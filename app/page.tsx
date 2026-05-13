@@ -1,1114 +1,1271 @@
 "use client";
 import { useState, useEffect, useRef } from "react";
-import type { CSSProperties, ReactNode, RefObject, ChangeEvent, FormEvent } from "react";
 
-type PageId = "home" | "brands" | "drivers";
+/* --- Design Tokens ----------------------------------------------------------- */
+const T = {
+  ivory:    "#F7F5F1",
+  ivoryDk:  "#EFEDE8",
+  stone:    "#E2DED8",
+  stoneMd:  "#C8C2B8",
+  cobalt:   "#1A4FD6",
+  cobaltLt: "#2D6BFF",
+  cobaltBg: "rgba(26,79,214,0.07)",
+  navy:     "#0D1B2A",
+  navyMd:   "#1C2E42",
+  navyLt:   "#374B62",
+  ink:      "#1A2332",
+  inkMd:    "#3D4E62",
+  inkLt:    "#6B7A8D",
+  white:    "#FFFFFF",
+};
 
-// ─── Shared constants ────────────────────────────────────────────────────────
-const BLUE = "#3d8eff";
-const BLUE_GLOW = "rgba(30,100,255,0.18)";
-const BLUE_SUBTLE = "rgba(30,100,255,0.08)";
+/* --- Global CSS --------------------------------------------------------------- */
+const GLOBAL = `
+  @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&display=swap');
+  *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
+  html { font-size:16px; scroll-behavior:smooth; }
+  body { background:${T.ivory}; font-family:'DM Sans',sans-serif; color:${T.ink}; -webkit-font-smoothing:antialiased; }
 
-// ─── Hooks ───────────────────────────────────────────────────────────────────
-function useInView(threshold = 0.12): [RefObject<HTMLElement | null>, boolean] {
-  const ref = useRef<HTMLElement | null>(null);
-  const [inView, setInView] = useState(false);
-  useEffect(() => {
-    const obs = new IntersectionObserver(
-      ([e]) => { if (e.isIntersecting) setInView(true); },
-      { threshold }
-    );
-    if (ref.current) obs.observe(ref.current);
-    return () => obs.disconnect();
-  }, []);
-  return [ref, inView];
-}
-
-// ─── Global Styles ────────────────────────────────────────────────────────────
-const GLOBAL_CSS = `
-  @import url('https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600&display=swap');
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  html { scroll-behavior: smooth; }
-  body { background: #08080C; }
-
-  @keyframes pulse    { 0%,100%{opacity:1} 50%{opacity:0.55} }
-  @keyframes fadeUp   { from{opacity:0;transform:translateY(36px)} to{opacity:1;transform:translateY(0)} }
+  @keyframes fadeUp   { from{opacity:0;transform:translateY(24px)} to{opacity:1;transform:translateY(0)} }
   @keyframes fadeIn   { from{opacity:0} to{opacity:1} }
-  @keyframes scanLine { 0%{top:-2px} 100%{top:100%} }
-  @keyframes shimmer  { 0%{background-position:200% center} 100%{background-position:-200% center} }
-  @keyframes borderGlow { 0%,100%{border-color:rgba(60,130,255,0.14)} 50%{border-color:rgba(60,130,255,0.42)} }
-  @keyframes orbFloat { 0%,100%{transform:translateY(0) scale(1)} 50%{transform:translateY(-18px) scale(1.03)} }
+  @keyframes slideDown{ from{opacity:0;transform:translateY(-8px)} to{opacity:1;transform:translateY(0)} }
+  @keyframes pulse    { 0%,100%{opacity:1} 50%{opacity:0.55} }
 
-  .fade-up         { opacity:0; transform:translateY(36px); transition:opacity 0.9s cubic-bezier(.22,.8,.36,1), transform 0.9s cubic-bezier(.22,.8,.36,1); }
+  .fade-up         { opacity:0; transform:translateY(24px); transition:opacity 0.7s cubic-bezier(.22,.8,.36,1), transform 0.7s cubic-bezier(.22,.8,.36,1); }
   .fade-up.visible { opacity:1; transform:translateY(0); }
   .fade-up.d1 { transition-delay:0.1s; }
-  .fade-up.d2 { transition-delay:0.22s; }
+  .fade-up.d2 { transition-delay:0.2s; }
+  .fade-up.d3 { transition-delay:0.3s; }
 
-  .cta-btn     { font-family:'DM Sans',sans-serif; font-size:0.82rem; font-weight:600; letter-spacing:0.13em; text-transform:uppercase; border-radius:2px; padding:0.95rem 2.1rem; cursor:pointer; transition:all 0.28s cubic-bezier(.22,.8,.36,1); }
-  .cta-primary { background:rgba(30,100,255,0.22); border:1px solid rgba(61,142,255,0.55); color:#fff; }
-  .cta-primary:hover { background:rgba(30,100,255,0.42); border-color:#3d8eff; box-shadow:0 0 28px rgba(30,100,255,0.22); }
-  .cta-ghost   { background:transparent; border:1px solid rgba(255,255,255,0.18); color:rgba(255,255,255,0.65); }
-  .cta-ghost:hover { border-color:rgba(255,255,255,0.45); color:#fff; }
-
-  .card-hover { transition:border-color 0.3s ease, transform 0.3s ease; }
-  .card-hover:hover { border-color:rgba(61,142,255,0.35) !important; transform:translateY(-3px); }
-
-  .path-card  { transition:border-color 0.35s ease, background 0.35s ease; }
-  .path-card:hover { border-color:rgba(61,142,255,0.42) !important; }
-
-  .nav-link   { background:none; border:none; cursor:pointer; font-family:'DM Sans',sans-serif; font-size:0.82rem; font-weight:500; letter-spacing:0.08em; text-transform:uppercase; color:rgba(255,255,255,0.5); transition:color 0.22s; }
-  .nav-link:hover { color:rgba(255,255,255,0.9); }
-
-  .form-input {
-    width:100%; padding:0.9rem 1.1rem;
-    background:rgba(255,255,255,0.03);
-    border:1px solid rgba(255,255,255,0.09);
-    border-radius:2px; color:#fff;
-    font-family:'DM Sans',sans-serif; font-size:0.9rem;
-    outline:none; transition:border-color 0.25s, background 0.25s;
+  /* Form inputs */
+  .fi {
+    width:100%; padding:0.85rem 1rem;
+    background:${T.white}; border:1.5px solid ${T.stone};
+    border-radius:8px; color:${T.ink};
+    font-family:'DM Sans',sans-serif; font-size:0.95rem;
+    outline:none; transition:border-color 0.22s, box-shadow 0.22s;
+    -webkit-appearance:none; appearance:none;
   }
-  .form-input:focus { border-color:rgba(61,142,255,0.55); background:rgba(30,100,255,0.05); }
-  .form-input::placeholder { color:rgba(255,255,255,0.18); }
+  .fi:focus { border-color:${T.cobalt}; box-shadow:0 0 0 3px rgba(26,79,214,0.1); }
+  .fi::placeholder { color:${T.stoneMd}; }
 
-  .submit-btn {
-    padding:1rem 2.2rem; border-radius:2px; cursor:pointer;
-    font-family:'DM Sans',sans-serif; font-size:0.82rem;
-    font-weight:600; letter-spacing:0.13em; text-transform:uppercase;
-    transition:all 0.28s cubic-bezier(.22,.8,.36,1);
-  }
+  select.fi { cursor:pointer; background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%236B7A8D' stroke-width='2'%3E%3Cpolyline points='6,9 12,15 18,9'/%3E%3C/svg%3E"); background-repeat:no-repeat; background-position:right 0.75rem center; background-size:16px; padding-right:2.5rem; }
 
-  input:-webkit-autofill, input:-webkit-autofill:focus {
-    -webkit-box-shadow:0 0 0 100px #0d0d18 inset !important;
-    -webkit-text-fill-color:#fff !important;
-    caret-color:#fff;
+  textarea.fi { resize:vertical; min-height:100px; }
+
+  /* Buttons */
+  .btn { display:inline-flex; align-items:center; justify-content:center; gap:0.5rem; font-family:'DM Sans',sans-serif; font-weight:600; letter-spacing:0.04em; border:none; cursor:pointer; transition:all 0.22s cubic-bezier(.22,.8,.36,1); border-radius:8px; text-transform:uppercase; font-size:0.78rem; }
+  .btn-primary { background:${T.cobalt}; color:#fff; padding:0.9rem 1.6rem; }
+  .btn-primary:hover { background:${T.cobaltLt}; transform:translateY(-1px); box-shadow:0 6px 20px rgba(26,79,214,0.28); }
+  .btn-outline { background:transparent; color:${T.ink}; padding:0.9rem 1.6rem; border:1.5px solid ${T.stone}; }
+  .btn-outline:hover { border-color:${T.inkMd}; background:rgba(0,0,0,0.04); }
+  .btn-navy { background:${T.navy}; color:#fff; padding:0.9rem 1.6rem; }
+  .btn-navy:hover { background:${T.navyMd}; transform:translateY(-1px); }
+  .btn-full { width:100%; }
+
+  /* Accordion */
+  .acc-item { border-bottom:1.5px solid ${T.stone}; }
+  .acc-trigger { width:100%; background:none; border:none; cursor:pointer; padding:1.1rem 0; display:flex; align-items:center; justify-content:space-between; text-align:left; font-family:'DM Sans',sans-serif; font-size:0.95rem; font-weight:600; color:${T.ink}; transition:color 0.18s; }
+  .acc-trigger:hover { color:${T.cobalt}; }
+  .acc-icon { flex-shrink:0; width:22px; height:22px; border-radius:50%; border:1.5px solid ${T.stone}; display:flex; align-items:center; justify-content:center; font-size:0.75rem; transition:all 0.22s; }
+  .acc-icon.open { background:${T.cobalt}; border-color:${T.cobalt}; color:#fff; transform:rotate(45deg); }
+  .acc-body { overflow:hidden; transition:max-height 0.35s cubic-bezier(.22,.8,.36,1), opacity 0.3s; }
+  .acc-body-inner { padding:0 0 1.2rem 0; font-size:0.9rem; color:${T.inkMd}; line-height:1.75; }
+
+  /* Comparison cards */
+  .cmp-bad  { background:${T.ivoryDk}; border:1.5px solid ${T.stone}; border-radius:12px; padding:1.5rem; }
+  .cmp-good { background:${T.navy}; border:1.5px solid ${T.navy}; border-radius:12px; padding:1.5rem; color:#fff; }
+
+  /* Nav */
+  .nav-link { background:none; border:none; cursor:pointer; font-family:'DM Sans',sans-serif; font-size:0.82rem; font-weight:500; color:${T.inkMd}; letter-spacing:0.04em; padding:0.35rem 0; transition:color 0.18s; }
+  .nav-link:hover, .nav-link.active { color:${T.cobalt}; }
+
+  /* Step form */
+  .step-dot { width:8px; height:8px; border-radius:50%; transition:all 0.25s; }
+  .step-dot.done { background:${T.cobalt}; }
+  .step-dot.curr { background:${T.cobalt}; width:20px; border-radius:4px; }
+  .step-dot.todo { background:${T.stone}; }
+
+  /* Chip options */
+  .chip { border:1.5px solid ${T.stone}; border-radius:20px; padding:0.5rem 1rem; font-size:0.82rem; font-weight:500; color:${T.inkMd}; cursor:pointer; transition:all 0.18s; background:${T.white}; }
+  .chip.selected { background:${T.cobalt}; border-color:${T.cobalt}; color:#fff; }
+  .chip:hover:not(.selected) { border-color:${T.cobalt}; color:${T.cobalt}; }
+
+  /* Report item */
+  .report-item { display:flex; align-items:center; gap:0.9rem; padding:1rem 0; border-bottom:1px solid ${T.stone}; }
+  .report-item:last-child { border-bottom:none; }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width:6px; }
+  ::-webkit-scrollbar-track { background:transparent; }
+  ::-webkit-scrollbar-thumb { background:${T.stone}; border-radius:4px; }
+
+  @media (max-width:640px) {
+    .hide-mobile { display:none !important; }
+    .stack-mobile { flex-direction:column !important; }
+    .full-mobile { width:100% !important; }
   }
 `;
 
-// ─── Visual Atoms ─────────────────────────────────────────────────────────────
-function CityOrbs({ intensity = 1 }) {
+/* --- Hooks -------------------------------------------------------------------- */
+function useInView(th = 0.1) {
+  const ref = useRef(null);
+  const [v, setV] = useState(false);
+  useEffect(() => {
+    const o = new IntersectionObserver(([e]) => { if (e.isIntersecting) setV(true); }, { threshold: th });
+    if (ref.current) o.observe(ref.current);
+    return () => o.disconnect();
+  }, []);
+  return [ref, v];
+}
+
+/* --- Accordion ---------------------------------------------------------------- */
+function Accordion({ items }) {
+  const [open, setOpen] = useState(null);
   return (
-    <div style={{ position:"absolute", inset:0, overflow:"hidden", pointerEvents:"none" }}>
-      <div style={{
-        position:"absolute", top:"14%", left:"6%",
-        width:700, height:700, borderRadius:"50%",
-        background:`radial-gradient(circle, rgba(20,80,220,${0.1*intensity}) 0%, transparent 68%)`,
-        filter:"blur(55px)", animation:"orbFloat 9s ease-in-out infinite",
-      }}/>
-      <div style={{
-        position:"absolute", top:"55%", right:"4%",
-        width:500, height:500, borderRadius:"50%",
-        background:`radial-gradient(circle, rgba(0,140,255,${0.07*intensity}) 0%, transparent 70%)`,
-        filter:"blur(70px)", animation:"orbFloat 12s ease-in-out infinite 3s",
-      }}/>
-      <div style={{
-        position:"absolute", bottom:"8%", left:"40%",
-        width:380, height:380, borderRadius:"50%",
-        background:`radial-gradient(circle, rgba(50,120,255,${0.05*intensity}) 0%, transparent 70%)`,
-        filter:"blur(65px)", animation:"orbFloat 10s ease-in-out infinite 6s",
-      }}/>
+    <div>
+      {items.map((it, i) => (
+        <div key={i} className="acc-item">
+          <button className="acc-trigger" onClick={() => setOpen(open === i ? null : i)}>
+            <span>{it.q}</span>
+            <span className={`acc-icon ${open === i ? "open" : ""}`}>+</span>
+          </button>
+          <div className="acc-body" style={{ maxHeight: open === i ? 300 : 0, opacity: open === i ? 1 : 0 }}>
+            <div className="acc-body-inner">{it.a}</div>
+          </div>
+        </div>
+      ))}
     </div>
   );
 }
 
-function QRGrid({ opacity = 0.028 }) {
-  const cells = Array.from({ length: 81 });
+/* --- Section wrapper ---------------------------------------------------------- */
+function Section({ children, style = {}, bg = T.ivory }) {
+  const [ref, v] = useInView();
   return (
-    <div style={{ position:"absolute", inset:0, overflow:"hidden", pointerEvents:"none" }}>
-      <div style={{
-        position:"absolute", inset:0,
-        display:"grid", gridTemplateColumns:"repeat(9, 1fr)", opacity,
-      }}>
-        {cells.map((_, i) => (
-          <div key={i} style={{
-            border:"1px solid #4da6ff", aspectRatio:"1",
-            background:(i%7===0||i%11===0) ? "rgba(77,166,255,0.22)" : "transparent",
-          }}/>
-        ))}
+    <section ref={ref} style={{ background: bg, ...style }}>
+      <div className={`fade-up ${v ? "visible" : ""}`} style={{ maxWidth: 680, margin: "0 auto", padding: "0 1.25rem" }}>
+        {children}
       </div>
+    </section>
+  );
+}
+
+/* --- Chip selector ------------------------------------------------------------ */
+function Chips({ options, value, onChange, multi = false }) {
+  const toggle = (o) => {
+    if (multi) {
+      const arr = Array.isArray(value) ? value : [];
+      onChange(arr.includes(o) ? arr.filter(x => x !== o) : [...arr, o]);
+    } else {
+      onChange(o);
+    }
+  };
+  const isSelected = (o) => multi ? (Array.isArray(value) && value.includes(o)) : value === o;
+  return (
+    <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem", marginTop: "0.75rem" }}>
+      {options.map(o => (
+        <button key={o} type="button" className={`chip ${isSelected(o) ? "selected" : ""}`} onClick={() => toggle(o)}>{o}</button>
+      ))}
     </div>
   );
 }
 
-function ScanLine() {
+/* --- Step indicator ----------------------------------------------------------- */
+function StepBar({ current, total }) {
   return (
-    <div style={{
-      position:"absolute", left:0, right:0, height:1,
-      background:"linear-gradient(90deg, transparent 0%, rgba(61,142,255,0.3) 40%, rgba(61,142,255,0.5) 50%, rgba(61,142,255,0.3) 60%, transparent 100%)",
-      animation:"scanLine 11s linear infinite",
-      pointerEvents:"none", zIndex:3,
-    }}/>
-  );
-}
-
-function Label({ children, style = {} }: { children?: ReactNode; style?: CSSProperties }) {
-  return (
-    <div style={{
-      fontFamily:"'DM Sans',sans-serif",
-      fontSize:"0.72rem", letterSpacing:"0.2em",
-      color:BLUE, textTransform:"uppercase", marginBottom:"1.2rem",
-      ...style,
-    }}>
-      {children}
+    <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: "1.5rem" }}>
+      {Array.from({ length: total }).map((_, i) => (
+        <div key={i} className={`step-dot ${i < current ? "done" : i === current ? "curr" : "todo"}`} />
+      ))}
+      <span style={{ fontSize: "0.75rem", color: T.inkLt, marginLeft: 8 }}>{current + 1} / {total}</span>
     </div>
   );
 }
 
-function SectionHeading({ children, style = {} }: { children?: ReactNode; style?: CSSProperties }) {
+/* --- Label chip --------------------------------------------------------------- */
+function Tag({ children }) {
   return (
-    <h2 style={{
-      fontFamily:"'Syne',sans-serif",
-      fontSize:"clamp(2rem, 5vw, 4rem)",
-      fontWeight:800, lineHeight:1.08,
-      letterSpacing:"-0.015em", color:"#fff",
-      ...style,
-    }}>
-      {children}
-    </h2>
+    <div style={{
+      display: "inline-flex", alignItems: "center", gap: 6,
+      background: T.cobaltBg, border: `1px solid rgba(26,79,214,0.18)`,
+      borderRadius: 20, padding: "0.3rem 0.85rem",
+      fontFamily: "'DM Sans',sans-serif",
+      fontSize: "0.7rem", fontWeight: 600,
+      letterSpacing: "0.12em", textTransform: "uppercase", color: T.cobalt,
+    }}>{children}</div>
   );
 }
 
-function SubText({ children, style = {} }: { children?: ReactNode; style?: CSSProperties }) {
+/* --- Hero dot ----------------------------------------------------------------- */
+function LiveDot() {
   return (
-    <p style={{
-      fontFamily:"'DM Sans',sans-serif",
-      fontSize:"1.05rem", color:"rgba(255,255,255,0.42)", lineHeight:1.85,
-      ...style,
-    }}>
-      {children}
-    </p>
+    <span style={{
+      display: "inline-block", width: 7, height: 7, borderRadius: "50%",
+      background: T.cobalt, animation: "pulse 2s infinite",
+    }} />
   );
 }
 
-// ─── Premium Footer ───────────────────────────────────────────────────────────
-function Footer({ setPage }: { setPage: (p: PageId) => void }) {
+/* --- Navbar ------------------------------------------------------------------- */
+function Navbar({ page, setPage, scrolled }) {
+  const [mob, setMob] = useState(false);
+  return (
+    <>
+      <nav style={{
+        position: "fixed", top: 0, left: 0, right: 0, zIndex: 300,
+        height: 60, padding: "0 1.25rem",
+        display: "flex", alignItems: "center", justifyContent: "space-between",
+        background: scrolled ? "rgba(247,245,241,0.95)" : T.ivory,
+        backdropFilter: scrolled ? "blur(16px)" : "none",
+        borderBottom: `1.5px solid ${scrolled ? T.stone : "transparent"}`,
+        transition: "all 0.3s ease",
+      }}>
+        <button onClick={() => setPage("home")} style={{
+          background: "none", border: "none", cursor: "pointer",
+          fontFamily: "'DM Serif Display',serif",
+          fontSize: "1.15rem", color: T.ink, letterSpacing: "0.02em",
+        }}>Escanea</button>
+
+        <div className="hide-mobile" style={{ display: "flex", gap: "1.75rem", alignItems: "center" }}>
+          {[
+            { l: "Inicio", p: "home" },
+            { l: "Marcas", p: "brands" },
+            { l: "Conductores", p: "drivers" },
+            { l: "Por Qué Ahora", p: "why" },
+          ].map(x => (
+            <button key={x.p} className={`nav-link ${page === x.p ? "active" : ""}`} onClick={() => setPage(x.p)}>
+              {x.l}
+            </button>
+          ))}
+          <button className="btn btn-primary" style={{ padding: "0.55rem 1.1rem" }} onClick={() => setPage("brands")}>
+            Anunciar
+          </button>
+        </div>
+
+        {/* Mobile hamburger */}
+        <button onClick={() => setMob(!mob)} style={{
+          display: "none", background: "none", border: "none", cursor: "pointer",
+          flexDirection: "column", gap: 5, padding: "4px",
+        }} className="hide-desktop" id="mob-btn">
+          {[0,1,2].map(i => (
+            <div key={i} style={{ width: 22, height: 2, background: T.ink, borderRadius: 2 }} />
+          ))}
+        </button>
+      </nav>
+
+      {/* Mobile menu overlay */}
+      {mob && (
+        <div style={{
+          position: "fixed", top: 60, left: 0, right: 0, bottom: 0, zIndex: 299,
+          background: T.ivory, padding: "2rem 1.5rem",
+          display: "flex", flexDirection: "column", gap: "1.5rem",
+          animation: "slideDown 0.25s ease",
+        }}>
+          {[
+            { l: "Inicio", p: "home" },
+            { l: "Marcas", p: "brands" },
+            { l: "Conductores", p: "drivers" },
+            { l: "Por Qué Ahora", p: "why" },
+          ].map(x => (
+            <button key={x.p} onClick={() => { setPage(x.p); setMob(false); }} style={{
+              background: "none", border: "none", cursor: "pointer", textAlign: "left",
+              fontFamily: "'DM Sans',sans-serif", fontSize: "1.1rem",
+              fontWeight: page === x.p ? 700 : 400, color: page === x.p ? T.cobalt : T.ink,
+            }}>
+              {x.l}
+            </button>
+          ))}
+          <div style={{ marginTop: "1rem", display: "flex", flexDirection: "column", gap: "0.75rem" }}>
+            <button className="btn btn-primary btn-full" onClick={() => { setPage("brands"); setMob(false); }}>Anunciar mi marca</button>
+            <button className="btn btn-outline btn-full" onClick={() => { setPage("drivers"); setMob(false); }}>Conducir con Escanea</button>
+          </div>
+        </div>
+      )}
+
+      <style>{`.hide-desktop { display:none; } @media(max-width:640px){ .hide-desktop{ display:flex !important; } .hide-mobile{ display:none !important; } } #mob-btn{ display:none; } @media(max-width:640px){ #mob-btn{ display:flex !important; } }`}</style>
+    </>
+  );
+}
+
+/* --- Footer ------------------------------------------------------------------- */
+function Footer({ setPage }) {
   return (
     <footer style={{
-      borderTop:"1px solid rgba(255,255,255,0.055)",
-      padding:"3.5rem 2.5rem",
+      background: T.navy, padding: "3rem 1.25rem 2rem",
     }}>
-      <div style={{
-        maxWidth:1100, margin:"0 auto",
-        display:"flex", justifyContent:"space-between",
-        alignItems:"flex-end", flexWrap:"wrap", gap:"2rem",
-      }}>
-        <div>
-          <button onClick={() => setPage("home")} style={{
-            background:"none", border:"none", cursor:"pointer",
-            fontFamily:"'Syne',sans-serif", fontSize:"1.05rem", fontWeight:800,
-            letterSpacing:"0.18em", color:"rgba(255,255,255,0.82)",
-            textTransform:"uppercase", display:"block", marginBottom:"0.5rem",
-          }}>
-            ESCANEA
-          </button>
-          <div style={{
-            fontFamily:"'DM Sans',sans-serif", fontSize:"0.78rem",
-            color:"rgba(255,255,255,0.22)", letterSpacing:"0.04em",
-          }}>
-            Transformando el tráfico en atención.
+      <div style={{ maxWidth: 680, margin: "0 auto" }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: "2rem", marginBottom: "2.5rem" }}>
+          <div>
+            <div style={{ fontFamily: "'DM Serif Display',serif", fontSize: "1.3rem", color: "#fff", marginBottom: "0.4rem" }}>Escanea</div>
+            <div style={{ fontSize: "0.82rem", color: "rgba(255,255,255,0.45)", lineHeight: 1.6 }}>
+              Transformando el tráfico<br />en atención medible.
+            </div>
+          </div>
+          <div style={{ display: "flex", gap: "3rem" }}>
+            {[["Plataforma", [
+              { l: "Inicio", p: "home" },
+              { l: "Marcas", p: "brands" },
+              { l: "Conductores", p: "drivers" },
+              { l: "Por Qué Ahora", p: "why" },
+            ]]].map(([title, links]) => (
+              <div key={title}>
+                <div style={{ fontSize: "0.7rem", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: "rgba(255,255,255,0.35)", marginBottom: "0.9rem" }}>{title}</div>
+                {links.map(({ l, p }) => (
+                  <button key={p} onClick={() => setPage(p)} style={{
+                    display: "block", background: "none", border: "none", cursor: "pointer",
+                    fontSize: "0.85rem", color: "rgba(255,255,255,0.55)", marginBottom: "0.6rem", textAlign: "left",
+                    transition: "color 0.18s",
+                  }}
+                    onMouseEnter={e => e.target.style.color = "#fff"}
+                    onMouseLeave={e => e.target.style.color = "rgba(255,255,255,0.55)"}
+                  >{l}</button>
+                ))}
+              </div>
+            ))}
+            <div>
+              <div style={{ fontSize: "0.7rem", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: "rgba(255,255,255,0.35)", marginBottom: "0.9rem" }}>Contacto</div>
+              <a href="mailto:contacto@escanea.co" style={{ display: "block", fontSize: "0.85rem", color: "rgba(255,255,255,0.55)", textDecoration: "none", marginBottom: "0.6rem" }}>contacto@escanea.co</a>
+              <div style={{ fontSize: "0.85rem", color: "rgba(255,255,255,0.55)" }}>www.escanea.co</div>
+            </div>
           </div>
         </div>
-        <div style={{
-          fontFamily:"'DM Sans',sans-serif", fontSize:"0.75rem",
-          color:"rgba(255,255,255,0.18)", letterSpacing:"0.05em", textAlign:"center",
-        }}>
-          www.escanea.co
-        </div>
-        <div style={{ textAlign:"right" }}>
-          <a href="mailto:contacto@escanea.co" style={{
-            fontFamily:"'DM Sans',sans-serif", fontSize:"0.78rem",
-            color:"rgba(255,255,255,0.28)", textDecoration:"none",
-            letterSpacing:"0.04em", display:"block", marginBottom:"0.4rem",
-            transition:"color 0.2s",
-          }}
-            onMouseEnter={e=>{ e.currentTarget.style.color="rgba(255,255,255,0.58)"; }}
-            onMouseLeave={e=>{ e.currentTarget.style.color="rgba(255,255,255,0.28)"; }}
-          >
-            contacto@escanea.co
-          </a>
-          <div style={{
-            fontFamily:"'DM Sans',sans-serif", fontSize:"0.7rem",
-            color:"rgba(255,255,255,0.13)", letterSpacing:"0.04em",
-          }}>
-            © 2025 Escanea
-          </div>
+        <div style={{ borderTop: "1px solid rgba(255,255,255,0.08)", paddingTop: "1.5rem", display: "flex", justifyContent: "space-between", flexWrap: "wrap", gap: "0.5rem" }}>
+          <div style={{ fontSize: "0.75rem", color: "rgba(255,255,255,0.25)" }}>© 2025 Escanea. Colombia.</div>
+          <div style={{ fontSize: "0.75rem", color: "rgba(255,255,255,0.25)" }}>Media urbana en movimiento.</div>
         </div>
       </div>
     </footer>
   );
 }
 
-// ─── Navbar ───────────────────────────────────────────────────────────────────
-function Navbar({ page, setPage, scrolled }: { page: PageId; setPage: (p: PageId) => void; scrolled: boolean }) {
-  return (
-    <nav style={{
-      position:"fixed", top:0, left:0, right:0, zIndex:200,
-      padding:"0 2.5rem", height:70,
-      display:"flex", alignItems:"center", justifyContent:"space-between",
-      background: scrolled ? "rgba(8,8,12,0.9)" : "transparent",
-      backdropFilter: scrolled ? "blur(24px) saturate(1.4)" : "none",
-      borderBottom: scrolled ? "1px solid rgba(255,255,255,0.055)" : "none",
-      transition:"all 0.45s cubic-bezier(.22,.8,.36,1)",
-    }}>
-      <button onClick={() => setPage("home")} style={{
-        background:"none", border:"none", cursor:"pointer",
-        fontFamily:"'Syne',sans-serif", fontSize:"1.15rem", fontWeight:800,
-        letterSpacing:"0.18em", color:"#fff", textTransform:"uppercase",
-      }}>
-        ESCANEA
-      </button>
-      <div style={{ display:"flex", gap:"2.2rem", alignItems:"center" }}>
-        {([{label:"Marcas",page:"brands"},{label:"Conductores",page:"drivers"}] as const).map(l=>(
-          <button key={l.page} className="nav-link" onClick={()=>setPage(l.page)}
-            style={{ color:page===l.page?"rgba(255,255,255,0.9)":undefined }}>
-            {l.label}
-          </button>
-        ))}
-        <button className="cta-btn cta-primary" onClick={()=>setPage("brands")}
-          style={{ padding:"0.5rem 1.15rem", fontSize:"0.75rem" }}>
-          Anunciar
-        </button>
-      </div>
-    </nav>
-  );
-}
+/* ===============================================================================
+   HOME PAGE
+=============================================================================== */
+function HomePage({ setPage }) {
+  const [r1, v1] = useInView();
+  const [r2, v2] = useInView();
+  const [r3, v3] = useInView();
+  const [r4, v4] = useInView();
+  const [r5, v5] = useInView();
 
-// ═══════════════════════════════════════════════════════════════════════════════
-// HOME PAGE
-// ═══════════════════════════════════════════════════════════════════════════════
-function HomePage({ setPage }: { setPage: (p: PageId) => void }) {
-  const [r1, iv1] = useInView();
-  const [r2, iv2] = useInView();
-  const [r3, iv3] = useInView();
+  const whyItems = [
+    {
+      q: "Exposición repetida",
+      a: "La repetición genera reconocimiento. Tu marca aparece constantemente en distintos puntos de la ciudad, construyendo familiaridad de marca en contextos reales.",
+    },
+    {
+      q: "Movimiento urbano real",
+      a: "A diferencia de la publicidad estática, Escanea circula donde vive, trabaja y se mueve tu audiencia — sin depender de que el cliente llegue hasta el anuncio.",
+    },
+    {
+      q: "Publicidad medible",
+      a: "Las campañas incluyen seguimiento QR y reportes semanales verificables. Por primera vez, la publicidad física tiene datos reales.",
+    },
+    {
+      q: "Cobertura por zonas",
+      a: "Las campañas pueden enfocarse en barrios y zonas específicas según tus objetivos: zonas residenciales, comerciales o corporativas.",
+    },
+  ];
 
   return (
-    <div style={{ background:"#08080C", color:"#fff", minHeight:"100vh" }}>
-      <style>{GLOBAL_CSS}</style>
+    <div style={{ background: T.ivory }}>
+      <style>{GLOBAL}</style>
 
-      {/* ── HERO ── */}
+      {/* -- HERO --------------------------------------------------------------- */}
       <section style={{
-        position:"relative", minHeight:"100vh",
-        display:"flex", alignItems:"center", overflow:"hidden",
+        minHeight: "calc(100vh - 60px)", paddingTop: 60,
+        display: "flex", flexDirection: "column", justifyContent: "center",
+        background: `linear-gradient(160deg, ${T.white} 0%, ${T.ivory} 60%, ${T.ivoryDk} 100%)`,
+        position: "relative", overflow: "hidden",
       }}>
-        <CityOrbs intensity={1.2}/>
-        <QRGrid opacity={0.03}/>
-        <ScanLine/>
+        {/* Decorative circle */}
         <div style={{
-          position:"absolute", inset:0,
-          background:"linear-gradient(135deg, rgba(0,15,50,0.32) 0%, rgba(8,8,12,0.52) 55%, rgba(0,0,0,0.78) 100%)",
-          pointerEvents:"none",
-        }}/>
+          position: "absolute", top: "-10%", right: "-15%",
+          width: "55vw", height: "55vw", maxWidth: 550, maxHeight: 550,
+          borderRadius: "50%",
+          background: `radial-gradient(circle, rgba(26,79,214,0.06) 0%, transparent 70%)`,
+          pointerEvents: "none",
+        }} />
         <div style={{
-          position:"absolute", bottom:0, left:0, right:0, height:240,
-          background:"linear-gradient(to bottom, transparent, #08080C)",
-          pointerEvents:"none",
-        }}/>
+          position: "absolute", bottom: "5%", left: "-5%",
+          width: "30vw", height: "30vw", maxWidth: 300,
+          borderRadius: "50%",
+          background: `radial-gradient(circle, rgba(26,79,214,0.04) 0%, transparent 70%)`,
+          pointerEvents: "none",
+        }} />
 
-        <div style={{
-          position:"relative", zIndex:2,
-          maxWidth:1100, margin:"0 auto",
-          padding:"140px 2.5rem 80px",
-        }}>
-          {/* Pill badge */}
-          <div style={{
-            display:"inline-flex", alignItems:"center", gap:8,
-            background:"rgba(30,100,255,0.09)", border:"1px solid rgba(61,142,255,0.26)",
-            borderRadius:2, padding:"0.38rem 1rem", marginBottom:"3rem",
-            animation:"fadeIn 1s ease 0.15s both",
-          }}>
-            <div style={{
-              width:5, height:5, borderRadius:"50%",
-              background:BLUE, animation:"pulse 2.5s ease infinite",
-            }}/>
-            <span style={{
-              fontFamily:"'DM Sans',sans-serif", fontSize:"0.72rem",
-              letterSpacing:"0.18em", color:"rgba(140,190,255,0.82)", textTransform:"uppercase",
-            }}>
-              Media urbana en movimiento
-            </span>
+        <div style={{ maxWidth: 680, margin: "0 auto", padding: "2.5rem 1.25rem", position: "relative", zIndex: 2 }}>
+          {/* Tag */}
+          <div style={{ marginBottom: "1.5rem", animation: "fadeIn 0.6s ease 0.1s both" }}>
+            <Tag><LiveDot /> Media urbana en movimiento</Tag>
           </div>
 
+          {/* Headline */}
           <h1 style={{
-            fontFamily:"'Syne',sans-serif",
-            fontSize:"clamp(3.2rem, 8.5vw, 7.5rem)",
-            fontWeight:800, lineHeight:0.97,
-            letterSpacing:"-0.025em", color:"#fff",
-            marginBottom:"1.8rem",
-            animation:"fadeUp 1s ease 0.35s both",
+            fontFamily: "'DM Serif Display',serif",
+            fontSize: "clamp(2.4rem, 7vw, 4.2rem)",
+            lineHeight: 1.1, letterSpacing: "-0.02em",
+            color: T.ink, marginBottom: "1.1rem",
+            animation: "fadeUp 0.7s ease 0.25s both",
           }}>
-            ¿Y si el tráfico<br/>
-            <span style={{
-              background:"linear-gradient(100deg, #5aabff 0%, #1e64ff 45%, #5aabff 100%)",
-              backgroundSize:"250% auto",
-              WebkitBackgroundClip:"text", WebkitTextFillColor:"transparent",
-              backgroundClip:"text", animation:"shimmer 6s linear infinite",
-            }}>
-              sí funcionara?
-            </span>
+            ¿Y si el tráfico<br />
+            <em style={{ color: T.cobalt, fontStyle: "italic" }}>sí funcionara?</em>
           </h1>
 
           <p style={{
-            fontFamily:"'DM Sans',sans-serif",
-            fontSize:"clamp(1.05rem, 2.2vw, 1.4rem)",
-            fontWeight:300, color:"rgba(255,255,255,0.46)",
-            marginBottom:"3.2rem", letterSpacing:"0.01em",
-            animation:"fadeUp 1s ease 0.55s both",
+            fontSize: "1.05rem", fontWeight: 400, color: T.inkMd,
+            lineHeight: 1.7, maxWidth: 480, marginBottom: "2.2rem",
+            animation: "fadeUp 0.7s ease 0.38s both",
           }}>
-            Transformando el tráfico en atención.
+            Transformando el tráfico en atención medible. Publicidad en movimiento con reportes reales.
           </p>
 
           <div style={{
-            display:"flex", gap:"0.85rem", flexWrap:"wrap",
-            animation:"fadeUp 1s ease 0.72s both",
+            display: "flex", gap: "0.75rem", flexWrap: "wrap",
+            animation: "fadeUp 0.7s ease 0.5s both",
           }}>
-            <button className="cta-btn cta-primary" onClick={()=>setPage("brands")}>
-              Anunciar mi marca
-            </button>
-            <button className="cta-btn cta-ghost" onClick={()=>setPage("drivers")}>
-              Conducir con Escanea
-            </button>
+            <button className="btn btn-primary" onClick={() => setPage("brands")}>Anunciar mi marca</button>
+            <button className="btn btn-outline" onClick={() => setPage("drivers")}>Conducir con Escanea</button>
           </div>
-        </div>
-      </section>
 
-      {/* ── WHY MOVEMENT ── */}
-      <section ref={r1} style={{ padding:"10rem 2.5rem", maxWidth:1100, margin:"0 auto" }}>
-        <div className={`fade-up ${iv1?"visible":""}`} style={{ marginBottom:"5.5rem" }}>
-          <Label>Por qué Escanea</Label>
-          <SectionHeading style={{ maxWidth:680, marginBottom:"1.5rem" }}>
-            El movimiento<br/>captura la atención.
-          </SectionHeading>
-          <SubText style={{ maxWidth:510 }}>
-            Mientras la publicidad digital se ignora y los billboards tradicionales
-            permanecen estáticos, nuestros vehículos recorren la ciudad — donde vive,
-            trabaja y transita tu audiencia.
-          </SubText>
-        </div>
-
-        {/* Contrast grid */}
-        <div className={`fade-up d1 ${iv1?"visible":""}`} style={{
-          display:"grid", gridTemplateColumns:"1fr 1fr",
-          gap:"1px", background:"rgba(255,255,255,0.05)", marginBottom:"5rem",
-        }}>
-          {[
-            {
-              label:"Publicidad estática",
-              text:"Un punto fijo. Todo el día, mismo lugar. Espera a que tu audiencia pase — una sola vez.",
-              accent:false,
-            },
-            {
-              label:"ESCANEA",
-              text:"Tu campaña recorre la ciudad. Zonas residenciales, comerciales y corporativas en una sola campaña.",
-              accent:true,
-            },
-            {
-              label:"Publicidad digital",
-              text:"Ignorada por saturación. Bloqueada por hábito. El usuario promedio ignora la mayoría de los anuncios que ve.",
-              accent:false,
-            },
-            {
-              label:"ESCANEA",
-              text:"Atención física real. Exposición repetida en múltiples zonas. Interacción QR medible y verificable.",
-              accent:true,
-            },
-          ].map(({label,text,accent},i)=>(
-            <div key={i} style={{
-              padding:"2.8rem",
-              background: accent ? "rgba(30,100,255,0.055)" : "rgba(255,255,255,0.018)",
-              borderLeft: `2px solid ${accent ? "rgba(61,142,255,0.42)" : "transparent"}`,
-            }}>
-              <div style={{
-                fontFamily:"'DM Sans',sans-serif", fontSize:"0.7rem",
-                letterSpacing:"0.18em", textTransform:"uppercase",
-                color: accent ? BLUE : "rgba(255,255,255,0.24)",
-                marginBottom:"0.9rem",
-              }}>
-                {label}
-              </div>
-              <p style={{
-                fontFamily:"'DM Sans',sans-serif", fontSize:"0.95rem",
-                color: accent ? "rgba(255,255,255,0.72)" : "rgba(255,255,255,0.33)",
-                lineHeight:1.78,
-              }}>
-                {text}
-              </p>
-            </div>
-          ))}
-        </div>
-
-        {/* Three pillars */}
-        <div className={`fade-up d2 ${iv1?"visible":""}`} style={{
-          display:"grid",
-          gridTemplateColumns:"repeat(auto-fit, minmax(270px, 1fr))",
-          gap:"1.4rem",
-        }}>
-          {[
-            {
-              icon:"◈",
-              title:"Exposición urbana constante",
-              desc:"Presencia diaria en múltiples zonas. Tu marca donde está la gente — en movimiento, todos los días.",
-            },
-            {
-              icon:"◎",
-              title:"Interacciones QR medibles",
-              desc:"Cada instalación lleva un QR único. Cada escaneo es un dato real — no una estimación ni una proyección.",
-            },
-            {
-              icon:"⬡",
-              title:"Cobertura en múltiples zonas",
-              desc:"Una flota activa que circula por zonas residenciales, comerciales y corporativas dentro de una sola campaña.",
-            },
-          ].map((p,i)=>(
-            <div key={i} className="card-hover" style={{
-              padding:"2.2rem",
-              border:"1px solid rgba(255,255,255,0.07)",
-              borderRadius:3, background:"rgba(255,255,255,0.02)",
-              position:"relative", overflow:"hidden",
-            }}>
-              <div style={{
-                position:"absolute", bottom:-24, right:-24,
-                width:100, height:100, borderRadius:"50%",
-                background:`radial-gradient(circle, ${BLUE_GLOW}, transparent)`,
-                pointerEvents:"none",
-              }}/>
-              <div style={{ fontSize:"1.55rem", color:"rgba(61,142,255,0.5)", marginBottom:"1.1rem" }}>{p.icon}</div>
-              <h3 style={{
-                fontFamily:"'Syne',sans-serif", fontSize:"1.05rem", fontWeight:700,
-                color:"#fff", marginBottom:"0.7rem",
-              }}>{p.title}</h3>
-              <p style={{
-                fontFamily:"'DM Sans',sans-serif", fontSize:"0.88rem",
-                color:"rgba(255,255,255,0.36)", lineHeight:1.78,
-              }}>{p.desc}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* ── CINEMATIC BENTO ── */}
-      <section ref={r2} style={{
-        position:"relative", overflow:"hidden",
-        padding:"7rem 2.5rem",
-        background:"linear-gradient(180deg, #08080C 0%, #060710 50%, #08080C 100%)",
-      }}>
-        <CityOrbs intensity={0.65}/>
-        <div className={`fade-up ${iv2?"visible":""}`} style={{ position:"relative", zIndex:2, maxWidth:1100, margin:"0 auto" }}>
-          <Label>Publicidad que se puede medir.</Label>
+          {/* Trust chips */}
           <div style={{
-            display:"grid",
-            gridTemplateColumns:"repeat(3, 1fr)",
-            gap:"0.75rem",
+            display: "flex", gap: "0.65rem", flexWrap: "wrap",
+            marginTop: "2.5rem",
+            animation: "fadeUp 0.7s ease 0.62s both",
           }}>
-            {/* Wide left — statement */}
-            <div style={{
-              gridColumn:"1 / 3",
-              padding:"3rem",
-              background:"linear-gradient(135deg, rgba(0,18,55,0.78) 0%, rgba(8,20,70,0.32) 100%)",
-              border:"1px solid rgba(61,142,255,0.14)",
-              borderRadius:3,
-              position:"relative", overflow:"hidden",
-              minHeight:240,
-              display:"flex", flexDirection:"column", justifyContent:"flex-end",
-              animation:"borderGlow 7s ease-in-out infinite",
-            }}>
-              {/* QR art */}
-              <div style={{
-                position:"absolute", top:"50%", right:"9%",
-                transform:"translateY(-50%)",
-                width:128, height:128,
-                display:"grid", gridTemplateColumns:"repeat(7, 1fr)",
-                gap:3, opacity:0.16,
-              }}>
-                {Array.from({length:49}).map((_,i)=>(
-                  <div key={i} style={{
-                    background:(i%3===0||i%5===0||i===0||i===6||i===42||i===48) ? "#4d9eff" : "transparent",
-                    borderRadius:1,
-                  }}/>
-                ))}
-              </div>
-              <div style={{
-                position:"absolute", inset:0,
-                background:"radial-gradient(ellipse at 25% 75%, rgba(30,100,255,0.17), transparent 60%)",
-                pointerEvents:"none",
-              }}/>
-              <div style={{ position:"relative", zIndex:2 }}>
-                <SectionHeading style={{ fontSize:"clamp(1.8rem, 4vw, 3rem)", marginBottom:"0.6rem" }}>
-                  Presencia urbana<br/>repetitiva.
-                </SectionHeading>
-                <SubText style={{ fontSize:"0.9rem" }}>Movimiento que genera atención.</SubText>
-              </div>
-            </div>
-
-            {/* Right tall — 90 days */}
-            <div style={{
-              gridRow:"1 / 3",
-              padding:"2.5rem",
-              background:BLUE_SUBTLE,
-              border:"1px solid rgba(61,142,255,0.17)",
-              borderRadius:3,
-              display:"flex", flexDirection:"column", justifyContent:"space-between",
-              animation:"borderGlow 9s ease-in-out infinite 2.5s",
-            }}>
-              <div>
-                <div style={{
-                  width:9, height:9, borderRadius:"50%",
-                  background:BLUE, marginBottom:"1.5rem",
-                  animation:"pulse 2.5s ease infinite",
-                }}/>
-                <div style={{
-                  fontFamily:"'DM Sans',sans-serif", fontSize:"0.7rem",
-                  letterSpacing:"0.18em", textTransform:"uppercase",
-                  color:"rgba(100,170,255,0.65)", marginBottom:"0.6rem",
-                }}>Campaña activa</div>
-                <div style={{
-                  fontFamily:"'Syne',sans-serif", fontSize:"2.4rem",
-                  fontWeight:800, color:"#fff", lineHeight:1.08,
-                }}>90<br/>días</div>
-              </div>
-              <div style={{
-                fontFamily:"'DM Sans',sans-serif", fontSize:"0.82rem",
-                color:"rgba(255,255,255,0.33)", lineHeight:1.72,
-              }}>
-                Presencia sostenida que construye reconocimiento real de marca.
-              </div>
-            </div>
-
-            {/* Bottom left */}
-            <div style={{
-              padding:"2rem",
-              background:"rgba(255,255,255,0.025)",
-              border:"1px solid rgba(255,255,255,0.07)",
-              borderRadius:3, display:"flex", flexDirection:"column", justifyContent:"center",
-            }}>
-              <div style={{
-                fontFamily:"'DM Sans',sans-serif", fontSize:"0.7rem",
-                letterSpacing:"0.15em", textTransform:"uppercase",
-                color:BLUE, marginBottom:"0.6rem",
-              }}>Reportes verificables</div>
-              <div style={{
-                fontFamily:"'Syne',sans-serif", fontSize:"1.45rem",
-                fontWeight:800, color:"#fff",
-              }}>QR único<br/>por vehículo.</div>
-            </div>
-
-            {/* Bottom mid */}
-            <div style={{
-              padding:"2rem",
-              background:"rgba(30,100,255,0.06)",
-              border:"1px solid rgba(61,142,255,0.14)",
-              borderRadius:3, display:"flex", flexDirection:"column", justifyContent:"center",
-            }}>
-              <div style={{
-                fontFamily:"'DM Sans',sans-serif", fontSize:"0.7rem",
-                letterSpacing:"0.15em", textTransform:"uppercase",
-                color:"rgba(100,170,255,0.6)", marginBottom:"0.6rem",
-              }}>Sin estimaciones</div>
-              <div style={{
-                fontFamily:"'Syne',sans-serif", fontSize:"1.45rem",
-                fontWeight:800, color:"#fff",
-              }}>Datos reales<br/>de campaña.</div>
-            </div>
+            {["Reportes semanales", "QR medible", "Sin contratos largos"].map(t => (
+              <div key={t} style={{
+                padding: "0.35rem 0.85rem",
+                background: T.white, border: `1px solid ${T.stone}`,
+                borderRadius: 20, fontSize: "0.75rem", color: T.inkMd,
+                fontWeight: 500,
+              }}>{t}</div>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* ── PATHWAY SPLIT ── */}
-      <section ref={r3} style={{ padding:"10rem 2.5rem 12rem", maxWidth:980, margin:"0 auto" }}>
-        <div className={`fade-up ${iv3?"visible":""}`}>
-          <div style={{ textAlign:"center", marginBottom:"5rem" }}>
-            <Label style={{ display:"block" }}>Tu camino</Label>
-            <SectionHeading style={{ fontSize:"clamp(2rem, 4vw, 3.5rem)" }}>
-              Empieza aquí.
-            </SectionHeading>
-          </div>
-          <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:"1.25rem" }}>
-            {/* Brands card */}
-            <button className="path-card" onClick={()=>setPage("brands")} style={{
-              background:"rgba(8,16,42,0.5)",
-              border:"1px solid rgba(61,142,255,0.22)",
-              borderRadius:3, padding:"3.5rem",
-              textAlign:"left", cursor:"pointer",
-              position:"relative", overflow:"hidden", display:"block", width:"100%",
-            }}>
-              <div style={{
-                position:"absolute", top:0, right:0, width:260, height:260,
-                background:"radial-gradient(circle, rgba(30,100,255,0.1), transparent 70%)",
-                pointerEvents:"none",
-              }}/>
-              <div style={{
-                fontFamily:"'DM Sans',sans-serif", fontSize:"0.7rem",
-                letterSpacing:"0.2em", textTransform:"uppercase",
-                color:BLUE, marginBottom:"1.8rem",
-              }}>Para Marcas</div>
-              <h3 style={{
-                fontFamily:"'Syne',sans-serif",
-                fontSize:"clamp(1.3rem, 2.5vw, 1.6rem)",
-                fontWeight:800, color:"#fff", lineHeight:1.18, marginBottom:"2.2rem",
-              }}>
-                Transforma tráfico<br/>urbano en atención<br/>medible.
-              </h3>
-              <div style={{
-                fontFamily:"'DM Sans',sans-serif", fontSize:"0.78rem",
-                letterSpacing:"0.1em", textTransform:"uppercase",
-                color:BLUE, display:"flex", alignItems:"center", gap:"0.5rem",
-              }}>
-                Anunciar mi marca <span style={{fontSize:"1rem"}}>→</span>
-              </div>
-            </button>
+      {/* -- CÓMO FUNCIONA ------------------------------------------------------ */}
+      <section ref={r1} style={{ background: T.navy, padding: "4rem 1.25rem" }}>
+        <div className={`fade-up ${v1 ? "visible" : ""}`} style={{ maxWidth: 680, margin: "0 auto" }}>
+          <Tag>Por qué Escanea</Tag>
+          <h2 style={{
+            fontFamily: "'DM Serif Display',serif",
+            fontSize: "clamp(1.9rem, 5vw, 3rem)",
+            color: "#fff", lineHeight: 1.15,
+            margin: "1rem 0 1rem",
+          }}>
+            El movimiento<br /><em style={{ color: "rgba(150,180,255,0.9)" }}>captura la atención.</em>
+          </h2>
+          <p style={{ fontSize: "0.95rem", color: "rgba(255,255,255,0.55)", lineHeight: 1.8, marginBottom: "2.5rem", maxWidth: 520 }}>
+            Mientras la publicidad digital se ignora y los billboards tradicionales permanecen estáticos, nuestros vehículos recorren la ciudad — donde vive, trabaja y transita tu audiencia.
+          </p>
 
-            {/* Drivers card */}
-            <button className="path-card" onClick={()=>setPage("drivers")} style={{
-              background:"rgba(255,255,255,0.018)",
-              border:"1px solid rgba(255,255,255,0.07)",
-              borderRadius:3, padding:"3.5rem",
-              textAlign:"left", cursor:"pointer",
-              position:"relative", overflow:"hidden", display:"block", width:"100%",
-            }}>
-              <div style={{
-                fontFamily:"'DM Sans',sans-serif", fontSize:"0.7rem",
-                letterSpacing:"0.2em", textTransform:"uppercase",
-                color:"rgba(255,255,255,0.3)", marginBottom:"1.8rem",
-              }}>Para Conductores</div>
-              <h3 style={{
-                fontFamily:"'Syne',sans-serif",
-                fontSize:"clamp(1.3rem, 2.5vw, 1.6rem)",
-                fontWeight:800, color:"#fff", lineHeight:1.18, marginBottom:"2.2rem",
+          {/* How it works steps */}
+          <div style={{ display: "flex", flexDirection: "column", gap: "0" }}>
+            {[
+              { n: "01", t: "Instalación en flota activa", d: "Diseños profesionales instalados en vehículos que circulan por zonas estratégicas de la ciudad." },
+              { n: "02", t: "Circulación diaria con QR", d: "Cada vehículo lleva un QR único. Tu campaña se mueve todos los días por múltiples zonas urbanas." },
+              { n: "03", t: "Reportes verificables", d: "Recibes reportes semanales reales: kilómetros, zonas, escaneos, conversaciones WhatsApp y fotografías." },
+            ].map((s, i) => (
+              <div key={i} style={{
+                display: "flex", gap: "1.25rem", alignItems: "flex-start",
+                padding: "1.5rem 0",
+                borderBottom: i < 2 ? "1px solid rgba(255,255,255,0.08)" : "none",
               }}>
-                Genera ingresos<br/>sin cambiar<br/>tus rutas.
-              </h3>
-              <div style={{
-                fontFamily:"'DM Sans',sans-serif", fontSize:"0.78rem",
-                letterSpacing:"0.1em", textTransform:"uppercase",
-                color:"rgba(255,255,255,0.38)",
-                display:"flex", alignItems:"center", gap:"0.5rem",
-              }}>
-                Conducir con Escanea <span style={{fontSize:"1rem"}}>→</span>
+                <div style={{
+                  flexShrink: 0,
+                  fontFamily: "'DM Serif Display',serif",
+                  fontSize: "1.5rem", color: "rgba(26,79,214,0.5)",
+                  lineHeight: 1, paddingTop: 2,
+                }}>{s.n}</div>
+                <div>
+                  <div style={{ fontWeight: 600, color: "#fff", marginBottom: "0.35rem", fontSize: "0.95rem" }}>{s.t}</div>
+                  <div style={{ fontSize: "0.87rem", color: "rgba(255,255,255,0.45)", lineHeight: 1.7 }}>{s.d}</div>
+                </div>
               </div>
-            </button>
+            ))}
           </div>
         </div>
       </section>
 
-      <Footer setPage={setPage}/>
+      {/* -- COMPARISON --------------------------------------------------------- */}
+      <section ref={r2} style={{ background: T.ivory, padding: "4rem 1.25rem" }}>
+        <div className={`fade-up ${v2 ? "visible" : ""}`} style={{ maxWidth: 680, margin: "0 auto" }}>
+          <Tag>La diferencia</Tag>
+          <h2 style={{
+            fontFamily: "'DM Serif Display',serif",
+            fontSize: "clamp(1.7rem, 4.5vw, 2.6rem)",
+            color: T.ink, lineHeight: 1.15, margin: "1rem 0 2rem",
+          }}>
+            No toda publicidad<br />funciona igual.
+          </h2>
+
+          <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
+            {[
+              {
+                bad: { label: "Publicidad estática", text: "Un punto fijo. Todo el día, mismo lugar. Espera a que tu audiencia pase — una sola vez." },
+                good: { label: "Escanea", text: "Tu campaña recorre la ciudad. Zonas residenciales, comerciales y corporativas en una sola campaña." },
+              },
+              {
+                bad: { label: "Publicidad digital", text: "Ignorada por saturación. Bloqueada por hábito. El usuario promedio ignora la mayoría de anuncios que ve." },
+                good: { label: "Escanea", text: "Atención física real. Exposición repetida en múltiples zonas. Interacción QR medible y verificable." },
+              },
+            ].map((row, i) => (
+              <div key={i} style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.75rem" }}>
+                <div className="cmp-bad">
+                  <div style={{ fontSize: "0.68rem", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: T.inkLt, marginBottom: "0.6rem" }}>
+                    {row.bad.label}
+                  </div>
+                  <p style={{ fontSize: "0.87rem", color: T.inkMd, lineHeight: 1.7 }}>{row.bad.text}</p>
+                </div>
+                <div className="cmp-good">
+                  <div style={{ fontSize: "0.68rem", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: "rgba(150,185,255,0.8)", marginBottom: "0.6rem" }}>
+                    {row.good.label}
+                  </div>
+                  <p style={{ fontSize: "0.87rem", color: "rgba(255,255,255,0.8)", lineHeight: 1.7 }}>{row.good.text}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* -- WHY IT WORKS (accordion) ------------------------------------------- */}
+      <section ref={r3} style={{ background: T.white, padding: "4rem 1.25rem" }}>
+        <div className={`fade-up ${v3 ? "visible" : ""}`} style={{ maxWidth: 680, margin: "0 auto" }}>
+          <Tag>Cómo funciona</Tag>
+          <h2 style={{
+            fontFamily: "'DM Serif Display',serif",
+            fontSize: "clamp(1.7rem, 4.5vw, 2.6rem)",
+            color: T.ink, lineHeight: 1.15, margin: "1rem 0 2rem",
+          }}>
+            Diseñado para<br />resultados reales.
+          </h2>
+          <Accordion items={whyItems} />
+        </div>
+      </section>
+
+      {/* -- SPLIT CTA ---------------------------------------------------------- */}
+      <section ref={r4} style={{ background: T.ivory, padding: "4rem 1.25rem" }}>
+        <div className={`fade-up ${v4 ? "visible" : ""}`} style={{ maxWidth: 680, margin: "0 auto" }}>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
+            {[
+              {
+                label: "Para Marcas",
+                h: "Transforma tráfico urbano en atención medible.",
+                cta: "Anunciar mi marca",
+                action: () => setPage("brands"),
+                accent: true,
+              },
+              {
+                label: "Para Conductores",
+                h: "Genera ingresos sin cambiar tus rutas.",
+                cta: "Conducir con Escanea",
+                action: () => setPage("drivers"),
+                accent: false,
+              },
+            ].map((c, i) => (
+              <div key={i} style={{
+                background: c.accent ? T.navy : T.white,
+                border: `1.5px solid ${c.accent ? T.navy : T.stone}`,
+                borderRadius: 16, padding: "1.75rem",
+                display: "flex", flexDirection: "column", gap: "1rem",
+                position: "relative", overflow: "hidden",
+              }}>
+                <div style={{
+                  fontSize: "0.68rem", fontWeight: 700, letterSpacing: "0.12em",
+                  textTransform: "uppercase",
+                  color: c.accent ? "rgba(150,185,255,0.7)" : T.inkLt,
+                }}>{c.label}</div>
+                <h3 style={{
+                  fontFamily: "'DM Serif Display',serif",
+                  fontSize: "clamp(1.05rem, 2.5vw, 1.3rem)",
+                  color: c.accent ? "#fff" : T.ink,
+                  lineHeight: 1.3, flex: 1,
+                }}>{c.h}</h3>
+                <button
+                  className={`btn ${c.accent ? "btn-outline" : "btn-primary"}`}
+                  style={c.accent ? { border: "1.5px solid rgba(255,255,255,0.25)", color: "#fff", fontSize: "0.72rem", padding: "0.75rem 1rem" } : { fontSize: "0.72rem", padding: "0.75rem 1rem" }}
+                  onClick={c.action}
+                >{c.cta}</button>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* -- REPORTING ---------------------------------------------------------- */}
+      <section ref={r5} style={{ background: T.white, padding: "4rem 1.25rem" }}>
+        <div className={`fade-up ${v5 ? "visible" : ""}`} style={{ maxWidth: 680, margin: "0 auto" }}>
+          <Tag>Reportes reales</Tag>
+          <h2 style={{
+            fontFamily: "'DM Serif Display',serif",
+            fontSize: "clamp(1.7rem, 4.5vw, 2.6rem)",
+            color: T.ink, lineHeight: 1.15, margin: "1rem 0 0.75rem",
+          }}>
+            No estimaciones.
+          </h2>
+          <p style={{ fontSize: "0.9rem", color: T.inkMd, lineHeight: 1.75, marginBottom: "2rem" }}>
+            Cada campaña incluye un reporte semanal con datos verificables de tu inversión.
+          </p>
+          <div style={{
+            background: T.ivoryDk, borderRadius: 16,
+            border: `1.5px solid ${T.stone}`, overflow: "hidden",
+          }}>
+            {[
+              { icon: "📍", label: "Kilómetros activos", desc: "Distancia total recorrida durante la campaña" },
+              { icon: "🗺", label: "Zonas recorridas", desc: "Barrios y sectores cubiertos por la flota" },
+              { icon: "📱", label: "Escaneos QR", desc: "Interacciones directas con tu código QR" },
+              { icon: "💬", label: "Conversaciones WhatsApp", desc: "Contactos iniciados a través de campaña" },
+              { icon: "📷", label: "Fotografías de verificación", desc: "Evidencia visual de la instalación activa" },
+              { icon: "📊", label: "Resumen semanal", desc: "Informe consolidado de cada semana de campaña" },
+            ].map((r, i) => (
+              <div key={i} className="report-item" style={{
+                padding: "0.9rem 1.25rem",
+                borderBottom: i < 5 ? `1px solid ${T.stone}` : "none",
+              }}>
+                <div style={{ fontSize: "1.1rem", flexShrink: 0 }}>{r.icon}</div>
+                <div>
+                  <div style={{ fontWeight: 600, fontSize: "0.88rem", color: T.ink }}>{r.label}</div>
+                  <div style={{ fontSize: "0.8rem", color: T.inkLt, marginTop: "0.1rem" }}>{r.desc}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* -- FINAL CTA ---------------------------------------------------------- */}
+      <section style={{
+        background: `linear-gradient(135deg, ${T.cobalt} 0%, #0A2FA0 100%)`,
+        padding: "4rem 1.25rem",
+      }}>
+        <div style={{ maxWidth: 680, margin: "0 auto", textAlign: "center" }}>
+          <h2 style={{
+            fontFamily: "'DM Serif Display',serif",
+            fontSize: "clamp(1.8rem, 5vw, 3rem)",
+            color: "#fff", lineHeight: 1.2, marginBottom: "1rem",
+          }}>
+            ¿Listo para<br />activar tu campaña?
+          </h2>
+          <p style={{ fontSize: "0.95rem", color: "rgba(255,255,255,0.65)", marginBottom: "2rem", lineHeight: 1.7 }}>
+            Nuestro equipo te contacta en menos de 24 horas.
+          </p>
+          <div style={{ display: "flex", gap: "0.75rem", justifyContent: "center", flexWrap: "wrap" }}>
+            <button style={{
+              fontFamily: "'DM Sans',sans-serif", fontWeight: 600,
+              letterSpacing: "0.04em", textTransform: "uppercase", fontSize: "0.78rem",
+              background: "#fff", color: T.cobalt,
+              border: "none", borderRadius: 8, padding: "0.9rem 1.6rem",
+              cursor: "pointer", transition: "all 0.22s",
+            }} onClick={() => setPage("brands")}
+              onMouseEnter={e => { e.currentTarget.style.background = T.ivory; }}
+              onMouseLeave={e => { e.currentTarget.style.background = "#fff"; }}
+            >Anunciar mi marca</button>
+            <button style={{
+              fontFamily: "'DM Sans',sans-serif", fontWeight: 600,
+              letterSpacing: "0.04em", textTransform: "uppercase", fontSize: "0.78rem",
+              background: "transparent", color: "#fff",
+              border: "1.5px solid rgba(255,255,255,0.35)", borderRadius: 8,
+              padding: "0.9rem 1.6rem", cursor: "pointer", transition: "all 0.22s",
+            }} onClick={() => setPage("drivers")}
+              onMouseEnter={e => { e.currentTarget.style.borderColor = "rgba(255,255,255,0.7)"; }}
+              onMouseLeave={e => { e.currentTarget.style.borderColor = "rgba(255,255,255,0.35)"; }}
+            >Conducir con Escanea</button>
+          </div>
+        </div>
+      </section>
+
+      <Footer setPage={setPage} />
     </div>
   );
 }
 
-// ═══════════════════════════════════════════════════════════════════════════════
-// BRANDS PAGE
-// ═══════════════════════════════════════════════════════════════════════════════
-type BrandsForm = { nombre: string; empresa: string; email: string; telefono: string; mensaje: string };
+/* ===============================================================================
+   BRANDS PAGE
+=============================================================================== */
+function BrandsPage({ setPage }) {
+  const [r1, v1] = useInView();
+  const [r2, v2] = useInView();
+  const [r3, v3] = useInView();
 
-function BrandsPage({ setPage }: { setPage: (p: PageId) => void }) {
-  const [form, setForm] = useState<BrandsForm>({ nombre:"", empresa:"", email:"", telefono:"", mensaje:"" });
+  // Multi-step form state
+  const [step, setStep] = useState(0);
+  const TOTAL = 7;
+  const [fd, setFd] = useState({
+    ciudad: "", zonas: "", presupuesto: "", objetivo: [], problema: [],
+    empresa: "", whatsapp: "", email: "", notas: "",
+  });
+  const upd = (k) => (e) => setFd(f => ({ ...f, [k]: e.target.value }));
   const [sent, setSent] = useState(false);
-  const [r1, iv1] = useInView();
-  const [r2, iv2] = useInView();
-  const [r3, iv3] = useInView();
-  const upd = (k: keyof BrandsForm) => (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
-    setForm(f => ({ ...f, [k]: e.target.value }));
-  const onSubmit = (e: FormEvent) => { e.preventDefault(); setSent(true); };
+
+  const BDropItems = [
+    { q: "Visibilidad urbana", a: "Tu marca circula donde realmente está la gente: vías principales, zonas residenciales, corredores comerciales y sectores corporativos." },
+    { q: "Exposición repetida", a: "La repetición física genera recordación. Tus campañas aparecen múltiples veces durante la rutina diaria de la audiencia." },
+    { q: "Reportes medibles", a: "Todas las campañas incluyen seguimiento QR y reportes semanales verificables. Datos reales de tu inversión." },
+    { q: "Activación de campaña", a: "Seleccionamos rutas, zonas y vehículos según los objetivos y ubicación de tu campaña." },
+  ];
+
+  const stepContent = [
+    <div key={0}>
+      <label style={FL}>Ciudad</label>
+      <select className="fi" value={fd.ciudad} onChange={upd("ciudad")} required>
+        <option value="">Selecciona tu ciudad</option>
+        <option>Bogotá</option>
+        <option>Medellín</option>
+      </select>
+    </div>,
+    <div key={1}>
+      <label style={FL}>Barrios o zonas de interés</label>
+      <textarea className="fi" rows={3} value={fd.zonas} onChange={upd("zonas")} placeholder="Ej: Chapinero, Zona Rosa, Usaquén..." />
+    </div>,
+    <div key={2}>
+      <label style={FL}>Presupuesto mensual aproximado</label>
+      <select className="fi" value={fd.presupuesto} onChange={upd("presupuesto")}>
+        <option value="">Seleccionar</option>
+        <option>Menos de $2M COP</option>
+        <option>$2M – $5M COP</option>
+        <option>$5M – $10M COP</option>
+        <option>Más de $10M COP</option>
+      </select>
+    </div>,
+    <div key={3}>
+      <label style={FL}>Objetivo principal</label>
+      <Chips multi options={["Reconocimiento de marca", "Visibilidad local", "Adquisición de clientes", "Tráfico a WhatsApp", "Tráfico QR", "Awareness urbano"]}
+        value={fd.objetivo} onChange={v => setFd(f => ({ ...f, objetivo: v }))} />
+    </div>,
+    <div key={4}>
+      <label style={FL}>Principal problema de marketing</label>
+      <Chips multi options={["Baja visibilidad", "Anuncios digitales costosos", "Poco engagement", "Baja recordación", "Competencia alta"]}
+        value={fd.problema} onChange={v => setFd(f => ({ ...f, problema: v }))} />
+    </div>,
+    <div key={5} style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
+      <div>
+        <label style={FL}>Nombre de la empresa</label>
+        <input className="fi" type="text" value={fd.empresa} onChange={upd("empresa")} placeholder="Tu empresa o marca" required />
+      </div>
+      <div>
+        <label style={FL}>WhatsApp</label>
+        <input className="fi" type="tel" value={fd.whatsapp} onChange={upd("whatsapp")} placeholder="+57 300 000 0000" required />
+      </div>
+      <div>
+        <label style={FL}>Email</label>
+        <input className="fi" type="email" value={fd.email} onChange={upd("email")} placeholder="tu@empresa.co" required />
+      </div>
+    </div>,
+    <div key={6}>
+      <label style={FL}>Objetivos adicionales o información importante</label>
+      <textarea className="fi" rows={4} value={fd.notas} onChange={upd("notas")} placeholder="Cuéntanos más sobre tu marca, objetivos o zonas de interés." />
+    </div>,
+  ];
+
+  const stepLabels = ["Ciudad", "Zonas", "Presupuesto", "Objetivo", "Problema", "Contacto", "Notas"];
 
   return (
-    <div style={{ background:"#08080C", color:"#fff", minHeight:"100vh" }}>
-      <style>{GLOBAL_CSS}</style>
+    <div style={{ background: T.ivory }}>
+      <style>{GLOBAL}</style>
 
-      <section style={{ position:"relative", padding:"15rem 2.5rem 9rem", overflow:"hidden" }}>
-        <CityOrbs intensity={0.9}/>
-        <div style={{
-          position:"absolute", inset:0,
-          background:"linear-gradient(180deg, rgba(0,14,45,0.26) 0%, #08080C 100%)",
-          pointerEvents:"none",
-        }}/>
-        <div style={{ position:"relative", zIndex:2, maxWidth:900, margin:"0 auto" }}>
-          <Label>Para Marcas</Label>
+      {/* Hero */}
+      <section style={{
+        background: `linear-gradient(160deg, ${T.white} 0%, ${T.ivory} 100%)`,
+        paddingTop: 100, paddingBottom: "3rem", padding: "100px 1.25rem 3rem",
+      }}>
+        <div style={{ maxWidth: 680, margin: "0 auto" }}>
+          <div style={{ animation: "fadeIn 0.6s ease 0.1s both", marginBottom: "1.2rem" }}><Tag>Para Marcas</Tag></div>
           <h1 style={{
-            fontFamily:"'Syne',sans-serif",
-            fontSize:"clamp(2.8rem, 6.5vw, 6rem)",
-            fontWeight:800, lineHeight:1.02,
-            letterSpacing:"-0.02em", color:"#fff", marginBottom:"1.6rem",
-            animation:"fadeUp 0.9s ease 0.2s both",
+            fontFamily: "'DM Serif Display',serif",
+            fontSize: "clamp(2.2rem, 6vw, 3.8rem)",
+            lineHeight: 1.1, color: T.ink, marginBottom: "1rem",
+            animation: "fadeUp 0.7s ease 0.25s both",
           }}>
-            Tu campaña<br/>recorre la ciudad.
+            Tu campaña<br /><em style={{ color: T.cobalt }}>recorre la ciudad.</em>
           </h1>
-          <SubText style={{ maxWidth:500, animation:"fadeUp 0.9s ease 0.38s both" }}>
-            Publicidad exterior en movimiento. Medible, verificable y presente
-            donde está tu audiencia — todos los días.
-          </SubText>
+          <p style={{ fontSize: "1rem", color: T.inkMd, lineHeight: 1.75, maxWidth: 480, marginBottom: "2rem", animation: "fadeUp 0.7s ease 0.38s both" }}>
+            Publicidad exterior en movimiento. Medible, verificable y presente donde está tu audiencia — todos los días.
+          </p>
+          <button className="btn btn-primary" onClick={() => {
+            document.getElementById("brands-form")?.scrollIntoView({ behavior: "smooth" });
+          }}>Activar campaña →</button>
         </div>
       </section>
 
       {/* Value props */}
-      <section ref={r1} style={{ padding:"2rem 2.5rem 7rem", maxWidth:1100, margin:"0 auto" }}>
-        <div className={`fade-up ${iv1?"visible":""}`}>
-          <div style={{
-            display:"grid",
-            gridTemplateColumns:"repeat(auto-fit, minmax(310px, 1fr))",
-            gap:"1px", background:"rgba(255,255,255,0.05)",
-          }}>
+      <section ref={r1} style={{ background: T.ivory, padding: "3.5rem 1.25rem" }}>
+        <div className={`fade-up ${v1 ? "visible" : ""}`} style={{ maxWidth: 680, margin: "0 auto" }}>
+          <Tag>La plataforma</Tag>
+          <h2 style={{
+            fontFamily: "'DM Serif Display',serif",
+            fontSize: "clamp(1.6rem, 4vw, 2.4rem)",
+            color: T.ink, lineHeight: 1.2, margin: "1rem 0 1.75rem",
+          }}>¿Por qué Escanea?</h2>
+          <Accordion items={BDropItems} />
+        </div>
+      </section>
+
+      {/* Reporting */}
+      <section ref={r2} style={{ background: T.white, padding: "3.5rem 1.25rem" }}>
+        <div className={`fade-up ${v2 ? "visible" : ""}`} style={{ maxWidth: 680, margin: "0 auto" }}>
+          <Tag>Reportes reales. No estimaciones.</Tag>
+          <h2 style={{
+            fontFamily: "'DM Serif Display',serif",
+            fontSize: "clamp(1.6rem, 4vw, 2.4rem)",
+            color: T.ink, lineHeight: 1.2, margin: "1rem 0 1.5rem",
+          }}>Lo que recibes cada semana.</h2>
+          <div style={{ background: T.ivoryDk, borderRadius: 14, border: `1.5px solid ${T.stone}`, overflow: "hidden" }}>
             {[
-              {n:"01",title:"Exposición urbana constante",
-                desc:"Tu marca en movimiento — zonas residenciales, comerciales y corporativas en una sola campaña."},
-              {n:"02",title:"Interacciones QR medibles",
-                desc:"Cada vehículo lleva un QR único. Cada escaneo queda registrado. Sin estimaciones ni suposiciones."},
-              {n:"03",title:"Presencia de 90 días",
-                desc:"Campañas sostenidas que construyen familiaridad real. No exposición fugaz — presencia constante."},
-              {n:"04",title:"Cobertura en múltiples zonas",
-                desc:"Una flota activa cubre la ciudad entera. Alcance urbano que un punto fijo no puede lograr."},
-              {n:"05",title:"Reportes verificables de campaña",
-                desc:"Datos reales de zonas activas e interacciones por campaña. Transparencia total en tu inversión."},
-              {n:"06",title:"Escala a demanda",
-                desc:"Incorpora más vehículos para ampliar cobertura. Una plataforma diseñada para crecer con tu marca."},
-            ].map(v=>(
-              <div key={v.n} style={{ padding:"2.8rem", background:"rgba(255,255,255,0.018)" }}>
-                <div style={{
-                  fontFamily:"'DM Sans',sans-serif", fontSize:"0.68rem",
-                  letterSpacing:"0.2em", color:"rgba(61,142,255,0.4)", marginBottom:"1.1rem",
-                }}>{v.n}</div>
-                <h3 style={{
-                  fontFamily:"'Syne',sans-serif", fontSize:"1.05rem", fontWeight:700,
-                  color:"#fff", marginBottom:"0.75rem",
-                }}>{v.title}</h3>
-                <p style={{
-                  fontFamily:"'DM Sans',sans-serif", fontSize:"0.88rem",
-                  color:"rgba(255,255,255,0.36)", lineHeight:1.78,
-                }}>{v.desc}</p>
+              { icon: "📍", label: "Kilómetros activos" },
+              { icon: "🗺", label: "Zonas recorridas" },
+              { icon: "📱", label: "Escaneos QR" },
+              { icon: "💬", label: "Conversaciones iniciadas por WhatsApp" },
+              { icon: "📷", label: "Fotografías de verificación" },
+              { icon: "📊", label: "Resumen semanal de campaña" },
+            ].map((r, i) => (
+              <div key={i} style={{
+                display: "flex", alignItems: "center", gap: "0.85rem",
+                padding: "0.85rem 1.25rem",
+                borderBottom: i < 5 ? `1px solid ${T.stone}` : "none",
+              }}>
+                <div style={{ fontSize: "1.05rem" }}>{r.icon}</div>
+                <div style={{ fontWeight: 500, fontSize: "0.88rem", color: T.ink }}>{r.label}</div>
+                <div style={{ marginLeft: "auto", width: 8, height: 8, borderRadius: "50%", background: T.cobalt, opacity: 0.6 }} />
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Process */}
-      <section ref={r2} style={{ padding:"4rem 2.5rem 8rem", maxWidth:780, margin:"0 auto" }}>
-        <div className={`fade-up ${iv2?"visible":""}`}>
-          <Label>Proceso</Label>
-          <SectionHeading style={{ fontSize:"clamp(1.8rem, 4vw, 3rem)", marginBottom:"3.5rem" }}>
-            Simple. Rápido. Medible.
-          </SectionHeading>
-          {[
-            ["Contacto","Cuéntanos sobre tu marca y objetivos de campaña."],
-            ["Diseño creativo","Desarrollamos el concepto visual y materiales para tu campaña."],
-            ["Instalación","Instalaciones removibles y profesionales en nuestra flota activa."],
-            ["Campaña activa","90 días de cobertura urbana con seguimiento de interacciones QR."],
-            ["Reporte de campaña","Datos verificables de exposición e interacciones al cierre."],
-          ].map(([step,desc],i)=>(
-            <div key={i} style={{
-              display:"flex", gap:"2rem", alignItems:"flex-start",
-              padding:"2rem 0",
-              borderBottom:"1px solid rgba(255,255,255,0.05)",
-            }}>
-              <div style={{
-                flexShrink:0, width:34, height:34,
-                border:"1px solid rgba(61,142,255,0.26)", borderRadius:"50%",
-                display:"flex", alignItems:"center", justifyContent:"center",
-                fontFamily:"'Syne',sans-serif", fontSize:"0.7rem", color:BLUE,
-              }}>
-                {String(i+1).padStart(2,"0")}
-              </div>
-              <div>
-                <div style={{
-                  fontFamily:"'Syne',sans-serif", fontSize:"1rem",
-                  fontWeight:700, color:"#fff", marginBottom:"0.35rem",
-                }}>{step}</div>
-                <div style={{
-                  fontFamily:"'DM Sans',sans-serif", fontSize:"0.88rem",
-                  color:"rgba(255,255,255,0.36)", lineHeight:1.72,
-                }}>{desc}</div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* Contact form */}
-      <section ref={r3} style={{ padding:"4rem 2.5rem 10rem", maxWidth:640, margin:"0 auto" }}>
-        <div className={`fade-up ${iv3?"visible":""}`}>
-          <Label>Anunciar</Label>
-          <SectionHeading style={{ fontSize:"clamp(1.8rem, 4vw, 3rem)", marginBottom:"0.75rem" }}>
-            Hablemos de tu campaña.
-          </SectionHeading>
-          <SubText style={{ marginBottom:"3.5rem" }}>
-            Nuestro equipo te contacta en menos de 24 horas.
-          </SubText>
+      {/* Multi-step form */}
+      <section ref={r3} id="brands-form" style={{ background: T.ivory, padding: "3.5rem 1.25rem" }}>
+        <div className={`fade-up ${v3 ? "visible" : ""}`} style={{ maxWidth: 680, margin: "0 auto" }}>
+          <Tag>Formulario</Tag>
+          <h2 style={{
+            fontFamily: "'DM Serif Display',serif",
+            fontSize: "clamp(1.6rem, 4vw, 2.4rem)",
+            color: T.ink, lineHeight: 1.2, margin: "1rem 0 2rem",
+          }}>Activa tu campaña</h2>
 
           {sent ? (
             <div style={{
-              padding:"3.5rem", border:"1px solid rgba(61,142,255,0.26)",
-              borderRadius:3, background:BLUE_SUBTLE, textAlign:"center",
+              background: T.white, border: `1.5px solid ${T.stone}`,
+              borderRadius: 16, padding: "3rem", textAlign: "center",
             }}>
-              <div style={{ fontSize:"1.8rem", marginBottom:"1rem", color:BLUE }}>◈</div>
-              <h3 style={{ fontFamily:"'Syne',sans-serif", fontSize:"1.3rem", color:"#fff", marginBottom:"0.6rem" }}>
-                Mensaje recibido.
-              </h3>
-              <p style={{ fontFamily:"'DM Sans',sans-serif", fontSize:"0.9rem", color:"rgba(255,255,255,0.36)" }}>
-                Te contactamos pronto.
-              </p>
+              <div style={{ fontSize: "2.5rem", marginBottom: "1rem" }}>✓</div>
+              <h3 style={{ fontFamily: "'DM Serif Display',serif", fontSize: "1.5rem", color: T.ink, marginBottom: "0.5rem" }}>¡Solicitud recibida!</h3>
+              <p style={{ color: T.inkMd, fontSize: "0.9rem" }}>Nuestro equipo te contacta en menos de 24 horas.</p>
             </div>
           ) : (
-            <form onSubmit={onSubmit} style={{ display:"flex", flexDirection:"column", gap:"1rem" }}>
-              {([
-                {k:"nombre" as const,   label:"Nombre completo",    type:"text" },
-                {k:"empresa" as const,  label:"Empresa o marca",    type:"text" },
-                {k:"email" as const,    label:"Email corporativo",  type:"email"},
-                {k:"telefono" as const, label:"WhatsApp / Teléfono",type:"tel"  },
-              ]).map(f=>(
-                <div key={f.k}>
-                  <label style={{
-                    fontFamily:"'DM Sans',sans-serif", fontSize:"0.7rem",
-                    letterSpacing:"0.12em", color:"rgba(255,255,255,0.32)",
-                    textTransform:"uppercase", display:"block", marginBottom:"0.45rem",
-                  }}>{f.label}</label>
-                  <input className="form-input" type={f.type} required
-                    value={form[f.k]} onChange={upd(f.k)}/>
-                </div>
-              ))}
-              <div>
-                <label style={{
-                  fontFamily:"'DM Sans',sans-serif", fontSize:"0.7rem",
-                  letterSpacing:"0.12em", color:"rgba(255,255,255,0.32)",
-                  textTransform:"uppercase", display:"block", marginBottom:"0.45rem",
-                }}>Cuéntanos sobre tu campaña</label>
-                <textarea className="form-input" rows={4}
-                  value={form.mensaje} onChange={upd("mensaje")}
-                  style={{ resize:"vertical" }}/>
+            <div style={{ background: T.white, border: `1.5px solid ${T.stone}`, borderRadius: 16, padding: "1.75rem" }}>
+              <StepBar current={step} total={TOTAL} />
+              <div style={{ fontSize: "0.72rem", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: T.inkLt, marginBottom: "1rem" }}>
+                Paso {step + 1}: {stepLabels[step]}
               </div>
-              <button type="submit" className="submit-btn" style={{
-                alignSelf:"flex-start", marginTop:"0.5rem",
-                background:"rgba(30,100,255,0.22)",
-                border:"1px solid rgba(61,142,255,0.5)", color:"#fff",
-              }}
-                onMouseEnter={e=>{
-                  e.currentTarget.style.background="rgba(30,100,255,0.42)";
-                  e.currentTarget.style.borderColor=BLUE;
-                  e.currentTarget.style.boxShadow="0 0 28px rgba(30,100,255,0.2)";
-                }}
-                onMouseLeave={e=>{
-                  e.currentTarget.style.background="rgba(30,100,255,0.22)";
-                  e.currentTarget.style.borderColor="rgba(61,142,255,0.5)";
-                  e.currentTarget.style.boxShadow="none";
-                }}
-              >
-                Enviar solicitud →
-              </button>
-            </form>
+              <div style={{ minHeight: 120, marginBottom: "1.5rem" }}>
+                {stepContent[step]}
+              </div>
+              <div style={{ display: "flex", gap: "0.65rem", justifyContent: "space-between" }}>
+                {step > 0 && (
+                  <button className="btn btn-outline" onClick={() => setStep(s => s - 1)} style={{ fontSize: "0.78rem" }}>← Anterior</button>
+                )}
+                <div style={{ marginLeft: "auto" }}>
+                  {step < TOTAL - 1 ? (
+                    <button className="btn btn-primary" onClick={() => setStep(s => s + 1)} style={{ fontSize: "0.78rem" }}>Siguiente →</button>
+                  ) : (
+                    <button className="btn btn-primary" onClick={() => setSent(true)} style={{ fontSize: "0.78rem" }}>Enviar solicitud →</button>
+                  )}
+                </div>
+              </div>
+            </div>
           )}
         </div>
       </section>
 
-      <Footer setPage={setPage}/>
+      <Footer setPage={setPage} />
     </div>
   );
 }
 
-// ═══════════════════════════════════════════════════════════════════════════════
-// DRIVERS PAGE
-// ═══════════════════════════════════════════════════════════════════════════════
-type DriversForm = { nombre: string; ciudad: string; email: string; telefono: string; vehiculo: string };
+const FL = { fontFamily: "'DM Sans',sans-serif", fontSize: "0.78rem", fontWeight: 600, letterSpacing: "0.06em", textTransform: "uppercase", color: T.inkLt, display: "block", marginBottom: "0.5rem" };
 
-function DriversPage({ setPage }: { setPage: (p: PageId) => void }) {
-  const [form, setForm] = useState<DriversForm>({ nombre:"", ciudad:"", email:"", telefono:"", vehiculo:"" });
+/* ===============================================================================
+   DRIVERS PAGE
+=============================================================================== */
+function DriversPage({ setPage }) {
+  const [r1, v1] = useInView();
+  const [r2, v2] = useInView();
+
+  const [step, setStep] = useState(0);
+  const TOTAL = 7;
+  const [fd, setFd] = useState({
+    ciudad: "", zonas: "", km: "", vehiculo: "", premium: false,
+    nombre: "", whatsapp: "", email: "", notas: "",
+  });
+  const upd = (k) => (e) => setFd(f => ({ ...f, [k]: e.target.value }));
   const [sent, setSent] = useState(false);
-  const [r1, iv1] = useInView();
-  const [r2, iv2] = useInView();
-  const upd = (k: keyof DriversForm) => (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
-    setForm(f => ({ ...f, [k]: e.target.value }));
-  const onSubmit = (e: FormEvent) => { e.preventDefault(); setSent(true); };
+
+  const DDropItems = [
+    { q: "Ingresos adicionales", a: "Genera un ingreso mensual adicional mientras haces lo que ya haces todos los días: moverte por la ciudad." },
+    { q: "Participación flexible", a: "Tú decides cuándo participar. Sin horarios obligatorios ni rutas específicas que debas seguir." },
+    { q: "Instalación removible", a: "Sin modificaciones permanentes al vehículo. Instalación y retiro profesional incluidos sin costo adicional." },
+    { q: "Rutas normales", a: "El modelo funciona sobre tus recorridos habituales — no necesitas cambiar tu rutina diaria para participar." },
+  ];
+
+  const stepContent = [
+    <div key={0}>
+      <label style={FL}>Ciudad</label>
+      <select className="fi" value={fd.ciudad} onChange={upd("ciudad")} required>
+        <option value="">Selecciona tu ciudad</option>
+        <option>Bogotá</option>
+        <option>Medellín</option>
+      </select>
+    </div>,
+    <div key={1}>
+      <label style={FL}>Barrios o zonas donde más conduces</label>
+      <textarea className="fi" rows={3} value={fd.zonas} onChange={upd("zonas")} placeholder="Ej: Kennedy, Bello, El Poblado..." />
+    </div>,
+    <div key={2}>
+      <label style={FL}>Kilómetros aproximados por mes</label>
+      <select className="fi" value={fd.km} onChange={upd("km")}>
+        <option value="">Seleccionar</option>
+        <option>Menos de 1.000 km</option>
+        <option>1.000 – 2.500 km</option>
+        <option>2.500 – 5.000 km</option>
+        <option>Más de 5.000 km</option>
+      </select>
+    </div>,
+    <div key={3}>
+      <label style={FL}>Vehículo (marca / modelo / año)</label>
+      <input className="fi" type="text" value={fd.vehiculo} onChange={upd("vehiculo")} placeholder="Ej: Chevrolet Spark 2020" />
+    </div>,
+    <div key={4}>
+      <div style={{
+        display: "flex", alignItems: "flex-start", gap: "0.85rem",
+        background: T.ivoryDk, border: `1.5px solid ${T.stone}`,
+        borderRadius: 12, padding: "1.25rem", cursor: "pointer",
+      }} onClick={() => setFd(f => ({ ...f, premium: !f.premium }))}>
+        <div style={{
+          width: 20, height: 20, borderRadius: 4, flexShrink: 0,
+          border: `2px solid ${fd.premium ? T.cobalt : T.stoneMd}`,
+          background: fd.premium ? T.cobalt : T.white,
+          display: "flex", alignItems: "center", justifyContent: "center",
+          transition: "all 0.18s", marginTop: 2,
+        }}>
+          {fd.premium && <div style={{ width: 10, height: 7, borderLeft: "2px solid #fff", borderBottom: "2px solid #fff", transform: "rotate(-45deg) translate(1px,-1px)" }} />}
+        </div>
+        <div>
+          <div style={{ fontWeight: 600, fontSize: "0.9rem", color: T.ink }}>Campañas premium con vinilo trasero</div>
+          <div style={{ fontSize: "0.82rem", color: T.inkMd, marginTop: "0.25rem", lineHeight: 1.6 }}>Estoy interesado en participar en campañas con instalación de vinilo en la parte trasera del vehículo.</div>
+        </div>
+      </div>
+    </div>,
+    <div key={5} style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
+      <div>
+        <label style={FL}>Nombre completo</label>
+        <input className="fi" type="text" value={fd.nombre} onChange={upd("nombre")} placeholder="Tu nombre" required />
+      </div>
+      <div>
+        <label style={FL}>WhatsApp</label>
+        <input className="fi" type="tel" value={fd.whatsapp} onChange={upd("whatsapp")} placeholder="+57 300 000 0000" required />
+      </div>
+      <div>
+        <label style={FL}>Email</label>
+        <input className="fi" type="email" value={fd.email} onChange={upd("email")} placeholder="tu@correo.com" required />
+      </div>
+    </div>,
+    <div key={6}>
+      <label style={FL}>Información adicional</label>
+      <textarea className="fi" rows={4} value={fd.notas} onChange={upd("notas")} placeholder="Cuéntanos sobre tus rutas, horarios o cualquier detalle importante." />
+    </div>,
+  ];
+
+  const stepLabels = ["Ciudad", "Zonas", "Kilómetros", "Vehículo", "Premium", "Contacto", "Notas"];
 
   return (
-    <div style={{ background:"#08080C", color:"#fff", minHeight:"100vh" }}>
-      <style>{GLOBAL_CSS}</style>
+    <div style={{ background: T.ivory }}>
+      <style>{GLOBAL}</style>
 
-      <section style={{ position:"relative", padding:"15rem 2.5rem 9rem", overflow:"hidden" }}>
-        <CityOrbs intensity={0.85}/>
-        <div style={{
-          position:"absolute", inset:0,
-          background:"linear-gradient(180deg, rgba(0,10,28,0.26) 0%, #08080C 100%)",
-          pointerEvents:"none",
-        }}/>
-        <div style={{ position:"relative", zIndex:2, maxWidth:900, margin:"0 auto" }}>
-          <Label>Para Conductores</Label>
+      {/* Hero */}
+      <section style={{
+        background: `linear-gradient(160deg, ${T.navy} 0%, ${T.navyMd} 100%)`,
+        paddingTop: 100, padding: "100px 1.25rem 3.5rem",
+      }}>
+        <div style={{ maxWidth: 680, margin: "0 auto" }}>
+          <div style={{ animation: "fadeIn 0.6s ease 0.1s both", marginBottom: "1.2rem" }}>
+            <div style={{
+              display: "inline-flex", alignItems: "center", gap: 6,
+              background: "rgba(255,255,255,0.08)", border: "1px solid rgba(255,255,255,0.15)",
+              borderRadius: 20, padding: "0.3rem 0.85rem",
+              fontSize: "0.7rem", fontWeight: 600, letterSpacing: "0.12em",
+              textTransform: "uppercase", color: "rgba(150,185,255,0.9)",
+            }}>Para Conductores</div>
+          </div>
           <h1 style={{
-            fontFamily:"'Syne',sans-serif",
-            fontSize:"clamp(2.8rem, 6.5vw, 6rem)",
-            fontWeight:800, lineHeight:1.02,
-            letterSpacing:"-0.02em", color:"#fff", marginBottom:"1.6rem",
-            animation:"fadeUp 0.9s ease 0.2s both",
+            fontFamily: "'DM Serif Display',serif",
+            fontSize: "clamp(2.2rem, 6vw, 3.8rem)",
+            lineHeight: 1.1, color: "#fff", marginBottom: "1rem",
+            animation: "fadeUp 0.7s ease 0.25s both",
           }}>
-            Tu vehículo ya<br/>trabaja para ti.
+            Tu vehículo ya<br /><em style={{ color: "rgba(150,185,255,0.85)" }}>trabaja para ti.</em>
           </h1>
-          <SubText style={{ maxWidth:500, animation:"fadeUp 0.9s ease 0.38s both" }}>
-            Genera ingresos adicionales mientras conduces. Sin cambiar tus rutas,
-            sin compromisos rígidos. Monetiza lo que ya haces.
-          </SubText>
-        </div>
-      </section>
+          <p style={{ fontSize: "1rem", color: "rgba(255,255,255,0.6)", lineHeight: 1.75, maxWidth: 460, marginBottom: "2rem", animation: "fadeUp 0.7s ease 0.38s both" }}>
+            Genera ingresos adicionales mientras conduces. Sin cambiar tus rutas, sin compromisos rígidos.
+          </p>
+          <button style={{
+            fontFamily: "'DM Sans',sans-serif", fontWeight: 600, letterSpacing: "0.04em",
+            textTransform: "uppercase", fontSize: "0.78rem",
+            background: "#fff", color: T.navy, border: "none", borderRadius: 8,
+            padding: "0.9rem 1.6rem", cursor: "pointer", transition: "all 0.22s",
+            animation: "fadeUp 0.7s ease 0.5s both",
+          }} onClick={() => { document.getElementById("drivers-form")?.scrollIntoView({ behavior: "smooth" }); }}
+            onMouseEnter={e => e.currentTarget.style.background = T.ivory}
+            onMouseLeave={e => e.currentTarget.style.background = "#fff"}
+          >Unirme a la red →</button>
 
-      {/* Benefits */}
-      <section ref={r1} style={{ padding:"2rem 2.5rem 7rem", maxWidth:1000, margin:"0 auto" }}>
-        <div className={`fade-up ${iv1?"visible":""}`}>
-          <div style={{
-            display:"grid",
-            gridTemplateColumns:"repeat(auto-fit, minmax(280px, 1fr))",
-            gap:"1.25rem", marginBottom:"4rem",
-          }}>
-            {[
-              {icon:"◎",title:"Sin cambiar tus rutas",
-                desc:"Conduce exactamente como siempre. Nuestro modelo trabaja con tu recorrido habitual — no contra él."},
-              {icon:"⬡",title:"Ingresos adicionales mensuales",
-                desc:"Genera un ingreso constante todos los meses mientras haces lo que ya haces: moverte por la ciudad."},
-              {icon:"◈",title:"Instalación removible",
-                desc:"Sin modificaciones permanentes a tu vehículo. Instalación y retiro profesional incluidos."},
-              {icon:"⬢",title:"Participación flexible",
-                desc:"Tú decides cuándo participar. Sin penalizaciones ni obligaciones rígidas."},
-              {icon:"◇",title:"Registro simple",
-                desc:"Proceso en línea. Verificación rápida. Instalación programada a tu conveniencia."},
-              {icon:"○",title:"Soporte permanente",
-                desc:"Equipo activo disponible ante cualquier duda o situación durante tu campaña."},
-            ].map((b,i)=>(
-              <div key={i} className="card-hover" style={{
-                padding:"2.2rem",
-                border:"1px solid rgba(255,255,255,0.07)",
-                borderRadius:3, background:"rgba(255,255,255,0.02)",
-              }}>
-                <div style={{ fontSize:"1.4rem", color:"rgba(61,142,255,0.45)", marginBottom:"1rem" }}>{b.icon}</div>
-                <h3 style={{
-                  fontFamily:"'Syne',sans-serif", fontSize:"1rem", fontWeight:700,
-                  color:"#fff", marginBottom:"0.6rem",
-                }}>{b.title}</h3>
-                <p style={{
-                  fontFamily:"'DM Sans',sans-serif", fontSize:"0.87rem",
-                  color:"rgba(255,255,255,0.36)", lineHeight:1.78,
-                }}>{b.desc}</p>
-              </div>
+          {/* Trust row */}
+          <div style={{ display: "flex", gap: "0.65rem", flexWrap: "wrap", marginTop: "2.5rem", animation: "fadeUp 0.7s ease 0.62s both" }}>
+            {["Sin modificaciones permanentes", "Ingresos mensuales", "Proceso simple"].map(t => (
+              <div key={t} style={{
+                padding: "0.35rem 0.85rem", background: "rgba(255,255,255,0.08)",
+                border: "1px solid rgba(255,255,255,0.12)", borderRadius: 20,
+                fontSize: "0.75rem", color: "rgba(255,255,255,0.6)", fontWeight: 500,
+              }}>{t}</div>
             ))}
           </div>
-
-          {/* Requirements */}
-          <div style={{
-            padding:"2.5rem 3rem",
-            border:"1px solid rgba(61,142,255,0.17)",
-            borderRadius:3, background:BLUE_SUBTLE,
-          }}>
-            <Label>Requisitos básicos</Label>
-            <div style={{
-              display:"grid",
-              gridTemplateColumns:"repeat(auto-fit, minmax(210px, 1fr))",
-              gap:"1rem",
-            }}>
-              {[
-                "Vehículo propio en buen estado",
-                "Documentación al día",
-                "Mayor de 21 años",
-                "Circulación urbana habitual",
-              ].map((r,i)=>(
-                <div key={i} style={{ display:"flex", alignItems:"center", gap:"0.8rem" }}>
-                  <div style={{ width:5, height:5, borderRadius:"50%", background:BLUE, flexShrink:0 }}/>
-                  <span style={{
-                    fontFamily:"'DM Sans',sans-serif", fontSize:"0.87rem",
-                    color:"rgba(255,255,255,0.5)",
-                  }}>{r}</span>
-                </div>
-              ))}
-            </div>
-          </div>
         </div>
       </section>
 
-      {/* Form */}
-      <section ref={r2} style={{ padding:"4rem 2.5rem 10rem", maxWidth:620, margin:"0 auto" }}>
-        <div className={`fade-up ${iv2?"visible":""}`}>
-          <Label>Registro</Label>
-          <SectionHeading style={{ fontSize:"clamp(1.8rem, 4vw, 3rem)", marginBottom:"0.75rem" }}>
-            Únete a la red.
-          </SectionHeading>
-          <SubText style={{ marginBottom:"3.5rem" }}>
-            Completa el formulario y nuestro equipo te contacta en los próximos días.
-          </SubText>
+      {/* Benefits accordion */}
+      <section ref={r1} style={{ background: T.ivory, padding: "3.5rem 1.25rem" }}>
+        <div className={`fade-up ${v1 ? "visible" : ""}`} style={{ maxWidth: 680, margin: "0 auto" }}>
+          <Tag>Cómo funciona</Tag>
+          <h2 style={{
+            fontFamily: "'DM Serif Display',serif",
+            fontSize: "clamp(1.6rem, 4vw, 2.4rem)",
+            color: T.ink, lineHeight: 1.2, margin: "1rem 0 1.75rem",
+          }}>Beneficios del programa</h2>
+          <Accordion items={DDropItems} />
+        </div>
+      </section>
+
+      {/* Multi-step form */}
+      <section ref={r2} id="drivers-form" style={{ background: T.white, padding: "3.5rem 1.25rem" }}>
+        <div className={`fade-up ${v2 ? "visible" : ""}`} style={{ maxWidth: 680, margin: "0 auto" }}>
+          <Tag>Registro</Tag>
+          <h2 style={{
+            fontFamily: "'DM Serif Display',serif",
+            fontSize: "clamp(1.6rem, 4vw, 2.4rem)",
+            color: T.ink, lineHeight: 1.2, margin: "1rem 0 2rem",
+          }}>Únete a la red</h2>
 
           {sent ? (
             <div style={{
-              padding:"3.5rem", border:"1px solid rgba(61,142,255,0.26)",
-              borderRadius:3, background:BLUE_SUBTLE, textAlign:"center",
+              background: T.ivoryDk, border: `1.5px solid ${T.stone}`,
+              borderRadius: 16, padding: "3rem", textAlign: "center",
             }}>
-              <div style={{ fontSize:"1.8rem", marginBottom:"1rem", color:BLUE }}>◈</div>
-              <h3 style={{ fontFamily:"'Syne',sans-serif", fontSize:"1.3rem", color:"#fff", marginBottom:"0.6rem" }}>
-                Registro recibido.
-              </h3>
-              <p style={{ fontFamily:"'DM Sans',sans-serif", fontSize:"0.9rem", color:"rgba(255,255,255,0.36)" }}>
-                Nuestro equipo te contacta en las próximas 48 horas.
-              </p>
+              <div style={{ fontSize: "2.5rem", marginBottom: "1rem" }}>✓</div>
+              <h3 style={{ fontFamily: "'DM Serif Display',serif", fontSize: "1.5rem", color: T.ink, marginBottom: "0.5rem" }}>¡Registro recibido!</h3>
+              <p style={{ color: T.inkMd, fontSize: "0.9rem" }}>Nuestro equipo te contacta en las próximas 48 horas.</p>
             </div>
           ) : (
-            <form onSubmit={onSubmit} style={{ display:"flex", flexDirection:"column", gap:"1rem" }}>
-              {([
-                {k:"nombre" as const,   label:"Nombre completo",              type:"text"},
-                {k:"ciudad" as const,   label:"Ciudad donde conduces",        type:"text"},
-                {k:"email" as const,    label:"Email",                        type:"email"},
-                {k:"telefono" as const, label:"WhatsApp / Teléfono",          type:"tel"},
-                {k:"vehiculo" as const, label:"Tipo de vehículo (marca · año)",type:"text"},
-              ]).map(f=>(
-                <div key={f.k}>
-                  <label style={{
-                    fontFamily:"'DM Sans',sans-serif", fontSize:"0.7rem",
-                    letterSpacing:"0.12em", color:"rgba(255,255,255,0.32)",
-                    textTransform:"uppercase", display:"block", marginBottom:"0.45rem",
-                  }}>{f.label}</label>
-                  <input className="form-input" type={f.type} required
-                    value={form[f.k]} onChange={upd(f.k)}/>
+            <div style={{ background: T.ivoryDk, border: `1.5px solid ${T.stone}`, borderRadius: 16, padding: "1.75rem" }}>
+              <StepBar current={step} total={TOTAL} />
+              <div style={{ fontSize: "0.72rem", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: T.inkLt, marginBottom: "1rem" }}>
+                Paso {step + 1}: {stepLabels[step]}
+              </div>
+              <div style={{ minHeight: 120, marginBottom: "1.5rem" }}>
+                {stepContent[step]}
+              </div>
+              <div style={{ display: "flex", gap: "0.65rem", justifyContent: "space-between" }}>
+                {step > 0 && (
+                  <button className="btn btn-outline" onClick={() => setStep(s => s - 1)} style={{ fontSize: "0.78rem" }}>← Anterior</button>
+                )}
+                <div style={{ marginLeft: "auto" }}>
+                  {step < TOTAL - 1 ? (
+                    <button className="btn btn-navy" onClick={() => setStep(s => s + 1)} style={{ fontSize: "0.78rem" }}>Siguiente →</button>
+                  ) : (
+                    <button className="btn btn-navy" onClick={() => setSent(true)} style={{ fontSize: "0.78rem" }}>Enviar registro →</button>
+                  )}
                 </div>
-              ))}
-              <button type="submit" className="submit-btn" style={{
-                alignSelf:"flex-start", marginTop:"0.5rem",
-                background:"rgba(255,255,255,0.05)",
-                border:"1px solid rgba(255,255,255,0.13)",
-                color:"rgba(255,255,255,0.75)",
-              }}
-                onMouseEnter={e=>{
-                  e.currentTarget.style.background="rgba(255,255,255,0.1)";
-                  e.currentTarget.style.borderColor="rgba(255,255,255,0.3)";
-                  e.currentTarget.style.color="#fff";
-                }}
-                onMouseLeave={e=>{
-                  e.currentTarget.style.background="rgba(255,255,255,0.05)";
-                  e.currentTarget.style.borderColor="rgba(255,255,255,0.13)";
-                  e.currentTarget.style.color="rgba(255,255,255,0.75)";
-                }}
-              >
-                Enviar registro →
-              </button>
-            </form>
+              </div>
+            </div>
           )}
         </div>
       </section>
 
-      <Footer setPage={setPage}/>
+      <Footer setPage={setPage} />
     </div>
   );
 }
 
-// ═══════════════════════════════════════════════════════════════════════════════
-// ROOT
-// ═══════════════════════════════════════════════════════════════════════════════
+/* ===============================================================================
+   WHY NOW PAGE
+=============================================================================== */
+function WhyPage({ setPage }) {
+  const [r1, v1] = useInView();
+  const [r2, v2] = useInView();
+
+  const whyItems = [
+    {
+      q: "Movimiento urbano desaprovechado",
+      a: "Millones de kilómetros urbanos se recorren todos los días sin generar valor publicitario medible. Escanea activa esa infraestructura silenciosa.",
+    },
+    {
+      q: "Fatiga digital",
+      a: "La atención digital está saturada. Los usuarios ignoran anuncios constantemente. La publicidad física en movimiento genera atención natural sin resistencia.",
+    },
+    {
+      q: "Costo de vida",
+      a: "Cada vez más conductores buscan ingresos complementarios sin depender de más horas laborales. Escanea convierte el movimiento cotidiano en valor económico.",
+    },
+    {
+      q: "Publicidad física medible",
+      a: "La publicidad offline ya no debe operar sin datos. Escanea conecta exposición física con métricas reales: zonas, kilómetros, escaneos y conversaciones.",
+    },
+    {
+      q: "Exposición repetida",
+      a: "La repetición en movimiento crea familiaridad de marca en contextos reales de ciudad. No una sola impresión — presencia diaria y constante.",
+    },
+  ];
+
+  return (
+    <div style={{ background: T.ivory }}>
+      <style>{GLOBAL}</style>
+
+      {/* Hero */}
+      <section style={{
+        background: `linear-gradient(160deg, ${T.white} 0%, ${T.ivory} 100%)`,
+        padding: "100px 1.25rem 3.5rem",
+      }}>
+        <div style={{ maxWidth: 680, margin: "0 auto" }}>
+          <div style={{ animation: "fadeIn 0.6s ease 0.1s both", marginBottom: "1.2rem" }}><Tag>Por Qué Ahora</Tag></div>
+          <h1 style={{
+            fontFamily: "'DM Serif Display',serif",
+            fontSize: "clamp(2.2rem, 6vw, 3.8rem)",
+            lineHeight: 1.1, color: T.ink, marginBottom: "1rem",
+            animation: "fadeUp 0.7s ease 0.25s both",
+          }}>
+            El futuro de la<br /><em style={{ color: T.cobalt }}>publicidad urbana.</em>
+          </h1>
+          <p style={{ fontSize: "1rem", color: T.inkMd, lineHeight: 1.75, maxWidth: 480, animation: "fadeUp 0.7s ease 0.38s both" }}>
+            Una respuesta inteligente a la fatiga digital, el costo de vida urbano y la demanda de publicidad física con datos reales.
+          </p>
+        </div>
+      </section>
+
+      {/* Why sections accordion */}
+      <section ref={r1} style={{ background: T.white, padding: "3.5rem 1.25rem" }}>
+        <div className={`fade-up ${v1 ? "visible" : ""}`} style={{ maxWidth: 680, margin: "0 auto" }}>
+          <Tag>El contexto</Tag>
+          <h2 style={{
+            fontFamily: "'DM Serif Display',serif",
+            fontSize: "clamp(1.6rem, 4vw, 2.4rem)",
+            color: T.ink, lineHeight: 1.2, margin: "1rem 0 1.75rem",
+          }}>Cinco razones que hacen esto urgente.</h2>
+          <Accordion items={whyItems} />
+        </div>
+      </section>
+
+      {/* Mission */}
+      <section style={{ background: T.navy, padding: "4rem 1.25rem" }}>
+        <div style={{ maxWidth: 680, margin: "0 auto" }}>
+          <div style={{ marginBottom: "1.2rem" }}>
+            <div style={{
+              display: "inline-flex", alignItems: "center", gap: 6,
+              background: "rgba(255,255,255,0.08)", border: "1px solid rgba(255,255,255,0.12)",
+              borderRadius: 20, padding: "0.3rem 0.85rem",
+              fontSize: "0.7rem", fontWeight: 600, letterSpacing: "0.12em",
+              textTransform: "uppercase", color: "rgba(150,185,255,0.9)",
+            }}>La misión</div>
+          </div>
+          <h2 style={{
+            fontFamily: "'DM Serif Display',serif",
+            fontSize: "clamp(1.7rem, 4.5vw, 2.8rem)",
+            color: "#fff", lineHeight: 1.2, marginBottom: "1.25rem",
+          }}>
+            Convertir la ciudad en<br /><em style={{ color: "rgba(150,185,255,0.85)" }}>infraestructura publicitaria.</em>
+          </h2>
+          <p style={{ fontSize: "0.95rem", color: "rgba(255,255,255,0.55)", lineHeight: 1.8, maxWidth: 520, marginBottom: "2.5rem" }}>
+            Escanea no es una agencia de publicidad. Es una red de media urbana medible — construida sobre el movimiento real de la ciudad, operada con tecnología y orientada a resultados verificables.
+          </p>
+          <div style={{ display: "flex", flexDirection: "column", gap: 0 }}>
+            {[
+              ["Red urbana activa", "Vehículos que circulan diariamente generando exposición real en múltiples zonas."],
+              ["Atribución QR", "Cada instalación incluye seguimiento QR único para medir interacciones reales."],
+              ["Reportes verificables", "Datos reales de campaña: no estimaciones, no proyecciones."],
+            ].map(([t, d], i) => (
+              <div key={i} style={{
+                padding: "1.4rem 0",
+                borderBottom: i < 2 ? "1px solid rgba(255,255,255,0.08)" : "none",
+                display: "flex", gap: "1.25rem", alignItems: "flex-start",
+              }}>
+                <div style={{
+                  width: 28, height: 28, borderRadius: "50%", flexShrink: 0,
+                  background: "rgba(26,79,214,0.4)", border: "1px solid rgba(61,142,255,0.3)",
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  fontSize: "0.75rem", color: "rgba(150,185,255,0.9)", fontWeight: 700,
+                }}>
+                  {String(i + 1).padStart(2, "0")}
+                </div>
+                <div>
+                  <div style={{ fontWeight: 600, color: "#fff", fontSize: "0.92rem", marginBottom: "0.3rem" }}>{t}</div>
+                  <div style={{ fontSize: "0.85rem", color: "rgba(255,255,255,0.45)", lineHeight: 1.7 }}>{d}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* CTA */}
+      <section ref={r2} style={{ background: T.ivory, padding: "4rem 1.25rem" }}>
+        <div className={`fade-up ${v2 ? "visible" : ""}`} style={{ maxWidth: 680, margin: "0 auto" }}>
+          <h2 style={{
+            fontFamily: "'DM Serif Display',serif",
+            fontSize: "clamp(1.7rem, 4.5vw, 2.6rem)",
+            color: T.ink, lineHeight: 1.2, marginBottom: "1rem",
+          }}>¿Quieres ser parte?</h2>
+          <p style={{ fontSize: "0.95rem", color: T.inkMd, lineHeight: 1.75, marginBottom: "2rem" }}>
+            Únete a la red como marca o como conductor. Escanea está construyendo la próxima capa de media urbana en Colombia.
+          </p>
+          <div style={{ display: "flex", gap: "0.75rem", flexWrap: "wrap" }}>
+            <button className="btn btn-primary" onClick={() => setPage("brands")}>Anunciar mi marca</button>
+            <button className="btn btn-outline" onClick={() => setPage("drivers")}>Conducir con Escanea</button>
+          </div>
+        </div>
+      </section>
+
+      <Footer setPage={setPage} />
+    </div>
+  );
+}
+
+/* ===============================================================================
+   ROOT
+=============================================================================== */
 export default function App() {
-  const [page, setPage]         = useState<PageId>("home");
+  const [page, setPage] = useState("home");
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
-    const h = () => setScrolled(window.scrollY > 55);
-    window.addEventListener("scroll", h, { passive:true });
+    const h = () => setScrolled(window.scrollY > 50);
+    window.addEventListener("scroll", h, { passive: true });
     return () => window.removeEventListener("scroll", h);
   }, []);
 
-  useEffect(() => {
-    window.scrollTo({ top:0, behavior:"smooth" });
-  }, [page]);
+  const changePage = (p) => {
+    setPage(p);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
 
   return (
     <>
-      <Navbar page={page} setPage={setPage} scrolled={scrolled}/>
-      {page === "home"    && <HomePage    setPage={setPage}/>}
-      {page === "brands"  && <BrandsPage  setPage={setPage}/>}
-      {page === "drivers" && <DriversPage setPage={setPage}/>}
+      <Navbar page={page} setPage={changePage} scrolled={scrolled} />
+      {page === "home"    && <HomePage    setPage={changePage} />}
+      {page === "brands"  && <BrandsPage  setPage={changePage} />}
+      {page === "drivers" && <DriversPage setPage={changePage} />}
+      {page === "why"     && <WhyPage     setPage={changePage} />}
     </>
   );
 }
