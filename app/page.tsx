@@ -120,8 +120,8 @@ function useInView(th = 0.1) {
 }
 
 /* --- Accordion ---------------------------------------------------------------- */
-function Accordion({ items }: { items: any[] }) {  
-  const [open, setOpen] = useState(null);
+function Accordion({ items }: { items: any[] }) {
+  const [open, setOpen] = useState<number | null>(null);
   return (
     <div>
       {items.map((it, i) => (
@@ -140,15 +140,61 @@ function Accordion({ items }: { items: any[] }) {
 }
 
 /* --- Section wrapper ---------------------------------------------------------- */
-function Section({ children, style = {}, bg = T.ivory }) {
-  const [ref, v] = useInView();
+
+function Section({
+
+  children,
+
+  style = {},
+
+  bg = T.ivory,
+
+}: {
+
+  children: React.ReactNode;
+
+  style?: React.CSSProperties;
+
+  bg?: string;
+
+}) {
+
+  const [ref, v] = useInView() as [React.RefObject<HTMLElement>, boolean];
+
   return (
-    <section ref={ref} style={{ background: bg, ...style }}>
-      <div className={`fade-up ${v ? "visible" : ""}`} style={{ maxWidth: 680, margin: "0 auto", padding: "0 1.25rem" }}>
+
+    <section
+
+    ref={ref}
+
+      style={{ background: bg, ...style }}
+
+    >
+
+      <div
+
+        className={`fade-up ${v ? "visible" : ""}`}
+
+        style={{
+
+          maxWidth: 680,
+
+          margin: "0 auto",
+
+          padding: "0 1.25rem",
+
+        }}
+
+      >
+
         {children}
+
       </div>
+
     </section>
+
   );
+
 }
 
 /* --- Chip selector ------------------------------------------------------------ */
