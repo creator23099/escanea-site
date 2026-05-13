@@ -69,6 +69,22 @@ export const metadata: Metadata = {
       "Transformando el tráfico en atención medible. Publicidad en movimiento con reportes reales.",
   },
   robots: { index: true, follow: true },
+  // Explicit icon declaration. We DO NOT rely on Next.js inferring icons
+  // purely from the file convention, because Safari (desktop + iOS) has
+  // a history of silently falling back to /favicon.ico or refusing to
+  // refresh a stale SVG favicon. Listing icon + shortcut + apple-touch-
+  // icon as explicit metadata guarantees the head exposes every rel a
+  // Safari version may look for, and lets us reference the PNG variants
+  // we generate via app/icon.tsx and app/apple-icon.tsx.
+  icons: {
+    icon: [
+      { url: "/icon", type: "image/png", sizes: "32x32" },
+    ],
+    shortcut: ["/icon"],
+    apple: [
+      { url: "/apple-icon", type: "image/png", sizes: "180x180" },
+    ],
+  },
 };
 
 export default function RootLayout({
