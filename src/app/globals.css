@@ -1,26 +1,254 @@
 @import "tailwindcss";
 
+/* =========================================================================
+   Escanea — global stylesheet
+   - Hoisted out of <style>{GLOBAL}</style> per page so the browser parses
+     once instead of re-mounting on every page switch.
+   - Design tokens kept here as CSS custom props for maintainability.
+   ========================================================================= */
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Brand palette */
+  --c-ivory:     #F7F5F1;
+  --c-ivory-dk:  #EFEDE8;
+  --c-stone:     #E2DED8;
+  --c-stone-md:  #C8C2B8;
+  --c-cobalt:    #1A4FD6;
+  --c-cobalt-lt: #2D6BFF;
+  --c-cobalt-bg: rgba(26, 79, 214, 0.07);
+  --c-navy:      #0D1B2A;
+  --c-navy-md:   #1C2E42;
+  --c-navy-lt:   #374B62;
+  --c-ink:       #1A2332;
+  --c-ink-md:    #3D4E62;
+  --c-ink-lt:    #6B7A8D;
+  --c-white:     #FFFFFF;
+  --c-error:     #D94040;
+
+  /* Type stacks resolve to next/font-injected variables */
+  --font-stack-sans:  var(--font-sans), "DM Sans", system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+  --font-stack-serif: var(--font-serif), "DM Serif Display", Georgia, serif;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+/* Reset (scoped enough to coexist with Tailwind Preflight) */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 16px; scroll-behavior: smooth; }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
+/* Override Tailwind's default Arial body font from the scaffold */
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--c-ivory);
+  font-family: var(--font-stack-sans);
+  color: var(--c-ink);
+  -webkit-font-smoothing: antialiased;
+}
+body.nav-open { overflow: hidden; }
+
+/* ---------- Skip link --------------------------------------------------- */
+.skip-link {
+  position: fixed;
+  top: 8px;
+  left: 8px;
+  z-index: 1000;
+  background: var(--c-cobalt);
+  color: #fff;
+  padding: 0.6rem 1rem;
+  border-radius: 6px;
+  font-family: var(--font-stack-sans);
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-decoration: none;
+  transform: translateY(-150%);
+  transition: transform 0.2s ease;
+}
+.skip-link:focus,
+.skip-link:focus-visible { transform: translateY(0); outline: 3px solid #fff; outline-offset: 2px; }
+
+/* ---------- Global focus fallback --------------------------------------- */
+/* Any unstyled <button>/<a> still gets a visible focus ring */
+:where(button, a, [role="button"]):focus-visible {
+  outline: 2px solid var(--c-cobalt);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* ---------- Animations -------------------------------------------------- */
+@keyframes fadeUp    { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes fadeIn    { from { opacity: 0; } to { opacity: 1; } }
+@keyframes slideDown { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes pulse     { 0%, 100% { opacity: 1; } 50% { opacity: 0.55; } }
+
+.fade-up         { opacity: 0; transform: translateY(24px); transition: opacity 0.7s cubic-bezier(.22,.8,.36,1), transform 0.7s cubic-bezier(.22,.8,.36,1); }
+.fade-up.visible { opacity: 1; transform: translateY(0); }
+.fade-up.d1      { transition-delay: 0.1s; }
+.fade-up.d2      { transition-delay: 0.2s; }
+.fade-up.d3      { transition-delay: 0.3s; }
+
+/* ---------- Form inputs ------------------------------------------------- */
+.fi {
+  width: 100%;
+  padding: 0.85rem 1rem;
+  background: var(--c-white);
+  border: 1.5px solid var(--c-stone);
+  border-radius: 8px;
+  color: var(--c-ink);
+  font-family: var(--font-stack-sans);
+  font-size: 0.95rem;
+  outline: none;
+  transition: border-color 0.22s, box-shadow 0.22s;
+  -webkit-appearance: none;
+  appearance: none;
+}
+.fi:focus,
+.fi:focus-visible { border-color: var(--c-cobalt); box-shadow: 0 0 0 3px rgba(26,79,214,0.1); }
+.fi::placeholder  { color: var(--c-stone-md); }
+.fi.error         { border-color: var(--c-error); box-shadow: 0 0 0 3px rgba(217,64,64,0.1); }
+
+select.fi {
+  cursor: pointer;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%236B7A8D' stroke-width='2'%3E%3Cpolyline points='6,9 12,15 18,9'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.75rem center;
+  background-size: 16px;
+  padding-right: 2.5rem;
+}
+
+textarea.fi { resize: vertical; min-height: 100px; }
+
+.field-error { font-size: 0.78rem; color: var(--c-error); margin-top: 0.35rem; display: block; }
+
+/* ---------- Buttons ----------------------------------------------------- */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  gap: 0.5rem;
+  font-family: var(--font-stack-sans);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  border: none;
+  cursor: pointer;
+  transition: background 0.22s cubic-bezier(.22,.8,.36,1),
+              color 0.22s cubic-bezier(.22,.8,.36,1),
+              border-color 0.22s cubic-bezier(.22,.8,.36,1),
+              transform 0.22s cubic-bezier(.22,.8,.36,1),
+              box-shadow 0.22s cubic-bezier(.22,.8,.36,1);
+  border-radius: 8px;
+  text-transform: uppercase;
+  font-size: 0.78rem;
+}
+.btn:focus-visible { outline: 3px solid var(--c-cobalt); outline-offset: 2px; }
+.btn-primary { background: var(--c-cobalt); color: #fff; padding: 0.9rem 1.6rem; }
+.btn-primary:hover { background: var(--c-cobalt-lt); transform: translateY(-1px); box-shadow: 0 6px 20px rgba(26,79,214,0.28); }
+.btn-outline { background: transparent; color: var(--c-ink); padding: 0.9rem 1.6rem; border: 1.5px solid var(--c-stone); }
+.btn-outline:hover { border-color: var(--c-ink-md); background: rgba(0,0,0,0.04); }
+.btn-navy { background: var(--c-navy); color: #fff; padding: 0.9rem 1.6rem; }
+.btn-navy:hover { background: var(--c-navy-md); transform: translateY(-1px); }
+.btn-full { width: 100%; }
+
+/* ---------- Accordion --------------------------------------------------- */
+.acc-item    { border-bottom: 1.5px solid var(--c-stone); }
+.acc-trigger {
+  width: 100%; background: none; border: none; cursor: pointer;
+  padding: 1.1rem 0;
+  display: flex; align-items: center; justify-content: space-between;
+  text-align: left;
+  font-family: var(--font-stack-sans);
+  font-size: 0.95rem; font-weight: 600;
+  color: var(--c-ink);
+  transition: color 0.18s;
+}
+.acc-trigger:focus-visible { outline: 2px solid var(--c-cobalt); outline-offset: 2px; border-radius: 2px; }
+.acc-trigger:hover         { color: var(--c-cobalt); }
+.acc-icon {
+  flex-shrink: 0; width: 22px; height: 22px;
+  border-radius: 50%; border: 1.5px solid var(--c-stone);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.75rem;
+  transition: background 0.22s, border-color 0.22s, color 0.22s, transform 0.22s;
+  user-select: none;
+}
+.acc-icon.open { background: var(--c-cobalt); border-color: var(--c-cobalt); color: #fff; transform: rotate(45deg); }
+.acc-body       { overflow: hidden; transition: height 0.35s cubic-bezier(.22,.8,.36,1), opacity 0.3s; }
+.acc-body-inner { padding: 0 0 1.2rem 0; font-size: 0.9rem; color: var(--c-ink-md); line-height: 1.75; }
+
+/* ---------- Comparison cards ------------------------------------------- */
+.cmp-bad  { background: var(--c-ivory-dk); border: 1.5px solid var(--c-stone); border-radius: 12px; padding: 1.5rem; }
+.cmp-good { background: var(--c-navy);     border: 1.5px solid var(--c-navy);   border-radius: 12px; padding: 1.5rem; color: #fff; }
+
+/* ---------- Nav --------------------------------------------------------- */
+.nav-link {
+  background: none; border: none; cursor: pointer;
+  font-family: var(--font-stack-sans);
+  font-size: 0.82rem; font-weight: 500;
+  color: var(--c-ink-md);
+  letter-spacing: 0.04em;
+  padding: 0.35rem 0;
+  transition: color 0.18s;
+}
+.nav-link:focus-visible              { outline: 2px solid var(--c-cobalt); outline-offset: 2px; border-radius: 2px; }
+.nav-link:hover, .nav-link.active    { color: var(--c-cobalt); }
+
+/* Mobile menu footer links (Footer.tsx) */
+.footer-link {
+  display: block; background: none; border: none; cursor: pointer;
+  font-size: 0.85rem; color: rgba(255,255,255,0.55);
+  margin-bottom: 0.6rem; text-align: left;
+  transition: color 0.18s;
+  font-family: var(--font-stack-sans);
+}
+.footer-link:hover,
+.footer-link:focus-visible { color: #fff; }
+
+/* ---------- Step form --------------------------------------------------- */
+.step-dot          { width: 8px; height: 8px; border-radius: 50%; transition: background 0.25s, width 0.25s, border-radius 0.25s; }
+.step-dot.done     { background: var(--c-cobalt); }
+.step-dot.curr     { background: var(--c-cobalt); width: 20px; border-radius: 4px; }
+.step-dot.todo     { background: var(--c-stone); }
+
+/* ---------- Chip options ----------------------------------------------- */
+.chip {
+  border: 1.5px solid var(--c-stone); border-radius: 20px;
+  padding: 0.5rem 1rem; font-size: 0.82rem; font-weight: 500;
+  color: var(--c-ink-md); cursor: pointer;
+  transition: background 0.18s, border-color 0.18s, color 0.18s;
+  background: var(--c-white);
+}
+.chip:focus-visible        { outline: 2px solid var(--c-cobalt); outline-offset: 2px; }
+.chip.selected             { background: var(--c-cobalt); border-color: var(--c-cobalt); color: #fff; }
+.chip:hover:not(.selected) { border-color: var(--c-cobalt); color: var(--c-cobalt); }
+
+/* ---------- Scrollbar --------------------------------------------------- */
+::-webkit-scrollbar       { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--c-stone); border-radius: 4px; }
+
+/* ---------- Responsive helpers ----------------------------------------- */
+.hide-desktop { display: none; }
+
+@media (max-width: 640px) {
+  .hide-mobile  { display: none !important; }
+  .hide-desktop { display: flex !important; }
+  .stack-mobile { flex-direction: column !important; }
+  .full-mobile  { width: 100% !important; }
+  .grid-2col    { grid-template-columns: 1fr !important; }
+  #mob-btn      { display: flex !important; }
+}
+
+/* ---------- Reduced motion --------------------------------------------- */
+/* Respect users who explicitly request less motion. Removes parallax-y
+   fade-ups, animations on icons, and the smooth scroll on <html>. */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .fade-up,
+  .fade-up.visible {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
 }
