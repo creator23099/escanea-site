@@ -1,11 +1,11 @@
 "use client";
+import Link from "next/link";
 import { Accordion } from "@/components/primitives/Accordion";
 import { LiveDot } from "@/components/primitives/LiveDot";
 import { ReportList } from "@/components/primitives/ReportList";
 import { Tag } from "@/components/primitives/Tag";
-import { Footer } from "@/components/layout/Footer";
 import { T } from "@/lib/tokens";
-import type { AccordionItem, SetPage } from "@/lib/types";
+import type { AccordionItem } from "@/lib/types";
 import { useInView } from "@/lib/use-in-view";
 
 const HOME_WHY_ITEMS: AccordionItem[] = [
@@ -68,7 +68,7 @@ const COMPARISON_ROWS = [
   },
 ];
 
-export function HomeContent({ setPage }: { setPage: SetPage }) {
+export function HomeContent() {
   const [r1, v1] = useInView<HTMLElement>();
   const [r2, v2] = useInView<HTMLElement>();
   const [r3, v3] = useInView<HTMLElement>();
@@ -140,12 +140,12 @@ export function HomeContent({ setPage }: { setPage: SetPage }) {
           </p>
 
           <div style={{ display: "flex", gap: "0.75rem", flexWrap: "wrap", animation: "fadeUp 0.7s ease 0.5s both" }}>
-            <button className="btn btn-primary" onClick={() => setPage("brands")}>
+            <Link href="/brands" scroll={false} className="btn btn-primary">
               Anunciar mi marca
-            </button>
-            <button className="btn btn-outline" onClick={() => setPage("drivers")}>
+            </Link>
+            <Link href="/drivers" scroll={false} className="btn btn-outline">
               Conducir con Escanea
-            </button>
+            </Link>
           </div>
 
           <div style={{ display: "flex", gap: "0.65rem", flexWrap: "wrap", marginTop: "2.5rem", animation: "fadeUp 0.7s ease 0.62s both" }}>
@@ -286,8 +286,8 @@ export function HomeContent({ setPage }: { setPage: SetPage }) {
         <div className={`fade-up ${v4 ? "visible" : ""}`} style={{ maxWidth: 680, margin: "0 auto" }}>
           <div className="grid-2col" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
             {[
-              { label: "Para Marcas",      h: "Transforma tráfico urbano en atención medible.", cta: "Anunciar mi marca",    action: () => setPage("brands"),  accent: true  },
-              { label: "Para Conductores", h: "Genera ingresos sin cambiar tus rutas.",          cta: "Conducir con Escanea", action: () => setPage("drivers"), accent: false },
+              { label: "Para Marcas",      h: "Transforma tráfico urbano en atención medible.", cta: "Anunciar mi marca",    href: "/brands",  accent: true  },
+              { label: "Para Conductores", h: "Genera ingresos sin cambiar tus rutas.",          cta: "Conducir con Escanea", href: "/drivers", accent: false },
             ].map((c) => (
               <div
                 key={c.label}
@@ -317,17 +317,18 @@ export function HomeContent({ setPage }: { setPage: SetPage }) {
                 >
                   {c.h}
                 </h3>
-                <button
+                <Link
+                  href={c.href}
+                  scroll={false}
                   className={`btn ${c.accent ? "btn-outline" : "btn-primary"}`}
                   style={
                     c.accent
                       ? { border: "1.5px solid rgba(255,255,255,0.25)", color: "#fff", fontSize: "0.72rem", padding: "0.75rem 1rem" }
                       : { fontSize: "0.72rem", padding: "0.75rem 1rem" }
                   }
-                  onClick={c.action}
                 >
                   {c.cta}
-                </button>
+                </Link>
               </div>
             ))}
           </div>
@@ -380,7 +381,9 @@ export function HomeContent({ setPage }: { setPage: SetPage }) {
             Nuestro equipo te contacta en menos de 24 horas.
           </p>
           <div style={{ display: "flex", gap: "0.75rem", justifyContent: "center", flexWrap: "wrap" }}>
-            <button
+            <Link
+              href="/brands"
+              scroll={false}
               className="btn"
               style={{
                 background: "#fff",
@@ -391,13 +394,14 @@ export function HomeContent({ setPage }: { setPage: SetPage }) {
                 textTransform: "uppercase",
                 borderRadius: 8,
               }}
-              onClick={() => setPage("brands")}
               onMouseEnter={(e) => { e.currentTarget.style.background = T.ivory; }}
               onMouseLeave={(e) => { e.currentTarget.style.background = "#fff"; }}
             >
               Anunciar mi marca
-            </button>
-            <button
+            </Link>
+            <Link
+              href="/drivers"
+              scroll={false}
               className="btn"
               style={{
                 background: "transparent",
@@ -409,17 +413,14 @@ export function HomeContent({ setPage }: { setPage: SetPage }) {
                 textTransform: "uppercase",
                 borderRadius: 8,
               }}
-              onClick={() => setPage("drivers")}
               onMouseEnter={(e) => { e.currentTarget.style.borderColor = "rgba(255,255,255,0.7)"; }}
               onMouseLeave={(e) => { e.currentTarget.style.borderColor = "rgba(255,255,255,0.35)"; }}
             >
               Conducir con Escanea
-            </button>
+            </Link>
           </div>
         </div>
       </section>
-
-      <Footer setPage={setPage} />
     </div>
   );
 }

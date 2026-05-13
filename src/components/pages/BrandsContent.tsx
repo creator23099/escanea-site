@@ -6,9 +6,8 @@ import { ReportList } from "@/components/primitives/ReportList";
 import { StepBar } from "@/components/primitives/StepBar";
 import { SuccessCard } from "@/components/primitives/SuccessCard";
 import { Tag } from "@/components/primitives/Tag";
-import { Footer } from "@/components/layout/Footer";
 import { T, FL } from "@/lib/tokens";
-import type { AccordionItem, BrandsFormData, SetPage } from "@/lib/types";
+import type { AccordionItem, BrandsFormData } from "@/lib/types";
 import { useInView } from "@/lib/use-in-view";
 import { validateBrandsStep } from "@/lib/validation";
 
@@ -38,7 +37,7 @@ const INITIAL_BRANDS: BrandsFormData = {
   problema: [], empresa: "", whatsapp: "", email: "", notas: "",
 };
 
-export function BrandsContent({ setPage }: { setPage: SetPage }) {
+export function BrandsContent() {
   const [r1, v1] = useInView<HTMLElement>();
   const [r2, v2] = useInView<HTMLElement>();
   const [r3, v3] = useInView<HTMLElement>();
@@ -174,6 +173,7 @@ export function BrandsContent({ setPage }: { setPage: SetPage }) {
             Publicidad exterior en movimiento. Medible, verificable y presente donde está tu audiencia — todos los días.
           </p>
           <button
+            type="button"
             className="btn btn-primary"
             onClick={() => document.getElementById("brands-form")?.scrollIntoView({ behavior: "smooth" })}
           >
@@ -254,17 +254,17 @@ export function BrandsContent({ setPage }: { setPage: SetPage }) {
               {error && <p className="field-error" role="alert">{error}</p>}
               <div style={{ display: "flex", gap: "0.65rem", justifyContent: "space-between", marginTop: "1rem" }}>
                 {step > 0 && (
-                  <button className="btn btn-outline" onClick={prev} style={{ fontSize: "0.78rem" }}>
+                  <button type="button" className="btn btn-outline" onClick={prev} style={{ fontSize: "0.78rem" }}>
                     ← Anterior
                   </button>
                 )}
                 <div style={{ marginLeft: "auto" }}>
                   {step < TOTAL - 1 ? (
-                    <button className="btn btn-primary" onClick={next} style={{ fontSize: "0.78rem" }}>
+                    <button type="button" className="btn btn-primary" onClick={next} style={{ fontSize: "0.78rem" }}>
                       Siguiente →
                     </button>
                   ) : (
-                    <button className="btn btn-primary" onClick={submit} style={{ fontSize: "0.78rem" }}>
+                    <button type="button" className="btn btn-primary" onClick={submit} style={{ fontSize: "0.78rem" }}>
                       Enviar solicitud →
                     </button>
                   )}
@@ -274,8 +274,6 @@ export function BrandsContent({ setPage }: { setPage: SetPage }) {
           )}
         </div>
       </section>
-
-      <Footer setPage={setPage} />
     </div>
   );
 }

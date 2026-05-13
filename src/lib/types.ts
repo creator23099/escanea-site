@@ -3,9 +3,13 @@ export interface AccordionItem {
   a: string;
 }
 
+/**
+ * A top-level navigation entry. Rendered by Navbar and Footer.
+ * `href` is a Next.js App Router pathname.
+ */
 export interface NavItem {
   l: string;
-  p: Page;
+  href: string;
 }
 
 export interface BrandsFormData {
@@ -31,8 +35,3 @@ export interface DriversFormData {
   email: string;
   notas: string;
 }
-
-export type Page = "home" | "brands" | "drivers" | "why";
-
-/** Single source of truth for the page-setter signature. */
-export type SetPage = (p: Page) => void;

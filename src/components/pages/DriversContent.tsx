@@ -5,9 +5,8 @@ import { DarkTag } from "@/components/primitives/DarkTag";
 import { StepBar } from "@/components/primitives/StepBar";
 import { SuccessCard } from "@/components/primitives/SuccessCard";
 import { Tag } from "@/components/primitives/Tag";
-import { Footer } from "@/components/layout/Footer";
 import { T, FL } from "@/lib/tokens";
-import type { AccordionItem, DriversFormData, SetPage } from "@/lib/types";
+import type { AccordionItem, DriversFormData } from "@/lib/types";
 import { useInView } from "@/lib/use-in-view";
 import { validateDriversStep } from "@/lib/validation";
 
@@ -37,7 +36,7 @@ const INITIAL_DRIVERS: DriversFormData = {
   nombre: "", whatsapp: "", email: "", notas: "",
 };
 
-export function DriversContent({ setPage }: { setPage: SetPage }) {
+export function DriversContent() {
   const [r1, v1] = useInView<HTMLElement>();
   const [r2, v2] = useInView<HTMLElement>();
   const [step, setStep] = useState(0);
@@ -205,6 +204,7 @@ export function DriversContent({ setPage }: { setPage: SetPage }) {
             Genera ingresos adicionales mientras conduces. Sin cambiar tus rutas, sin compromisos rígidos.
           </p>
           <button
+            type="button"
             className="btn"
             style={{
               background: "#fff",
@@ -294,13 +294,13 @@ export function DriversContent({ setPage }: { setPage: SetPage }) {
               {error && <p className="field-error" role="alert">{error}</p>}
               <div style={{ display: "flex", gap: "0.65rem", justifyContent: "space-between", marginTop: "1rem" }}>
                 {step > 0 && (
-                  <button className="btn btn-outline" onClick={prev} style={{ fontSize: "0.78rem" }}>← Anterior</button>
+                  <button type="button" className="btn btn-outline" onClick={prev} style={{ fontSize: "0.78rem" }}>← Anterior</button>
                 )}
                 <div style={{ marginLeft: "auto" }}>
                   {step < TOTAL - 1 ? (
-                    <button className="btn btn-navy" onClick={next} style={{ fontSize: "0.78rem" }}>Siguiente →</button>
+                    <button type="button" className="btn btn-navy" onClick={next} style={{ fontSize: "0.78rem" }}>Siguiente →</button>
                   ) : (
-                    <button className="btn btn-navy" onClick={submit} style={{ fontSize: "0.78rem" }}>Enviar registro →</button>
+                    <button type="button" className="btn btn-navy" onClick={submit} style={{ fontSize: "0.78rem" }}>Enviar registro →</button>
                   )}
                 </div>
               </div>
@@ -308,8 +308,6 @@ export function DriversContent({ setPage }: { setPage: SetPage }) {
           )}
         </div>
       </section>
-
-      <Footer setPage={setPage} />
     </div>
   );
 }

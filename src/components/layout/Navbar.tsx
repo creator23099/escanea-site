@@ -1,24 +1,9 @@
 "use client";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { NAV_ITEMS } from "@/lib/nav-items";
 import { T } from "@/lib/tokens";
-import type { NavItem, Page, SetPage } from "@/lib/types";
-
-/**
- * Exported because Footer also renders the same list in its "Plataforma"
- * column. Single source of truth for the top-level navigation entries.
- */
-export const NAV_ITEMS: NavItem[] = [
-  { l: "Inicio",       p: "home" },
-  { l: "Marcas",      p: "brands" },
-  { l: "Conductores", p: "drivers" },
-  { l: "Por Qué Ahora", p: "why" },
-];
-
-interface NavbarProps {
-  page: Page;
-  setPage: SetPage;
-  scrolled: boolean;
-}
 
 /** Returns all focusable elements inside `root`, in DOM order. */
 function getFocusable(root: HTMLElement | null): HTMLElement[] {
@@ -30,11 +15,31 @@ function getFocusable(root: HTMLElement | null): HTMLElement[] {
   );
 }
 
-export function Navbar({ page, setPage, scrolled }: NavbarProps) {
+export function Navbar() {
+  const pathname = usePathname();
   const [mobOpen, setMobOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
   const hamburgerRef = useRef<HTMLButtonElement>(null);
   const dialogRef = useRef<HTMLDivElement>(null);
   const prevOpenRef = useRef(false);
+
+  // Throttled scroll listener — owns the frosted-glass `scrolled` flag.
+  // Moved from the old SPA App root in Phase 3; layout-level mount means
+  // it survives every route transition (Navbar lives in layout.tsx).
+  useEffect(() => {
+    let ticking = false;
+    const h = () => {
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          setScrolled(window.scrollY > 50);
+          ticking = false;
+        });
+        ticking = true;
+      }
+    };
+    window.addEventListener("scroll", h, { passive: true });
+    return () => window.removeEventListener("scroll", h);
+  }, []);
 
   // Lock body scroll when mobile nav is open
   useEffect(() => {
@@ -42,13 +47,17 @@ export function Navbar({ page, setPage, scrolled }: NavbarProps) {
     return () => document.body.classList.remove("nav-open");
   }, [mobOpen]);
 
-  const navigate = useCallback(
-    (p: Page) => {
-      setPage(p);
-      setMobOpen(false);
-    },
-    [setPage]
-  );
+  const closeMenu = useCallback(() => setMobOpen(false), []);
+
+  // Close the mobile dialog on browser back/forward. Each Link inside
+  // the menu already calls closeMenu in its onClick, so the popstate
+  // listener only catches history navigation (not in-app clicks).
+  // This drives the prevOpenRef -> hamburger focus-restore effect.
+  useEffect(() => {
+    const handler = () => setMobOpen(false);
+    window.addEventListener("popstate", handler);
+    return () => window.removeEventListener("popstate", handler);
+  }, []);
 
   // Keyboard: Escape closes, Tab/Shift+Tab cycles focus inside the dialog
   useEffect(() => {
@@ -109,10 +118,15 @@ export function Navbar({ page, setPage, scrolled }: NavbarProps) {
           transition: "background 0.3s ease, border-color 0.3s ease",
         }}
       >
-        <button
-          type="button"
-          onClick={() => navigate("home")}
+        <Link
+          href="/"
+          scroll={false}
           aria-label="Escanea — ir al inicio"
+          // Preserve SPA affordance: clicking the logo while on `/` still
+          // scrolls to top. Same-pathname Link clicks don't fire ScrollManager.
+          onClick={() => {
+            if (pathname === "/") window.scrollTo(0, 0);
+          }}
           style={{
             background: "none",
             border: "none",
@@ -122,32 +136,33 @@ export function Navbar({ page, setPage, scrolled }: NavbarProps) {
             color: T.ink,
             letterSpacing: "0.02em",
             padding: "0.25rem 0",
+            textDecoration: "none",
           }}
         >
           Escanea
-        </button>
+        </Link>
 
         {/* Desktop nav */}
         <div className="hide-mobile" style={{ display: "flex", gap: "1.75rem", alignItems: "center" }}>
           {NAV_ITEMS.map((x) => (
-            <button
-              key={x.p}
-              type="button"
-              className={`nav-link ${page === x.p ? "active" : ""}`}
-              onClick={() => setPage(x.p)}
-              aria-current={page === x.p ? "page" : undefined}
+            <Link
+              key={x.href}
+              href={x.href}
+              scroll={false}
+              className={`nav-link ${pathname === x.href ? "active" : ""}`}
+              aria-current={pathname === x.href ? "page" : undefined}
             >
               {x.l}
-            </button>
+            </Link>
           ))}
-          <button
-            type="button"
+          <Link
+            href="/brands"
+            scroll={false}
             className="btn btn-primary"
             style={{ padding: "0.55rem 1.1rem" }}
-            onClick={() => setPage("brands")}
           >
             Anunciar
-          </button>
+          </Link>
         </div>
 
         {/* Mobile hamburger */}
@@ -201,11 +216,12 @@ export function Navbar({ page, setPage, scrolled }: NavbarProps) {
           }}
         >
           {NAV_ITEMS.map((x) => (
-            <button
-              key={x.p}
-              type="button"
-              onClick={() => navigate(x.p)}
-              aria-current={page === x.p ? "page" : undefined}
+            <Link
+              key={x.href}
+              href={x.href}
+              scroll={false}
+              onClick={closeMenu}
+              aria-current={pathname === x.href ? "page" : undefined}
               style={{
                 background: "none",
                 border: "none",
@@ -213,28 +229,31 @@ export function Navbar({ page, setPage, scrolled }: NavbarProps) {
                 textAlign: "left",
                 fontFamily: "'DM Sans',sans-serif",
                 fontSize: "1.1rem",
-                fontWeight: page === x.p ? 700 : 400,
-                color: page === x.p ? T.cobalt : T.ink,
+                fontWeight: pathname === x.href ? 700 : 400,
+                color: pathname === x.href ? T.cobalt : T.ink,
+                textDecoration: "none",
               }}
             >
               {x.l}
-            </button>
+            </Link>
           ))}
           <div style={{ marginTop: "1rem", display: "flex", flexDirection: "column", gap: "0.75rem" }}>
-            <button
-              type="button"
+            <Link
+              href="/brands"
+              scroll={false}
+              onClick={closeMenu}
               className="btn btn-primary btn-full"
-              onClick={() => navigate("brands")}
             >
               Anunciar mi marca
-            </button>
-            <button
-              type="button"
+            </Link>
+            <Link
+              href="/drivers"
+              scroll={false}
+              onClick={closeMenu}
               className="btn btn-outline btn-full"
-              onClick={() => navigate("drivers")}
             >
               Conducir con Escanea
-            </button>
+            </Link>
           </div>
         </div>
       )}

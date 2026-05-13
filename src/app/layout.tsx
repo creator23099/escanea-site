@@ -1,6 +1,9 @@
 import type { Metadata, Viewport } from "next";
 import { DM_Sans, DM_Serif_Display } from "next/font/google";
 import "./globals.css";
+import { Footer } from "@/components/layout/Footer";
+import { Navbar } from "@/components/layout/Navbar";
+import { ScrollManager } from "@/components/layout/ScrollManager";
 
 /**
  * Fonts are self-hosted via next/font (no external Google Fonts request at runtime),
@@ -80,7 +83,10 @@ export default function RootLayout({
         <a href="#main-content" className="skip-link">
           Saltar al contenido
         </a>
-        {children}
+        <Navbar />
+        <ScrollManager />
+        <main id="main-content">{children}</main>
+        <Footer />
       </body>
     </html>
   );

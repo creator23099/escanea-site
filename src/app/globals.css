@@ -133,6 +133,8 @@ textarea.fi { resize: vertical; min-height: 100px; }
   border-radius: 8px;
   text-transform: uppercase;
   font-size: 0.78rem;
+  /* Reset anchor defaults so `<Link className="btn">` renders identically to `<button className="btn">` */
+  text-decoration: none;
 }
 .btn:focus-visible { outline: 3px solid var(--c-cobalt); outline-offset: 2px; }
 .btn-primary { background: var(--c-cobalt); color: #fff; padding: 0.9rem 1.6rem; }
@@ -182,6 +184,8 @@ textarea.fi { resize: vertical; min-height: 100px; }
   letter-spacing: 0.04em;
   padding: 0.35rem 0;
   transition: color 0.18s;
+  /* Reset anchor defaults so `<Link className="nav-link">` matches the old `<button className="nav-link">` */
+  text-decoration: none;
 }
 .nav-link:focus-visible              { outline: 2px solid var(--c-cobalt); outline-offset: 2px; border-radius: 2px; }
 .nav-link:hover, .nav-link.active    { color: var(--c-cobalt); }
@@ -193,6 +197,8 @@ textarea.fi { resize: vertical; min-height: 100px; }
   margin-bottom: 0.6rem; text-align: left;
   transition: color 0.18s;
   font-family: var(--font-stack-sans);
+  /* Reset anchor defaults so `<Link className="footer-link">` matches the old `<button className="footer-link">` */
+  text-decoration: none;
 }
 .footer-link:hover,
 .footer-link:focus-visible { color: #fff; }

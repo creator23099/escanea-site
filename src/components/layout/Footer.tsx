@@ -1,9 +1,8 @@
-"use client";
+import Link from "next/link";
+import { NAV_ITEMS } from "@/lib/nav-items";
 import { T } from "@/lib/tokens";
-import type { SetPage } from "@/lib/types";
-import { NAV_ITEMS } from "@/components/layout/Navbar";
 
-export function Footer({ setPage }: { setPage: SetPage }) {
+export function Footer() {
   return (
     <footer style={{ background: T.navy, padding: "3rem 1.25rem 2rem" }}>
       <div style={{ maxWidth: 680, margin: "0 auto" }}>
@@ -46,15 +45,15 @@ export function Footer({ setPage }: { setPage: SetPage }) {
               >
                 Plataforma
               </div>
-              {NAV_ITEMS.map(({ l, p }) => (
-                <button
-                  key={p}
-                  type="button"
+              {NAV_ITEMS.map(({ l, href }) => (
+                <Link
+                  key={href}
+                  href={href}
+                  scroll={false}
                   className="footer-link"
-                  onClick={() => setPage(p)}
                 >
                   {l}
-                </button>
+                </Link>
               ))}
             </nav>
             <address style={{ fontStyle: "normal" }}>

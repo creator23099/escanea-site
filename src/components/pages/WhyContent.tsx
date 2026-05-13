@@ -1,10 +1,10 @@
 "use client";
+import Link from "next/link";
 import { Accordion } from "@/components/primitives/Accordion";
 import { DarkTag } from "@/components/primitives/DarkTag";
 import { Tag } from "@/components/primitives/Tag";
-import { Footer } from "@/components/layout/Footer";
 import { T } from "@/lib/tokens";
-import type { AccordionItem, SetPage } from "@/lib/types";
+import type { AccordionItem } from "@/lib/types";
 import { useInView } from "@/lib/use-in-view";
 
 const WHY_ITEMS: AccordionItem[] = [
@@ -36,7 +36,7 @@ const MISSION_POINTS = [
   ["Reportes verificables", "Datos reales de campaña: no estimaciones, no proyecciones."],
 ] as const;
 
-export function WhyContent({ setPage }: { setPage: SetPage }) {
+export function WhyContent() {
   const [r1, v1] = useInView<HTMLElement>();
   const [r2, v2] = useInView<HTMLElement>();
 
@@ -173,13 +173,11 @@ export function WhyContent({ setPage }: { setPage: SetPage }) {
             urbana en Colombia.
           </p>
           <div style={{ display: "flex", gap: "0.75rem", flexWrap: "wrap" }}>
-            <button className="btn btn-primary" onClick={() => setPage("brands")}>Anunciar mi marca</button>
-            <button className="btn btn-outline" onClick={() => setPage("drivers")}>Conducir con Escanea</button>
+            <Link href="/brands" scroll={false} className="btn btn-primary">Anunciar mi marca</Link>
+            <Link href="/drivers" scroll={false} className="btn btn-outline">Conducir con Escanea</Link>
           </div>
         </div>
       </section>
-
-      <Footer setPage={setPage} />
     </div>
   );
 }
