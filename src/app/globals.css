@@ -221,6 +221,75 @@ textarea.fi { resize: vertical; min-height: 100px; }
 .chip.selected             { background: var(--c-cobalt); border-color: var(--c-cobalt); color: #fff; }
 .chip:hover:not(.selected) { border-color: var(--c-cobalt); color: var(--c-cobalt); }
 
+/* ---------- WhatsApp floating CTA -------------------------------------- */
+/* Bottom-right FAB. z-index sits below the navbar (300) and the mobile
+   dialog (299) so the dialog can always cover it; sits above page
+   content (which has no z-index). Safe-area insets handle iOS Safari's
+   home indicator and the notch on horizontal orientation. */
+.wa-fab {
+  position: fixed;
+  right: max(1rem, env(safe-area-inset-right));
+  bottom: max(1rem, calc(env(safe-area-inset-bottom) + 1rem));
+  z-index: 100;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: #25D366;
+  color: #fff;
+  text-decoration: none;
+  box-shadow: 0 6px 16px rgba(37, 211, 102, 0.28),
+              0 2px 4px rgba(0, 0, 0, 0.06);
+  transition: transform 0.22s cubic-bezier(.22,.8,.36,1),
+              box-shadow 0.22s cubic-bezier(.22,.8,.36,1),
+              background 0.22s cubic-bezier(.22,.8,.36,1);
+  -webkit-tap-highlight-color: transparent;
+}
+.wa-fab:hover {
+  background: #20BC5A;
+  transform: translateY(-2px);
+  box-shadow: 0 10px 24px rgba(37, 211, 102, 0.34),
+              0 4px 8px rgba(0, 0, 0, 0.08);
+}
+.wa-fab:active {
+  transform: translateY(0);
+  box-shadow: 0 4px 10px rgba(37, 211, 102, 0.28);
+}
+.wa-fab:focus-visible {
+  outline: 3px solid #fff;
+  outline-offset: 3px;
+  box-shadow: 0 0 0 5px rgba(37, 211, 102, 0.45),
+              0 6px 16px rgba(37, 211, 102, 0.28);
+}
+.wa-fab svg { width: 28px; height: 28px; display: block; }
+
+@media (min-width: 768px) {
+  .wa-fab {
+    right: max(1.5rem, env(safe-area-inset-right));
+    bottom: max(1.5rem, calc(env(safe-area-inset-bottom) + 1.5rem));
+    width: 60px;
+    height: 60px;
+  }
+  .wa-fab svg { width: 30px; height: 30px; }
+}
+
+/* ---------- Footer socials --------------------------------------------- */
+.social-row { display: flex; gap: 0.25rem; margin-top: 0.9rem; }
+.social-icon {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 32px; height: 32px;
+  color: rgba(255,255,255,0.55);
+  text-decoration: none;
+  border-radius: 6px;
+  transition: color 0.18s, background 0.18s;
+  -webkit-tap-highlight-color: transparent;
+}
+.social-icon:hover,
+.social-icon:focus-visible { color: #fff; background: rgba(255,255,255,0.06); }
+.social-icon svg { width: 18px; height: 18px; display: block; }
+
 /* ---------- Scrollbar --------------------------------------------------- */
 ::-webkit-scrollbar       { width: 6px; }
 ::-webkit-scrollbar-track { background: transparent; }
