@@ -132,8 +132,15 @@ export function Navbar() {
             border: "none",
             cursor: "pointer",
             fontFamily: "'DM Serif Display',serif",
-            fontSize: "1.15rem",
-            color: T.ink,
+            // +~13% from 1.15rem. Increase chosen empirically so the
+            // mark reads as intentional vs. footnote in the navbar
+            // without pushing into "startup oversized" territory.
+            fontSize: "1.3rem",
+            // Brand cobalt (matches --c-cobalt / T.cobalt used on
+            // .btn-primary, italic headline accents, focus rings,
+            // and the active nav state). Reinforces brand identity
+            // in the top-left vs. the previous near-black ink.
+            color: T.cobalt,
             letterSpacing: "0.02em",
             padding: "0.25rem 0",
             textDecoration: "none",
