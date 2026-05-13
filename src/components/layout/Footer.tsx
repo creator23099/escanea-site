@@ -69,18 +69,6 @@ export function Footer() {
               >
                 Contacto
               </div>
-              <a
-                href="mailto:contacto@escanea.co"
-                style={{
-                  display: "block",
-                  fontSize: "0.85rem",
-                  color: "rgba(255,255,255,0.55)",
-                  textDecoration: "none",
-                  marginBottom: "0.6rem",
-                }}
-              >
-                contacto@escanea.co
-              </a>
               <div style={{ fontSize: "0.85rem", color: "rgba(255,255,255,0.55)" }}>www.escanea.co</div>
               <div className="social-row" role="group" aria-label="Redes sociales">
                 <a

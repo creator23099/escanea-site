@@ -21,7 +21,8 @@ export interface BrandsFormData {
   empresa: string;
   whatsapp: string;
   email: string;
-  notas: string;
+  instagram: string;
+  comments: string;
 }
 
 export interface DriversFormData {

@@ -30,11 +30,12 @@ const BRANDS_FAQ: AccordionItem[] = [
   },
 ];
 
-const BRANDS_STEP_LABELS = ["Ciudad", "Zonas", "Presupuesto", "Objetivo", "Problema", "Contacto", "Notas"];
+const BRANDS_STEP_LABELS = ["Ciudad", "Zonas", "Presupuesto", "Objetivo", "Problema", "Contacto", "Comentarios"];
 
 const INITIAL_BRANDS: BrandsFormData = {
   ciudad: "", zonas: "", presupuesto: "", objetivo: [],
-  problema: [], empresa: "", whatsapp: "", email: "", notas: "",
+  problema: [], empresa: "", whatsapp: "", email: "",
+  instagram: "", comments: "",
 };
 
 export function BrandsContent() {
@@ -127,10 +128,14 @@ export function BrandsContent() {
         <label htmlFor="b-email" style={FL}>Email</label>
         <input id="b-email" className={`fi ${error && !fd.email ? "error" : ""}`} type="email" value={fd.email} onChange={upd("email")} placeholder="tu@empresa.co" required aria-required="true" />
       </div>
+      <div>
+        <label htmlFor="b-instagram" style={FL}>Instagram</label>
+        <input id="b-instagram" className="fi" type="text" value={fd.instagram} onChange={upd("instagram")} placeholder="@tuempresa" autoCapitalize="none" autoCorrect="off" spellCheck={false} inputMode="text" />
+      </div>
     </div>,
     <div key={6}>
-      <label htmlFor="b-notas" style={FL}>Objetivos adicionales o información importante</label>
-      <textarea id="b-notas" className="fi" rows={4} value={fd.notas} onChange={upd("notas")} placeholder="Cuéntanos más sobre tu marca, objetivos o zonas de interés." />
+      <label htmlFor="b-comments" style={FL}>Comentarios</label>
+      <textarea id="b-comments" className="fi" rows={4} value={fd.comments} onChange={upd("comments")} placeholder="Cuéntanos sobre tu campaña, objetivos, zonas de interés o cualquier detalle importante…" />
     </div>,
   ];
 
