@@ -1,13 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32">
+  <!--
+    Escanea brand favicon. Cobalt rounded-square monogram.
+    Fill #1A4FD6 is the brand cobalt token (same value used on the primary
+    CTA buttons, italic headline accents, focus rings and active nav state).
+    Corner radius rx=7 (~22%) follows the modern iOS / Linear / Notion app
+    icon convention and reads as "premium product" at 16x16 tab size. The
+    italic monogram echoes the italic accents on the homepage without
+    ornate serifs that smudge at small sizes; falls back through DM Sans
+    then system sans for cross-platform consistency.
+  -->
+  <rect width="32" height="32" rx="7" ry="7" fill="#1A4FD6"/>
   <text
     x="16"
-    y="25"
-    fill="#1A4FD6"
-    font-family="Georgia, 'Times New Roman', 'Big Caslon', 'DM Serif Display', serif"
+    y="23"
+    fill="#FFFFFF"
+    font-family="'DM Sans', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Helvetica, Arial, sans-serif"
     font-style="italic"
     font-weight="700"
-    font-size="30"
+    font-size="22"
     text-anchor="middle"
   >E</text>
 </svg>
