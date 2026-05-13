@@ -120,7 +120,8 @@ function useInView(th = 0.1) {
 }
 
 /* --- Accordion ---------------------------------------------------------------- */
-function Accordion({ items }: { items: any[] }) {  const [open, setOpen] = useState(null);
+function Accordion({ items }: { items: any[] }) {  
+  const [open, setOpen] = useState(null);
   return (
     <div>
       {items.map((it, i) => (
