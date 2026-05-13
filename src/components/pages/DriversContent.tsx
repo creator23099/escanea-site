@@ -42,6 +42,8 @@ export function DriversContent() {
   const [step, setStep] = useState(0);
   const [fd, setFd] = useState<DriversFormData>(INITIAL_DRIVERS);
   const [error, setError] = useState<string | null>(null);
+  const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
   const [sent, setSent] = useState(false);
   const TOTAL = DRIVERS_STEP_LABELS.length;
 
@@ -61,12 +63,31 @@ export function DriversContent() {
     setStep((s) => s + 1);
   };
 
-  const prev = () => { setError(null); setStep((s) => s - 1); };
+  const prev = () => { setError(null); setSubmitError(null); setStep((s) => s - 1); };
 
-  const submit = () => {
+  const submit = async () => {
     const err = validateDriversStep(step, fd);
     if (err) { setError(err); return; }
-    setSent(true);
+    if (submitting) return;
+    setSubmitting(true);
+    setSubmitError(null);
+    try {
+      const res = await fetch("/api/contact/drivers", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(fd),
+      });
+      const body = (await res.json().catch(() => null)) as { ok?: boolean; error?: string } | null;
+      if (!res.ok || !body?.ok) {
+        setSubmitError(body?.error || "No se pudo enviar el registro. Intenta nuevamente.");
+        return;
+      }
+      setSent(true);
+    } catch {
+      setSubmitError("Error de conexión. Verifica tu internet e intenta nuevamente.");
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   const stepContent: ReactNode[] = [
@@ -292,15 +313,25 @@ export function DriversContent() {
               </div>
               <div style={{ minHeight: 120, marginBottom: "1rem" }}>{stepContent[step]}</div>
               {error && <p className="field-error" role="alert">{error}</p>}
+              {submitError && <p className="field-error" role="alert">{submitError}</p>}
               <div style={{ display: "flex", gap: "0.65rem", justifyContent: "space-between", marginTop: "1rem" }}>
                 {step > 0 && (
-                  <button type="button" className="btn btn-outline" onClick={prev} style={{ fontSize: "0.78rem" }}>← Anterior</button>
+                  <button type="button" className="btn btn-outline" onClick={prev} disabled={submitting} style={{ fontSize: "0.78rem" }}>← Anterior</button>
                 )}
                 <div style={{ marginLeft: "auto" }}>
                   {step < TOTAL - 1 ? (
-                    <button type="button" className="btn btn-navy" onClick={next} style={{ fontSize: "0.78rem" }}>Siguiente →</button>
+                    <button type="button" className="btn btn-navy" onClick={next} disabled={submitting} style={{ fontSize: "0.78rem" }}>Siguiente →</button>
                   ) : (
-                    <button type="button" className="btn btn-navy" onClick={submit} style={{ fontSize: "0.78rem" }}>Enviar registro →</button>
+                    <button
+                      type="button"
+                      className="btn btn-navy"
+                      onClick={submit}
+                      disabled={submitting}
+                      aria-busy={submitting}
+                      style={{ fontSize: "0.78rem" }}
+                    >
+                      {submitting ? "Enviando…" : "Enviar registro →"}
+                    </button>
                   )}
                 </div>
               </div>

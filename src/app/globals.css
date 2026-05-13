@@ -144,6 +144,16 @@ textarea.fi { resize: vertical; min-height: 100px; }
 .btn-navy { background: var(--c-navy); color: #fff; padding: 0.9rem 1.6rem; }
 .btn-navy:hover { background: var(--c-navy-md); transform: translateY(-1px); }
 .btn-full { width: 100%; }
+/* Disabled state: used while form submissions are in flight. Neutralizes
+   hover transforms and box-shadows so the loading-button reads as inert. */
+.btn:disabled,
+.btn[aria-busy="true"] {
+  opacity: 0.55;
+  cursor: not-allowed;
+  pointer-events: none;
+  transform: none;
+  box-shadow: none;
+}
 
 /* ---------- Accordion --------------------------------------------------- */
 .acc-item    { border-bottom: 1.5px solid var(--c-stone); }
