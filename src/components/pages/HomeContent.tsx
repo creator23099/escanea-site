@@ -128,6 +128,17 @@ export function HomeContent() {
           </h1>
 
           <p style={{
+            fontSize: "0.85rem",
+            fontWeight: 400,
+            color: T.inkLt,
+            lineHeight: 1.7,
+            marginBottom: "1.1rem",
+            animation: "fadeUp 0.7s ease 0.32s both",
+          }}>
+            Lanzamiento inicial en Medellín y Bogotá.
+          </p>
+
+          <p style={{
             fontSize: "1.05rem",
             fontWeight: 400,
             color: T.inkMd,
@@ -172,6 +183,9 @@ export function HomeContent() {
       {/* -- CÓMO FUNCIONA ------------------------------------------------------ */}
       <section ref={r1} style={{ background: T.navy, padding: "4rem 1.25rem" }} aria-label="Cómo funciona">
         <div className={`fade-up ${v1 ? "visible" : ""}`} style={{ maxWidth: 680, margin: "0 auto" }}>
+          <div style={{ marginBottom: "0.5rem" }}>
+            <Tag>Activando nuestras primeras campañas en Colombia</Tag>
+          </div>
           <Tag>Por qué Escanea</Tag>
           <h2
             style={{
@@ -379,6 +393,16 @@ export function HomeContent() {
           </h2>
           <p style={{ fontSize: "0.95rem", color: "rgba(255,255,255,0.65)", marginBottom: "2rem", lineHeight: 1.7 }}>
             Nuestro equipo te contacta en menos de 24 horas.
+          </p>
+          <p style={{
+            fontSize: "0.85rem",
+            fontWeight: 500,
+            color: "rgba(150,180,255,1)",
+            lineHeight: 1.6,
+            marginTop: "-1.25rem",
+            marginBottom: "0.75rem",
+          }}>
+            Espacios limitados para marcas fundadoras.
           </p>
           <div style={{ display: "flex", gap: "0.75rem", justifyContent: "center", flexWrap: "wrap" }}>
             <Link
