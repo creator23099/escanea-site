@@ -16,7 +16,7 @@ const DRIVER_SPEC_FAQ: AccordionItem[] = [
   },
   {
     q: "¿Es difícil de quitar?",
-    a: "No tienes que quitarlo tú. Al finalizar la campaña, nuestro equipo coordina el retiro profesional sin costo adicional.",
+    a: "No. La mayoría de materiales se retiran en minutos sin herramientas especiales. Coordinamos contigo al final de la campaña — con instrucciones paso a paso o ayuda directa si la necesitas.",
   },
   {
     q: "¿Tengo que cambiar mis rutas o mis horarios?",
@@ -556,11 +556,11 @@ export function DriversContent() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div style={darkTrustCardShell}>
               <DarkTrustAccentTitle>REMOVIBLES SIN RESIDUO</DarkTrustAccentTitle>
-              <p style={darkTrustBody}>Al finalizar la campaña, los materiales se retiran con un proceso profesional que no deja adhesivo ni marcas en la pintura ni en los vidrios originales.</p>
+              <p style={darkTrustBody}>Los materiales se diseñan para retirarse sin adhesivo ni marcas en la pintura ni los vidrios. Según el tipo de campaña, los retiras tú mismo o coordinamos un retiro guiado sin costo.</p>
             </div>
             <div style={darkTrustCardShell}>
               <DarkTrustAccentTitle>INSTALACIÓN COORDINADA</DarkTrustAccentTitle>
-              <p style={darkTrustBody}>Un equipo especializado realiza la instalación en menos de 30 minutos. No tienes que aprender nada técnico.</p>
+              <p style={darkTrustBody}>Coordinamos cada instalación según el material de la campaña. La mayoría se colocan en minutos — imanes o vinilos diseñados para ser simples. Soporte disponible si lo necesitas.</p>
             </div>
             <div style={darkTrustCardShell}>
               <DarkTrustAccentTitle>SIN MODIFICACIONES PERMANENTES</DarkTrustAccentTitle>
@@ -568,7 +568,7 @@ export function DriversContent() {
             </div>
             <div style={darkTrustCardShell}>
               <DarkTrustAccentTitle>DOCUMENTACIÓN PREVIA</DarkTrustAccentTitle>
-              <p style={darkTrustBody}>Antes de instalar, documentamos el estado del vehículo contigo presente.</p>
+              <p style={darkTrustBody}>Antes de la instalación, documentas tú mismo el estado de tu vehículo con una guía simple. Queda registro para ambas partes — tu protección y la nuestra.</p>
             </div>
           </div>
           <p style={{ fontFamily: "'DM Serif Display',serif", fontSize: "1.08rem", fontStyle: "italic", fontWeight: 400, color: MUTED_COBALT, marginTop: 48, lineHeight: 1.6 }}>
