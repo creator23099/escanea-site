@@ -1,6 +1,7 @@
 "use client";
 import Link from "next/link";
 import { Accordion } from "@/components/primitives/Accordion";
+import { DarkTag } from "@/components/primitives/DarkTag";
 import { LiveDot } from "@/components/primitives/LiveDot";
 import { ReportList } from "@/components/primitives/ReportList";
 import { Tag } from "@/components/primitives/Tag";
@@ -184,9 +185,9 @@ export function HomeContent() {
       <section ref={r1} style={{ background: T.navy, padding: "4rem 1.25rem" }} aria-label="Cómo funciona">
         <div className={`fade-up ${v1 ? "visible" : ""}`} style={{ maxWidth: 680, margin: "0 auto" }}>
           <div style={{ marginBottom: "0.5rem" }}>
-            <Tag>Activando nuestras primeras campañas en Colombia</Tag>
+            <DarkTag>Activando nuestras primeras campañas en Colombia</DarkTag>
           </div>
-          <Tag>Por qué Escanea</Tag>
+          <DarkTag>Por qué Escanea</DarkTag>
           <h2
             style={{
               fontFamily: "'DM Serif Display',serif",

@@ -132,10 +132,10 @@ export function Navbar() {
             border: "none",
             cursor: "pointer",
             fontFamily: "'DM Serif Display',serif",
-            // +~13% from 1.15rem. Increase chosen empirically so the
+            // Larger wordmark so the brand reads clearly in the navbar
             // mark reads as intentional vs. footnote in the navbar
             // without pushing into "startup oversized" territory.
-            fontSize: "1.3rem",
+            fontSize: "1.42rem",
             // Brand cobalt (matches --c-cobalt / T.cobalt used on
             // .btn-primary, italic headline accents, focus rings,
             // and the active nav state). Reinforces brand identity

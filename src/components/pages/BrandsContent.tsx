@@ -32,6 +32,29 @@ const BRANDS_FAQ: AccordionItem[] = [
 
 const BRANDS_STEP_LABELS = ["Ciudad", "Zonas", "Presupuesto", "Objetivo", "Problema", "Contacto", "Comentarios"];
 
+const FRAUD_PROTECTION_ITEMS = [
+  {
+    label: "Check-ins fotográficos",
+    desc: "Evidencia visual durante la instalación y el ciclo activo de campaña.",
+  },
+  {
+    label: "Conductores verificados",
+    desc: "Trabajamos con conductores evaluados antes de asignarlos a una campaña.",
+  },
+  {
+    label: "Verificación de campaña",
+    desc: "Confirmamos que la campaña esté instalada y visible según lo acordado.",
+  },
+  {
+    label: "Confirmación de ubicación",
+    desc: "Validamos presencia en zonas relevantes para tu objetivo de cobertura.",
+  },
+  {
+    label: "Monitoreo de campaña activa",
+    desc: "Damos seguimiento a la operación para mantener control durante el ciclo.",
+  },
+] as const;
+
 const INITIAL_BRANDS: BrandsFormData = {
   ciudad: "", zonas: "", presupuesto: "", objetivo: [],
   problema: [], empresa: "", whatsapp: "", email: "",
@@ -42,6 +65,7 @@ export function BrandsContent() {
   const [r1, v1] = useInView<HTMLElement>();
   const [r2, v2] = useInView<HTMLElement>();
   const [r3, v3] = useInView<HTMLElement>();
+  const [r4, v4] = useInView<HTMLElement>();
   const [step, setStep] = useState(0);
   const [fd, setFd] = useState<BrandsFormData>(INITIAL_BRANDS);
   const [error, setError] = useState<string | null>(null);
@@ -241,12 +265,83 @@ export function BrandsContent() {
             Lo que recibes cada semana.
           </h2>
           <ReportList />
+          <div style={{ display: "flex", justifyContent: "center", marginTop: "2rem" }}>
+            <button
+              type="button"
+              className="btn btn-primary"
+              onClick={() => document.getElementById("brands-form")?.scrollIntoView({ behavior: "smooth" })}
+              style={{ fontSize: "0.78rem" }}
+            >
+              Activar campaña →
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <section ref={r3} style={{ background: T.ivory, padding: "3.5rem 1.25rem" }}>
+        <div className={`fade-up ${v3 ? "visible" : ""}`} style={{ maxWidth: 680, margin: "0 auto" }}>
+          <Tag>Verificación</Tag>
+          <h2
+            style={{
+              fontFamily: "'DM Serif Display',serif",
+              fontSize: "clamp(1.6rem, 4vw, 2.4rem)",
+              color: T.ink,
+              lineHeight: 1.2,
+              margin: "1rem 0 1.5rem",
+            }}
+          >
+            Protección contra fraude.
+          </h2>
+          <p style={{ fontSize: "0.95rem", color: T.inkMd, lineHeight: 1.75, marginTop: 0, marginBottom: "1.25rem" }}>
+            Cada campaña incluye controles para confirmar que la ejecución sea real, visible y monitoreada durante el ciclo activo.
+          </p>
+          <div
+            style={{
+              background: T.white,
+              borderRadius: 16,
+              border: `1.5px solid ${T.stone}`,
+              overflow: "hidden",
+            }}
+          >
+            {FRAUD_PROTECTION_ITEMS.map((item, i) => (
+              <div
+                key={item.label}
+                style={{
+                  display: "flex",
+                  alignItems: "flex-start",
+                  gap: "1rem",
+                  padding: "1rem 1.25rem",
+                  borderBottom: i < FRAUD_PROTECTION_ITEMS.length - 1 ? `1px solid ${T.stone}` : "none",
+                }}
+              >
+                <div
+                  aria-hidden="true"
+                  style={{
+                    flexShrink: 0,
+                    fontFamily: "'DM Serif Display',serif",
+                    fontSize: "1.15rem",
+                    color: T.cobalt,
+                    opacity: 0.55,
+                    lineHeight: 1,
+                    minWidth: "1.6rem",
+                    paddingTop: 2,
+                  }}
+                >
+                  {String(i + 1).padStart(2, "0")}
+                </div>
+                <div>
+                  <div style={{ fontWeight: 600, fontSize: "0.88rem", color: T.ink }}>{item.label}</div>
+                  <div style={{ fontSize: "0.8rem", color: T.inkLt, marginTop: "0.1rem", lineHeight: 1.6 }}>{item.desc}</div>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 
       {/* Multi-step form */}
-      <section ref={r3} id="brands-form" style={{ background: T.ivory, padding: "3.5rem 1.25rem" }}>
-        <div className={`fade-up ${v3 ? "visible" : ""}`} style={{ maxWidth: 680, margin: "0 auto" }}>
+      <section ref={r4} id="brands-form" style={{ background: T.ivory, padding: "3.5rem 1.25rem" }}>
+        <div className={`fade-up ${v4 ? "visible" : ""}`} style={{ maxWidth: 680, margin: "0 auto" }}>
           <Tag>Formulario</Tag>
           <h2
             style={{

@@ -15,7 +15,7 @@ export function DarkTag({ children }: { children: ReactNode }) {
         fontWeight: 600,
         letterSpacing: "0.12em",
         textTransform: "uppercase",
-        color: "rgba(150,185,255,0.9)",
+        color: "rgba(255,255,255,0.88)",
         fontFamily: "'DM Sans',sans-serif",
       }}
     >
