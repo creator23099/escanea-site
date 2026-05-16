@@ -584,9 +584,18 @@ export function DriversContent() {
           <h2 style={h2Drivers}>Diseñado para no afectar la experiencia del pasajero.</h2>
           <div style={whiteTrustCardShell}>
             <div style={{ width: 24, height: 2, background: T.cobalt, marginBottom: 12 }} aria-hidden />
-            <p style={{ ...bodyMd, margin: 0 }}>
-              Las campañas mantienen un estándar editorial: no son stickers llamativos ni publicidad tradicional. Los materiales se ubican en zonas específicas que no interfieren con la visibilidad ni con la experiencia del pasajero, para que tu calificación, tus propinas y tu relación con los pasajeros se mantengan intactas.
-            </p>
+            <div style={{ display: "grid", gap: "0.85rem" }}>
+              {[
+                ["Apariencia profesional", "No son stickers llamativos ni publicidad tradicional."],
+                ["Ubicación sin interferir", "Los materiales se ubican en zonas que no afectan la visibilidad ni la experiencia del pasajero."],
+                ["Relación intacta", "Tu calificación, tus propinas y tu relación con los pasajeros se mantienen."],
+              ].map(([title, desc]) => (
+                <div key={title}>
+                  <strong style={{ color: T.cobalt, display: "block", fontSize: "0.9rem", marginBottom: "0.2rem" }}>{title}</strong>
+                  <p style={{ ...bodyMd, margin: 0 }}>{desc}</p>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </section>
