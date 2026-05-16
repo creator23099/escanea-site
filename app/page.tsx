@@ -576,7 +576,7 @@ function Navbar({ page, setPage, scrolled }: NavbarProps) {
             border: "none",
             cursor: "pointer",
             fontFamily: "'DM Serif Display',serif",
-            fontSize: "1.15rem",
+            fontSize: "1.3rem",
             color: T.ink,
             letterSpacing: "0.02em",
             padding: "0.25rem 0",
