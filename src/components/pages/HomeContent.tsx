@@ -184,10 +184,9 @@ export function HomeContent() {
       {/* -- CÓMO FUNCIONA ------------------------------------------------------ */}
       <section ref={r1} style={{ background: T.navy, padding: "4rem 1.25rem" }} aria-label="Cómo funciona">
         <div className={`fade-up ${v1 ? "visible" : ""}`} style={{ maxWidth: 680, margin: "0 auto" }}>
-          <div style={{ marginBottom: "0.5rem" }}>
+          <div style={{ marginBottom: "1.2rem" }}>
             <DarkTag>Activando nuestras primeras campañas en Colombia</DarkTag>
           </div>
-          <DarkTag>Por qué Escanea</DarkTag>
           <h2
             style={{
               fontFamily: "'DM Serif Display',serif",
