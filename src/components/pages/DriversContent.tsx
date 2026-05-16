@@ -104,6 +104,13 @@ const whiteTrustCardShell: CSSProperties = {
   background: T.white,
 };
 
+const darkTrustCardShell: CSSProperties = {
+  ...trustCardShell,
+  background: T.navy,
+  borderColor: T.navy,
+  color: T.white,
+};
+
 const MUTED_COBALT = "rgba(26,79,214,0.58)";
 
 const CRITERIA_ITEMS = [
@@ -197,10 +204,10 @@ function BrandedStackList({ items, background = T.ivoryDk }: { items: string[]; 
   );
 }
 
-function TrustAccentTitle({ children }: { children: ReactNode }) {
+function DarkTrustAccentTitle({ children }: { children: ReactNode }) {
   return (
     <>
-      <div style={{ width: 24, height: 2, background: T.cobalt, marginBottom: 12 }} aria-hidden />
+      <div style={{ width: 24, height: 2, background: T.cobaltLt, marginBottom: 12 }} aria-hidden />
       <div
         style={{
           fontFamily: "'DM Sans',sans-serif",
@@ -208,7 +215,7 @@ function TrustAccentTitle({ children }: { children: ReactNode }) {
           fontWeight: 700,
           letterSpacing: "0.06em",
           textTransform: "uppercase",
-          color: T.ink,
+          color: "rgba(150,185,255,0.85)",
           marginBottom: "0.65rem",
         }}
       >
@@ -274,6 +281,11 @@ export function DriversContent() {
     fontSize: "0.92rem",
     color: T.inkMd,
     lineHeight: 1.75,
+  };
+
+  const darkTrustBody: CSSProperties = {
+    ...trustBody,
+    color: "rgba(255,255,255,0.72)",
   };
 
   const h2Drivers: CSSProperties = {
@@ -542,21 +554,21 @@ export function DriversContent() {
             Usamos materiales de calidad profesional, los mismos estándares utilizados por flotas vehiculares en todo el mundo.
           </p>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div style={whiteTrustCardShell}>
-              <TrustAccentTitle>REMOVIBLES SIN RESIDUO</TrustAccentTitle>
-              <p style={trustBody}>Al finalizar la campaña, los materiales se retiran con un proceso profesional que no deja adhesivo ni marcas en la pintura ni en los vidrios originales.</p>
+            <div style={darkTrustCardShell}>
+              <DarkTrustAccentTitle>REMOVIBLES SIN RESIDUO</DarkTrustAccentTitle>
+              <p style={darkTrustBody}>Al finalizar la campaña, los materiales se retiran con un proceso profesional que no deja adhesivo ni marcas en la pintura ni en los vidrios originales.</p>
             </div>
-            <div style={whiteTrustCardShell}>
-              <TrustAccentTitle>INSTALACIÓN COORDINADA</TrustAccentTitle>
-              <p style={trustBody}>Un equipo especializado realiza la instalación en menos de 30 minutos. No tienes que aprender nada técnico.</p>
+            <div style={darkTrustCardShell}>
+              <DarkTrustAccentTitle>INSTALACIÓN COORDINADA</DarkTrustAccentTitle>
+              <p style={darkTrustBody}>Un equipo especializado realiza la instalación en menos de 30 minutos. No tienes que aprender nada técnico.</p>
             </div>
-            <div style={whiteTrustCardShell}>
-              <TrustAccentTitle>SIN MODIFICACIONES PERMANENTES</TrustAccentTitle>
-              <p style={trustBody}>No se hacen agujeros, no se altera el vehículo, no se compromete tu reventa.</p>
+            <div style={darkTrustCardShell}>
+              <DarkTrustAccentTitle>SIN MODIFICACIONES PERMANENTES</DarkTrustAccentTitle>
+              <p style={darkTrustBody}>No se hacen agujeros, no se altera el vehículo, no se compromete tu reventa.</p>
             </div>
-            <div style={whiteTrustCardShell}>
-              <TrustAccentTitle>DOCUMENTACIÓN PREVIA</TrustAccentTitle>
-              <p style={trustBody}>Antes de instalar, documentamos el estado del vehículo contigo presente.</p>
+            <div style={darkTrustCardShell}>
+              <DarkTrustAccentTitle>DOCUMENTACIÓN PREVIA</DarkTrustAccentTitle>
+              <p style={darkTrustBody}>Antes de instalar, documentamos el estado del vehículo contigo presente.</p>
             </div>
           </div>
           <p style={{ fontFamily: "'DM Serif Display',serif", fontSize: "1.08rem", fontStyle: "italic", fontWeight: 400, color: MUTED_COBALT, marginTop: 48, lineHeight: 1.6 }}>
