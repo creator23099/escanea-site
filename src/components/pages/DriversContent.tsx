@@ -128,7 +128,7 @@ const MUTED_COBALT = "rgba(26,79,214,0.58)";
 
 const CRITERIA_ITEMS = [
   "Vehículo particular en buen estado",
-  "Mínimo 3 meses activo en Uber, DiDi o InDrive",
+  "Activo en plataformas como Uber, DiDi o InDrive",
   "Recorridos consistentes en Bogotá o Medellín",
   "Sin daños mayores visibles en pintura o vidrios",
 ];
@@ -699,7 +699,7 @@ export function DriversContent() {
           <Tag>Ingresos</Tag>
           <h2 style={h2Drivers}>Ingresos adicionales por los recorridos que ya haces.</h2>
           <p style={{ ...bodyMd, marginTop: 0 }}>
-            Cada campaña tiene un pago definido antes de aceptar. Los pagos típicos están entre 200.000 y 400.000 COP mensuales, según la campaña, ciudad y vehículo.
+            Cada campaña tiene un pago definido que conoces antes de aceptar. La compensación varía según el tipo de campaña que selecciones, tu ciudad y tu vehículo. Una vez completes tu postulación, alguien de nuestro equipo de onboarding te contactará con los detalles específicos de las campañas disponibles para ti.
           </p>
           <div style={{ marginTop: "1rem" }}>
             <BrandedStackList items={INGRESOS_ITEMS} background={T.white} />
@@ -768,7 +768,7 @@ export function DriversContent() {
             >
               <StepBar current={step} total={TOTAL} />
               <div style={{ fontSize: "0.72rem", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: T.inkLt, marginBottom: "1rem" }}>
-                Paso {step + 1}: {DRIVERS_STEP_LABELS[step]}
+                Paso {step + 1} de {TOTAL}: {DRIVERS_STEP_LABELS[step]}
               </div>
               <div style={{ minHeight: 120, marginBottom: "1rem" }}>{stepContent[step]}</div>
               {error && <p className="field-error" role="alert">{error}</p>}

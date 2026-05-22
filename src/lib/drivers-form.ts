@@ -1,13 +1,13 @@
 import type { DriversFormData } from "@/lib/types";
 
 export const DRIVERS_STEP_LABELS = [
-  "Ciudad",
-  "Zonas",
-  "Kilómetros",
-  "Vehículo",
-  "Contacto",
-  "Campaña",
-  "Adicional",
+  "Ciudad principal donde manejas",
+  "Zonas que manejas con más frecuencia",
+  "Kilómetros promedio que manejas al mes",
+  "Vehículo: año, marca, modelo y color",
+  "Información de contacto",
+  "Tipo de campaña",
+  "Información adicional",
 ] as const;
 
 export const ZONES_MEDELLIN = [

@@ -72,7 +72,7 @@ export function Footer() {
               <div style={{ fontSize: "0.85rem", color: "rgba(255,255,255,0.55)" }}>www.escanea.co</div>
               <div className="social-row" role="group" aria-label="Redes sociales">
                 <a
-                  href="https://www.instagram.com/escanea_co?igsh=emwzYnI4N2drOGV1"
+                  href="https://www.instagram.com/escanea_co"
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="Escanea en Instagram"
@@ -83,7 +83,7 @@ export function Footer() {
                   </svg>
                 </a>
                 <a
-                  href="https://www.linkedin.com/company/escanea/?viewAsMember=true"
+                  href="https://www.linkedin.com/company/escanea/"
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="Escanea en LinkedIn"
@@ -107,7 +107,7 @@ export function Footer() {
             gap: "0.5rem",
           }}
         >
-          <div style={{ fontSize: "0.75rem", color: "rgba(255,255,255,0.25)" }}>© 2025 Escanea. Colombia.</div>
+          <div style={{ fontSize: "0.75rem", color: "rgba(255,255,255,0.25)" }}>© 2026 Escanea. Colombia.</div>
           <div style={{ fontSize: "0.75rem", color: "rgba(255,255,255,0.25)" }}>Media urbana en movimiento.</div>
         </div>
       </div>
