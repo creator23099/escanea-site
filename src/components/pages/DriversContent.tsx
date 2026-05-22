@@ -5,6 +5,14 @@ import { StepBar } from "@/components/primitives/StepBar";
 import { SuccessCard } from "@/components/primitives/SuccessCard";
 import { Tag } from "@/components/primitives/Tag";
 import { T, FL } from "@/lib/tokens";
+import {
+  DRIVERS_STEP_LABELS,
+  INITIAL_DRIVERS,
+  KM_OPTIONS,
+  PREMIUM_OPTIONS,
+  driversPayloadForApi,
+  zonesForCity,
+} from "@/lib/drivers-form";
 import type { AccordionItem, DriversFormData } from "@/lib/types";
 import { useInView } from "@/lib/use-in-view";
 import { validateDriversStep } from "@/lib/validation";
@@ -36,18 +44,23 @@ const DRIVER_SPEC_FAQ: AccordionItem[] = [
   },
 ];
 
-const DRIVERS_STEP_LABELS = ["Ciudad", "Zonas", "Kilómetros", "Vehículo", "Premium", "Contacto", "Notas"];
+const fieldHint: CSSProperties = {
+  fontFamily: "'DM Sans',sans-serif",
+  fontSize: "0.82rem",
+  color: T.inkMd,
+  marginTop: "0.35rem",
+  lineHeight: 1.5,
+};
 
-const INITIAL_DRIVERS: DriversFormData = {
-  ciudad: "",
-  zonas: "",
-  km: "",
-  vehiculo: "",
-  premium: false,
-  nombre: "",
-  whatsapp: "",
-  email: "",
-  notas: "",
+const zoneLabel: CSSProperties = {
+  display: "flex",
+  alignItems: "flex-start",
+  gap: "0.65rem",
+  cursor: "pointer",
+  fontFamily: "'DM Sans',sans-serif",
+  fontSize: "0.9rem",
+  color: T.inkMd,
+  lineHeight: 1.45,
 };
 
 const inner: CSSProperties = {
@@ -305,6 +318,21 @@ export function DriversContent() {
     []
   );
 
+  const setCiudad = (ciudad: string) => {
+    setFd((f) => ({ ...f, ciudad, zonas: [], zonasOtra: "" }));
+    setError(null);
+  };
+
+  const toggleZone = (zone: string) => {
+    setFd((f) => {
+      const selected = f.zonas.includes(zone);
+      const zonas = selected ? f.zonas.filter((z) => z !== zone) : [...f.zonas, zone];
+      const zonasOtra = zone === "Otra" && selected ? "" : f.zonasOtra;
+      return { ...f, zonas, zonasOtra };
+    });
+    setError(null);
+  };
+
   const next = () => {
     const err = validateDriversStep(step, fd);
     if (err) {
@@ -322,10 +350,13 @@ export function DriversContent() {
   };
 
   const submit = async () => {
-    const err = validateDriversStep(step, fd);
-    if (err) {
-      setError(err);
-      return;
+    for (let i = 0; i <= 5; i++) {
+      const err = validateDriversStep(i, fd);
+      if (err) {
+        setError(err);
+        setStep(i);
+        return;
+      }
     }
     if (submitting) return;
     setSubmitting(true);
@@ -334,7 +365,7 @@ export function DriversContent() {
       const res = await fetch("/api/contact/drivers", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(fd),
+        body: JSON.stringify(driversPayloadForApi(fd)),
       });
       const body = (await res.json().catch(() => null)) as { ok?: boolean; error?: string } | null;
       if (!res.ok || !body?.ok) {
@@ -349,99 +380,162 @@ export function DriversContent() {
     }
   };
 
+  const zoneOptions = zonesForCity(fd.ciudad);
+
   const stepContent: ReactNode[] = [
     <div key={0}>
-      <label htmlFor="d-ciudad" style={FL}>Ciudad</label>
-      <select id="d-ciudad" className={`fi ${error ? "error" : ""}`} value={fd.ciudad} onChange={upd("ciudad")} required aria-required="true">
+      <label htmlFor="d-ciudad" style={FL}>Ciudad principal donde manejas</label>
+      <select
+        id="d-ciudad"
+        className={`fi ${error ? "error" : ""}`}
+        value={fd.ciudad}
+        onChange={(e) => setCiudad(e.target.value)}
+        required
+        aria-required="true"
+      >
         <option value="">Selecciona tu ciudad</option>
-        <option>Bogotá</option>
         <option>Medellín</option>
+        <option>Bogotá</option>
       </select>
     </div>,
     <div key={1}>
-      <label htmlFor="d-zonas" style={FL}>Barrios o zonas donde más conduces</label>
-      <textarea id="d-zonas" className={`fi ${error ? "error" : ""}`} rows={3} value={fd.zonas} onChange={upd("zonas")} placeholder="Ej: Kennedy, Bello, El Poblado..." />
+      <fieldset style={{ border: 0, margin: 0, padding: 0 }}>
+        <legend style={{ ...FL, padding: 0, marginBottom: 0 }}>Zonas que manejas con más frecuencia</legend>
+        <div
+          role="group"
+          aria-label="Zonas que manejas con más frecuencia"
+          style={{ display: "flex", flexDirection: "column", gap: "0.65rem", marginTop: "0.75rem" }}
+        >
+          {zoneOptions.map((zone) => (
+            <label key={zone} style={zoneLabel}>
+              <input
+                type="checkbox"
+                checked={fd.zonas.includes(zone)}
+                onChange={() => toggleZone(zone)}
+                style={{ marginTop: "0.2rem", flexShrink: 0, accentColor: T.cobalt }}
+              />
+              <span>{zone}</span>
+            </label>
+          ))}
+        </div>
+        {fd.zonas.includes("Otra") && (
+          <input
+            id="d-zonas-otra"
+            className={`fi ${error ? "error" : ""}`}
+            type="text"
+            value={fd.zonasOtra}
+            onChange={upd("zonasOtra")}
+            placeholder="Especifica tu zona"
+            style={{ marginTop: "0.75rem" }}
+            aria-label="Especifica tu zona"
+          />
+        )}
+      </fieldset>
     </div>,
     <div key={2}>
-      <label htmlFor="d-km" style={FL}>Kilómetros aproximados por mes</label>
-      <select id="d-km" className="fi" value={fd.km} onChange={upd("km")}>
+      <label htmlFor="d-km" style={FL}>Kilómetros promedio que manejas al mes</label>
+      <select id="d-km" className={`fi ${error ? "error" : ""}`} value={fd.km} onChange={upd("km")} required aria-required="true">
         <option value="">Seleccionar</option>
-        <option>Menos de 1.000 km</option>
-        <option>1.000 – 2.500 km</option>
-        <option>2.500 – 5.000 km</option>
-        <option>Más de 5.000 km</option>
+        {KM_OPTIONS.map((opt) => (
+          <option key={opt}>{opt}</option>
+        ))}
       </select>
+      <p style={fieldHint}>Manejas tus rutas normales — no necesitas cambiar nada</p>
     </div>,
     <div key={3}>
-      <label htmlFor="d-vehiculo" style={FL}>Vehículo (marca / modelo / año)</label>
-      <input id="d-vehiculo" className={`fi ${error ? "error" : ""}`} type="text" value={fd.vehiculo} onChange={upd("vehiculo")} placeholder="Ej: Chevrolet Spark 2020" />
+      <label htmlFor="d-vehiculo" style={FL}>Vehículo: año, marca, modelo y color</label>
+      <input
+        id="d-vehiculo"
+        className={`fi ${error ? "error" : ""}`}
+        type="text"
+        value={fd.vehiculo}
+        onChange={upd("vehiculo")}
+        placeholder="Ej: 2018 Chevrolet Spark, Blanco"
+        required
+        aria-required="true"
+      />
     </div>,
-    <div key={4}>
-      <button
-        type="button"
-        role="checkbox"
-        aria-checked={fd.premium}
-        onClick={() => setFd((f) => ({ ...f, premium: !f.premium }))}
-        style={{
-          display: "flex",
-          alignItems: "flex-start",
-          gap: "0.85rem",
-          background: T.ivoryDk,
-          border: `1.5px solid ${fd.premium ? T.cobalt : T.stone}`,
-          borderRadius: 12,
-          padding: "1.25rem",
-          cursor: "pointer",
-          width: "100%",
-          textAlign: "left",
-          transition: "border-color 0.18s",
-          fontFamily: "'DM Sans',sans-serif",
-        }}
-      >
-        <div
-          aria-hidden="true"
-          style={{
-            width: 20,
-            height: 20,
-            borderRadius: 4,
-            flexShrink: 0,
-            border: `2px solid ${fd.premium ? T.cobalt : T.stoneMd}`,
-            background: fd.premium ? T.cobalt : T.white,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            transition: "all 0.18s",
-            marginTop: 2,
-          }}
-        >
-          {fd.premium && (
-            <div style={{ width: 10, height: 7, borderLeft: "2px solid #fff", borderBottom: "2px solid #fff", transform: "rotate(-45deg) translate(1px,-1px)" }} />
-          )}
-        </div>
-        <div>
-          <div style={{ fontWeight: 600, fontSize: "0.9rem", color: T.ink }}>Campañas premium con vinilo trasero</div>
-          <div style={{ fontSize: "0.82rem", color: T.inkMd, marginTop: "0.25rem", lineHeight: 1.6 }}>
-            Estoy interesado en participar en campañas con instalación de vinilo en la parte trasera del vehículo.
-          </div>
-        </div>
-      </button>
-    </div>,
-    <div key={5} style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
+    <div key={4} style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
+      <div style={{ ...FL, marginBottom: "0.15rem" }}>Información de contacto</div>
       <div>
         <label htmlFor="d-nombre" style={FL}>Nombre completo</label>
-        <input id="d-nombre" className={`fi ${error && !fd.nombre ? "error" : ""}`} type="text" value={fd.nombre} onChange={upd("nombre")} placeholder="Tu nombre" required aria-required="true" />
+        <input
+          id="d-nombre"
+          className={`fi ${error && !fd.nombre ? "error" : ""}`}
+          type="text"
+          value={fd.nombre}
+          onChange={upd("nombre")}
+          placeholder="Tu nombre"
+          required
+          aria-required="true"
+        />
       </div>
       <div>
         <label htmlFor="d-whatsapp" style={FL}>WhatsApp</label>
-        <input id="d-whatsapp" className={`fi ${error && !fd.whatsapp ? "error" : ""}`} type="tel" value={fd.whatsapp} onChange={upd("whatsapp")} placeholder="+57 300 000 0000" required aria-required="true" />
+        <input
+          id="d-whatsapp"
+          className={`fi ${error && !fd.whatsapp ? "error" : ""}`}
+          type="tel"
+          value={fd.whatsapp}
+          onChange={upd("whatsapp")}
+          placeholder="+57 300 000 0000"
+          required
+          aria-required="true"
+        />
       </div>
       <div>
         <label htmlFor="d-email" style={FL}>Email</label>
-        <input id="d-email" className={`fi ${error && !fd.email ? "error" : ""}`} type="email" value={fd.email} onChange={upd("email")} placeholder="tu@correo.com" required aria-required="true" />
+        <input
+          id="d-email"
+          className={`fi ${error && !fd.email ? "error" : ""}`}
+          type="email"
+          value={fd.email}
+          onChange={upd("email")}
+          placeholder="tu@correo.com"
+          required
+          aria-required="true"
+        />
       </div>
     </div>,
+    <div key={5}>
+      <fieldset style={{ border: 0, margin: 0, padding: 0 }}>
+        <legend style={{ ...FL, padding: 0, marginBottom: 0 }}>
+          ¿Te interesa la campaña premium con vinilo adicional en la ventana trasera?
+        </legend>
+        <div
+          role="radiogroup"
+          aria-label="Tipo de campaña"
+          style={{ display: "flex", flexDirection: "column", gap: "0.85rem", marginTop: "0.75rem" }}
+        >
+          {PREMIUM_OPTIONS.map((opt) => (
+            <label key={opt} style={zoneLabel}>
+              <input
+                type="radio"
+                name="d-premium"
+                checked={fd.premium === opt}
+                onChange={() => {
+                  setFd((f) => ({ ...f, premium: opt }));
+                  setError(null);
+                }}
+                style={{ marginTop: "0.25rem", flexShrink: 0, accentColor: T.cobalt }}
+              />
+              <span>{opt}</span>
+            </label>
+          ))}
+        </div>
+      </fieldset>
+      <p style={fieldHint}>Los conductores piloto reciben prioridad para futuras campañas</p>
+    </div>,
     <div key={6}>
-      <label htmlFor="d-notas" style={FL}>Información adicional</label>
-      <textarea id="d-notas" className="fi" rows={4} value={fd.notas} onChange={upd("notas")} placeholder="Cuéntanos sobre tus rutas, horarios o cualquier detalle importante." />
+      <label htmlFor="d-notas" style={FL}>¿Algo más que quieras compartir?</label>
+      <textarea
+        id="d-notas"
+        className="fi"
+        rows={4}
+        value={fd.notas}
+        onChange={upd("notas")}
+        placeholder="Cualquier información adicional, preguntas, o comentarios"
+      />
     </div>,
   ];
 
@@ -661,7 +755,11 @@ export function DriversContent() {
           </p>
 
           {sent ? (
-            <SuccessCard title="Recibimos tu postulación." message="Te contactamos por WhatsApp en menos de 48 horas." bg={T.white} />
+            <SuccessCard
+              title="¡Gracias! Tu postulación está registrada."
+              message="Te contactaremos cuando lancemos la próxima campaña en tu ciudad."
+              bg={T.white}
+            />
           ) : (
             <div
               style={{ background: T.white, border: `1.5px solid ${T.stone}`, borderRadius: 16, padding: "1.75rem" }}

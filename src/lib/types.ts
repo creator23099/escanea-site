@@ -27,10 +27,11 @@ export interface BrandsFormData {
 
 export interface DriversFormData {
   ciudad: string;
-  zonas: string;
+  zonas: string[];
+  zonasOtra: string;
   km: string;
   vehiculo: string;
-  premium: boolean;
+  premium: string;
   nombre: string;
   whatsapp: string;
   email: string;

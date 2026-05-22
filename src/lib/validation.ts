@@ -21,18 +21,34 @@ export function validateBrandsStep(step: number, fd: BrandsFormData): string | n
 
 export function validateDriversStep(step: number, fd: DriversFormData): string | null {
   switch (step) {
-    case 0: return fd.ciudad ? null : "Por favor selecciona tu ciudad.";
-    case 1: return fd.zonas.trim() ? null : "Por favor indica al menos una zona.";
-    case 2: return null;
-    case 3: return fd.vehiculo.trim() ? null : "Por favor ingresa los datos de tu vehículo.";
-    case 4: return null;
-    case 5: {
-      if (!fd.nombre.trim()) return "Por favor ingresa tu nombre.";
-      if (!fd.whatsapp.trim()) return "Por favor ingresa tu número de WhatsApp.";
-      if (!fd.email.trim() || !/\S+@\S+\.\S+/.test(fd.email)) return "Por favor ingresa un email válido.";
+    case 0:
+      return fd.ciudad === "Medellín" || fd.ciudad === "Bogotá"
+        ? null
+        : "Por favor selecciona tu ciudad.";
+    case 1: {
+      if (fd.zonas.length === 0) return "Por favor selecciona al menos una zona.";
+      if (fd.zonas.includes("Otra") && !fd.zonasOtra.trim()) {
+        return "Por favor especifica tu zona en el campo de texto.";
+      }
       return null;
     }
-    case 6: return null;
-    default: return null;
+    case 2:
+      return fd.km ? null : "Por favor selecciona tus kilómetros promedio al mes.";
+    case 3:
+      return fd.vehiculo.trim() ? null : "Por favor ingresa los datos de tu vehículo.";
+    case 4: {
+      if (!fd.nombre.trim()) return "Por favor ingresa tu nombre.";
+      if (!fd.whatsapp.trim()) return "Por favor ingresa tu número de WhatsApp.";
+      if (!fd.email.trim() || !/\S+@\S+\.\S+/.test(fd.email)) {
+        return "Por favor ingresa un email válido.";
+      }
+      return null;
+    }
+    case 5:
+      return fd.premium ? null : "Por favor selecciona una opción de campaña.";
+    case 6:
+      return null;
+    default:
+      return null;
   }
 }

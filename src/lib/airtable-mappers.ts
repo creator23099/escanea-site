@@ -10,12 +10,13 @@
  *   - km "1.000 – 2.500 km" → Avg KM/month="1000-2000"  (lossy)
  *   - km "2.500 – 5.000 km" → Avg KM/month="3000-4000"  (lossy)
  *   - Drivers email → Notes only  (no Email column on Drivers in live schema)
- *   - premium=true → Notes only   (Vehicle Type left blank for ops)
+ *   - premium choice → Notes only   (Vehicle Type left blank for ops)
  *
  * The raw form values are preserved in Notes so any future schema fix is
  * reversible without data loss.
  */
 
+import { buildZonasPayload } from "@/lib/drivers-form";
 import type { BrandsFormData, DriversFormData } from "@/lib/types";
 
 const todayISO = (): string => new Date().toISOString().slice(0, 10);
@@ -70,12 +71,11 @@ const DRIVER_ZONE_MAP: Record<string, string> = {
 };
 
 const DRIVER_KM_MAP: Record<string, string> = {
-  // Clean 1:1 mappings.
-  "Menos de 1.000 km": "<1000",
-  "Más de 5.000 km": "4000+",
-  // Lossy mappings (form bands don't align with Airtable bands):
-  "1.000 – 2.500 km": "1000-2000",
-  "2.500 – 5.000 km": "3000-4000",
+  "Menos de 1.000 km / mes": "<1000",
+  "1.000 – 2.000 km / mes": "1000-2000",
+  "2.000 – 3.000 km / mes": "2000-3000",
+  "3.000 – 4.000 km / mes": "3000-4000",
+  "Más de 4.000 km / mes": "4000+",
 };
 
 export function toDriverRecord(fd: DriversFormData): Record<string, unknown> {
@@ -83,7 +83,7 @@ export function toDriverRecord(fd: DriversFormData): Record<string, unknown> {
   const whatsapp = fd.whatsapp.trim();
   const email = fd.email.trim();
   const vehiculo = fd.vehiculo.trim();
-  const zonas = fd.zonas.trim();
+  const zonas = buildZonasPayload(fd);
   const notas = fd.notas.trim();
 
   const record: Record<string, unknown> = {
@@ -107,7 +107,7 @@ export function toDriverRecord(fd: DriversFormData): Record<string, unknown> {
     zonas ? `Zonas: ${zonas}` : null,
     fd.km ? `KM/mes (form): ${fd.km}` : null,
     email ? `Email: ${email}` : null,
-    fd.premium ? "Premium (vinilo trasero): Sí" : null,
+    fd.premium ? `Campaña: ${fd.premium}` : null,
     notas ? `Notas:\n${notas}` : null,
   ]);
   if (notes) record.Notes = notes;

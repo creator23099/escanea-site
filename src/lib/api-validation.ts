@@ -9,6 +9,7 @@
  * for the mappers.
  */
 
+import { PREMIUM_OPTIONS } from "@/lib/drivers-form";
 import type { BrandsFormData, DriversFormData } from "@/lib/types";
 
 const MAX_TEXT = 5000;
@@ -71,24 +72,40 @@ export function parseBrandsPayload(raw: unknown): ParseResult<BrandsFormData> {
 export function parseDriversPayload(raw: unknown): ParseResult<DriversFormData> {
   if (!isPlainObject(raw)) return { ok: false, error: "Payload inválido." };
 
+  const zonasStr = pickString(raw, "zonas", MAX_TEXT);
+  const premiumRaw = raw.premium;
+  let premium = "";
+  if (isString(premiumRaw)) {
+    premium = premiumRaw.slice(0, MAX_TEXT);
+  } else if (premiumRaw === true) {
+    premium = PREMIUM_OPTIONS[0];
+  }
+
   const value: DriversFormData = {
     ciudad: pickString(raw, "ciudad", MAX_TINY),
-    zonas: pickString(raw, "zonas", MAX_TEXT),
+    zonas: zonasStr ? [zonasStr] : [],
+    zonasOtra: "",
     km: pickString(raw, "km", MAX_TINY),
     vehiculo: pickString(raw, "vehiculo", MAX_SHORT),
-    premium: raw.premium === true,
+    premium,
     nombre: pickString(raw, "nombre", MAX_SHORT),
     whatsapp: pickString(raw, "whatsapp", MAX_TINY),
     email: pickString(raw, "email", MAX_SHORT),
     notas: pickString(raw, "notas", MAX_TEXT),
   };
 
+  if (value.ciudad !== "Medellín" && value.ciudad !== "Bogotá") {
+    return { ok: false, error: "Por favor selecciona tu ciudad." };
+  }
+  if (!zonasStr.trim()) return { ok: false, error: "Por favor indica al menos una zona." };
+  if (!value.km.trim()) return { ok: false, error: "Por favor selecciona tus kilómetros promedio al mes." };
   if (!value.nombre.trim()) return { ok: false, error: "Por favor ingresa tu nombre." };
   if (!value.whatsapp.trim()) return { ok: false, error: "Por favor ingresa tu número de WhatsApp." };
   if (!value.email.trim() || !EMAIL_RE.test(value.email)) {
     return { ok: false, error: "Por favor ingresa un email válido." };
   }
   if (!value.vehiculo.trim()) return { ok: false, error: "Por favor ingresa los datos de tu vehículo." };
+  if (!value.premium.trim()) return { ok: false, error: "Por favor selecciona una opción de campaña." };
 
   return { ok: true, value };
 }
