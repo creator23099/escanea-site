@@ -2,7 +2,7 @@
  * POST /api/contact/drivers
  *
  * Mirror of the brands handler. Accepts a JSON-encoded DriversFormData,
- * server-validates, maps to the Drivers table, and creates one record.
+ * server-validates, maps to the Driver Form Submissions table, and creates one record.
  *
  * See src/app/api/contact/brands/route.ts for the shared design notes.
  */
@@ -15,7 +15,7 @@ import { parseDriversPayload } from "@/lib/api-validation";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-const DRIVERS_TABLE_ID = "tblboE9y6QBy1CsAf"; // "Drivers"
+const DRIVERS_TABLE_ID = "tblD9UJ7g8J2QbZzb"; // "Driver Form Submissions"
 
 export async function POST(req: Request) {
   let raw: unknown;

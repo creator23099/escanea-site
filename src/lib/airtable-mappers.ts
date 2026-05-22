@@ -3,20 +3,12 @@
  * record shape for the corresponding pipeline table. No I/O, no env reads,
  * no side effects — safe to unit-test by inspection.
  *
- * Locked decisions (documented inline below) match the mapping plan that
- * was shown before implementation:
- *
- *   - Bogotá → Zone="Bogotá Otra"  (form doesn't ask sub-zone)
- *   - km "1.000 – 2.500 km" → Avg KM/month="1000-2000"  (lossy)
- *   - km "2.500 – 5.000 km" → Avg KM/month="3000-4000"  (lossy)
- *   - Drivers email → Notes only  (no Email column on Drivers in live schema)
- *   - premium choice → Notes only   (Vehicle Type left blank for ops)
- *
- * The raw form values are preserved in Notes so any future schema fix is
- * reversible without data loss.
+ * Driver submissions map 1:1 to the "Driver Form Submissions" table columns.
+ * Ciudad, KM por mes, and Tipo de campaña use form values (with short labels
+ * for campaign type only).
  */
 
-import { buildZonasPayload } from "@/lib/drivers-form";
+import { PREMIUM_OPTIONS, buildZonasPayload } from "@/lib/drivers-form";
 import type { BrandsFormData, DriversFormData } from "@/lib/types";
 
 const todayISO = (): string => new Date().toISOString().slice(0, 10);
@@ -61,56 +53,34 @@ export function toAdvertiserRecord(fd: BrandsFormData): Record<string, unknown> 
 }
 
 /* -------------------------------------------------------------------------- */
-/* Drivers form → Drivers table                                               */
+/* Drivers form → Driver Form Submissions table                               */
 /* -------------------------------------------------------------------------- */
 
-const DRIVER_ZONE_MAP: Record<string, string> = {
-  // Form doesn't collect a Bogotá sub-zone; ops team refines from Notes.
-  "Bogotá": "Bogotá Otra",
-  "Medellín": "Medellín",
+const PREMIUM_AIRTABLE_LABELS: Record<string, string> = {
+  [PREMIUM_OPTIONS[0]]: "Premium (puertas + ventana)",
+  [PREMIUM_OPTIONS[1]]: "Estándar (puertas)",
+  [PREMIUM_OPTIONS[2]]: "No está seguro",
 };
 
-const DRIVER_KM_MAP: Record<string, string> = {
-  "Menos de 1.000 km / mes": "<1000",
-  "1.000 – 2.000 km / mes": "1000-2000",
-  "2.000 – 3.000 km / mes": "2000-3000",
-  "3.000 – 4.000 km / mes": "3000-4000",
-  "Más de 4.000 km / mes": "4000+",
-};
+function mapPremiumToAirtable(premium: string): string {
+  return PREMIUM_AIRTABLE_LABELS[premium] ?? premium;
+}
 
 export function toDriverRecord(fd: DriversFormData): Record<string, unknown> {
-  const nombre = fd.nombre.trim();
-  const whatsapp = fd.whatsapp.trim();
-  const email = fd.email.trim();
-  const vehiculo = fd.vehiculo.trim();
-  const zonas = buildZonasPayload(fd);
-  const notas = fd.notas.trim();
-
   const record: Record<string, unknown> = {
-    "Driver Name": nombre,
-    WhatsApp: whatsapp,
-    Status: "Waitlist",
-    Source: "Form",
-    "Sign-up Date": todayISO(),
+    Ciudad: fd.ciudad.trim(),
+    Zonas: buildZonasPayload(fd),
+    "KM por mes": fd.km.trim(),
+    Vehículo: fd.vehiculo.trim(),
+    Nombre: fd.nombre.trim(),
+    WhatsApp: fd.whatsapp.trim(),
+    Email: fd.email.trim(),
+    "Tipo de campaña": mapPremiumToAirtable(fd.premium.trim()),
+    Estado: "Nuevo",
   };
 
-  if (vehiculo) record["Vehicle Make/Model"] = vehiculo;
-
-  const zone = DRIVER_ZONE_MAP[fd.ciudad];
-  if (zone) record.Zone = zone;
-
-  const km = DRIVER_KM_MAP[fd.km];
-  if (km) record["Avg KM/month"] = km;
-
-  const notes = joinNotes([
-    fd.ciudad ? `Ciudad: ${fd.ciudad}` : null,
-    zonas ? `Zonas: ${zonas}` : null,
-    fd.km ? `KM/mes (form): ${fd.km}` : null,
-    email ? `Email: ${email}` : null,
-    fd.premium ? `Campaña: ${fd.premium}` : null,
-    notas ? `Notas:\n${notas}` : null,
-  ]);
-  if (notes) record.Notes = notes;
+  const notas = fd.notas.trim();
+  if (notas) record["Notas adicionales"] = notas;
 
   return record;
 }
