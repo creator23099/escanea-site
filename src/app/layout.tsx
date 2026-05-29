@@ -34,12 +34,10 @@ export const viewport: Viewport = {
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://www.escanea.co"),
-  // Browser tab title is intentionally minimal across every route. We do
-  // NOT set `template` here — child route metadata blocks no longer pass a
-  // `title`, so every page inherits this single string. If a future route
-  // wants a different tab title, set `title: { absolute: "…" }` on that
-  // route to bypass inheritance explicitly.
-  title: "Escanea",
+  title: {
+    default: "Escanea",
+    template: "%s",
+  },
   description:
     "Publicidad exterior en movimiento. Medible, verificable y presente donde está tu audiencia — todos los días.",
   applicationName: "Escanea",

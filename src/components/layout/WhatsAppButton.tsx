@@ -1,3 +1,5 @@
+import { WHATSAPP_URL } from "@/lib/contact";
+
 /**
  * Floating WhatsApp call-to-action.
  *
@@ -17,7 +19,7 @@
 export function WhatsAppButton() {
   return (
     <a
-      href="https://wa.me/573026691241"
+      href={WHATSAPP_URL}
       target="_blank"
       rel="noopener noreferrer"
       aria-label="Escríbenos por WhatsApp"

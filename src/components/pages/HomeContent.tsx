@@ -2,7 +2,6 @@
 import Link from "next/link";
 import { Accordion } from "@/components/primitives/Accordion";
 import { DarkTag } from "@/components/primitives/DarkTag";
-import { LiveDot } from "@/components/primitives/LiveDot";
 import { ReportList } from "@/components/primitives/ReportList";
 import { Tag } from "@/components/primitives/Tag";
 import { T } from "@/lib/tokens";
@@ -110,7 +109,7 @@ export function HomeContent() {
 
         <div style={{ maxWidth: 680, margin: "0 auto", padding: "2.5rem 1.25rem", position: "relative", zIndex: 2 }}>
           <div style={{ marginBottom: "1.5rem", animation: "fadeIn 0.6s ease 0.1s both" }}>
-            <Tag><LiveDot /> Media urbana en movimiento</Tag>
+            <Tag>La primera red de publicidad vehicular de Colombia</Tag>
           </div>
 
           <h1
@@ -124,20 +123,10 @@ export function HomeContent() {
               animation: "fadeUp 0.7s ease 0.25s both",
             }}
           >
-            ¿Y si el tráfico<br />
-            <em style={{ color: T.cobalt, fontStyle: "italic" }}>sí funcionara?</em>
+            Tu marca recorre la ciudad.
+            <br />
+            <em style={{ color: T.cobalt, fontStyle: "italic" }}>Con datos reales.</em>
           </h1>
-
-          <p style={{
-            fontSize: "0.85rem",
-            fontWeight: 400,
-            color: T.inkLt,
-            lineHeight: 1.7,
-            marginBottom: "1.1rem",
-            animation: "fadeUp 0.7s ease 0.32s both",
-          }}>
-            Lanzamiento inicial en Medellín y Bogotá.
-          </p>
 
           <p style={{
             fontSize: "1.05rem",
@@ -148,7 +137,7 @@ export function HomeContent() {
             marginBottom: "2.2rem",
             animation: "fadeUp 0.7s ease 0.38s both",
           }}>
-            Transformando el tráfico en atención medible. Publicidad en movimiento con reportes reales.
+            Publicidad en vehículos que circulan por Medellín y Bogotá todos los días. Medible con QR, verificable con reportes semanales. No más adivinanzas.
           </p>
 
           <div style={{ display: "flex", gap: "0.75rem", flexWrap: "wrap", animation: "fadeUp 0.7s ease 0.5s both" }}>

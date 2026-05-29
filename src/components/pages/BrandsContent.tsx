@@ -1,5 +1,5 @@
 "use client";
-import { useCallback, useState, type ReactNode } from "react";
+import { useCallback, useState, type CSSProperties, type ReactNode } from "react";
 import { Accordion } from "@/components/primitives/Accordion";
 import { Chips } from "@/components/primitives/Chips";
 import { ReportList } from "@/components/primitives/ReportList";
@@ -13,22 +13,56 @@ import { validateBrandsStep } from "@/lib/validation";
 
 const BRANDS_FAQ: AccordionItem[] = [
   {
-    q: "Visibilidad urbana",
-    a: "Tu marca circula donde realmente está la gente: vías principales, zonas residenciales, corredores comerciales y sectores corporativos.",
+    q: "¿Cómo se mide mi campaña?",
+    a: "Cada vehículo lleva un código QR único. Medimos escaneos, zonas recorridas, kilómetros activos y conversaciones de WhatsApp generadas. Recibes un reporte semanal con datos reales — no estimaciones.",
   },
   {
-    q: "Exposición repetida",
-    a: "La repetición física genera recordación. Tus campañas aparecen múltiples veces durante la rutina diaria de la audiencia.",
+    q: "¿Dónde va a circular mi marca?",
+    a: "Tú defines las zonas según tu objetivo: residenciales, comerciales o corporativas. Seleccionamos vehículos cuyas rutas coinciden con donde está tu audiencia.",
   },
   {
-    q: "Reportes medibles",
-    a: "Todas las campañas incluyen seguimiento QR y reportes semanales verificables. Datos reales de tu inversión.",
+    q: "¿Quiénes son los conductores?",
+    a: "Conductores activos y verificados de Uber, DiDi e InDrive, con mínimo 3 meses de experiencia y vehículos en buen estado. Es una red curada, no una plataforma masiva.",
   },
   {
-    q: "Activación de campaña",
-    a: "Seleccionamos rutas, zonas y vehículos según los objetivos y ubicación de tu campaña.",
+    q: "¿Mi marca aparecerá junto a contenido inapropiado?",
+    a: "No. Trabajamos solo con campañas de marcas profesionales. No aceptamos alcohol, tabaco, apuestas ni contenido que comprometa tu imagen.",
+  },
+  {
+    q: "¿Cuánto dura una campaña?",
+    a: "Las campañas van generalmente de 1 a 3 meses. Sin contratos largos ni permanencia obligatoria.",
+  },
+  {
+    q: "¿Qué pasa si no veo resultados?",
+    a: "Por eso medimos todo. Recibes datos semanales reales para evaluar tu inversión desde la primera semana — no esperas al final para saber qué pasó.",
+  },
+  {
+    q: "¿Cómo empiezo?",
+    a: "Llena el formulario con tu ciudad y objetivos. Nuestro equipo te contacta en menos de 24 horas para activar tu campaña.",
   },
 ];
+
+const PROBLEM_COLUMNS = [
+  {
+    label: "Publicidad digital",
+    text: "Ignorada por saturación. Bloqueada por hábito. El usuario promedio ignora la mayoría de anuncios que ve.",
+  },
+  {
+    label: "Vallas tradicionales",
+    text: "Un punto fijo. Sin datos. Sin saber quién vio tu mensaje ni cuántas veces generó atención real.",
+  },
+  {
+    label: "Inversión desperdiciada",
+    text: "Gastas sin visibilidad real. Sin reportes verificables. Sin saber si tu presupuesto llegó a tu audiencia.",
+  },
+] as const;
+
+const CAMPAIGN_STEPS = [
+  { n: "01", t: "Eliges zona y objetivo", d: "Definimos dónde debe estar tu marca según tu audiencia y metas de campaña." },
+  { n: "02", t: "Instalamos en flota activa", d: "Diseños profesionales en vehículos verificados que circulan todos los días." },
+  { n: "03", t: "Tu marca circula con QR único", d: "Cada vehículo lleva un código QR para medir interacción y alcance en tiempo real." },
+  { n: "04", t: "Recibes reportes semanales verificables", d: "Kilómetros, zonas, escaneos y conversaciones — datos reales cada semana." },
+] as const;
 
 const BRANDS_STEP_LABELS = ["Ciudad", "Zonas", "Presupuesto", "Objetivo", "Problema", "Contacto", "Comentarios"];
 
@@ -61,11 +95,51 @@ const INITIAL_BRANDS: BrandsFormData = {
   instagram: "", comments: "",
 };
 
+const inner: CSSProperties = { maxWidth: 680, margin: "0 auto" };
+
+const sectionIvory: CSSProperties = { background: T.ivory, padding: "3.5rem 1.25rem" };
+
+const sectionWhite: CSSProperties = { background: T.white, padding: "3.5rem 1.25rem" };
+
+const bodyMd: CSSProperties = {
+  fontFamily: "'DM Sans',sans-serif",
+  fontSize: "0.95rem",
+  color: T.inkMd,
+  lineHeight: 1.75,
+};
+
+const h2Brands: CSSProperties = {
+  fontFamily: "'DM Serif Display',serif",
+  fontSize: "clamp(1.6rem, 4vw, 2.4rem)",
+  color: T.ink,
+  lineHeight: 1.2,
+  margin: "1rem 0 1.75rem",
+};
+
+const faqPanelShell: CSSProperties = {
+  background: T.ivoryDk,
+  borderRadius: 12,
+  border: `1.5px solid ${T.stone}`,
+  padding: "clamp(24px, 5vw, 32px)",
+  overflow: "hidden",
+};
+
+const cardShell: CSSProperties = {
+  background: T.white,
+  border: `1.5px solid ${T.stone}`,
+  borderRadius: 12,
+  padding: "1.5rem",
+};
+
 export function BrandsContent() {
-  const [r1, v1] = useInView<HTMLElement>();
-  const [r2, v2] = useInView<HTMLElement>();
-  const [r3, v3] = useInView<HTMLElement>();
-  const [r4, v4] = useInView<HTMLElement>();
+  const [problemRef, problemVis] = useInView<HTMLElement>();
+  const [stepsRef, stepsVis] = useInView<HTMLElement>();
+  const [safetyRef, safetyVis] = useInView<HTMLElement>();
+  const [foundingRef, foundingVis] = useInView<HTMLElement>();
+  const [reportRef, reportVis] = useInView<HTMLElement>();
+  const [fraudRef, fraudVis] = useInView<HTMLElement>();
+  const [faqRef, faqVis] = useInView<HTMLElement>();
+  const [formRef, formVis] = useInView<HTMLElement>();
   const [step, setStep] = useState(0);
   const [fd, setFd] = useState<BrandsFormData>(INITIAL_BRANDS);
   const [error, setError] = useState<string | null>(null);
@@ -193,7 +267,7 @@ export function BrandsContent() {
           padding: "100px 1.25rem 3rem",
         }}
       >
-        <div style={{ maxWidth: 680, margin: "0 auto" }}>
+        <div style={inner}>
           <div style={{ animation: "fadeIn 0.6s ease 0.1s both", marginBottom: "1.2rem" }}>
             <Tag>Para Marcas</Tag>
           </div>
@@ -207,8 +281,8 @@ export function BrandsContent() {
               animation: "fadeUp 0.7s ease 0.25s both",
             }}
           >
-            Tu campaña<br />
-            <em style={{ color: T.cobalt }}>recorre la ciudad.</em>
+            ¿Y si el tráfico<br />
+            <em style={{ color: T.cobalt, fontStyle: "italic" }}>sí funcionara?</em>
           </h1>
           <p
             style={{
@@ -220,50 +294,91 @@ export function BrandsContent() {
               animation: "fadeUp 0.7s ease 0.38s both",
             }}
           >
-            Publicidad exterior en movimiento. Medible, verificable y presente donde está tu audiencia — todos los días.
+            Tu campaña recorre la ciudad en vehículos reales. Medible, verificable y presente donde está tu audiencia.
           </p>
           <button
             type="button"
             className="btn btn-primary"
             onClick={() => document.getElementById("brands-form")?.scrollIntoView({ behavior: "smooth" })}
+            style={{ animation: "fadeUp 0.7s ease 0.5s both" }}
           >
             Activar campaña →
           </button>
         </div>
       </section>
 
-      <section ref={r1} style={{ background: T.ivory, padding: "3.5rem 1.25rem" }}>
-        <div className={`fade-up ${v1 ? "visible" : ""}`} style={{ maxWidth: 680, margin: "0 auto" }}>
-          <Tag>La plataforma</Tag>
-          <h2
-            style={{
-              fontFamily: "'DM Serif Display',serif",
-              fontSize: "clamp(1.6rem, 4vw, 2.4rem)",
-              color: T.ink,
-              lineHeight: 1.2,
-              margin: "1rem 0 1.75rem",
-            }}
-          >
-            ¿Por qué Escanea?
-          </h2>
-          <Accordion items={BRANDS_FAQ} />
+      <section ref={problemRef} style={sectionIvory} aria-label="El problema">
+        <div className={`fade-up ${problemVis ? "visible" : ""}`} style={inner}>
+          <Tag>El contexto</Tag>
+          <h2 style={h2Brands}>No toda inversión publicitaria llega a tu audiencia.</h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {PROBLEM_COLUMNS.map((col) => (
+              <div key={col.label} className="cmp-bad">
+                <div style={{ fontSize: "0.68rem", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: T.inkLt, marginBottom: "0.6rem" }}>
+                  {col.label}
+                </div>
+                <p style={{ fontSize: "0.87rem", color: T.inkMd, lineHeight: 1.7, margin: 0 }}>{col.text}</p>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 
-      <section ref={r2} style={{ background: T.white, padding: "3.5rem 1.25rem" }}>
-        <div className={`fade-up ${v2 ? "visible" : ""}`} style={{ maxWidth: 680, margin: "0 auto" }}>
+      <section ref={stepsRef} style={sectionWhite} aria-label="Cómo funciona una campaña">
+        <div className={`fade-up ${stepsVis ? "visible" : ""}`} style={inner}>
+          <Tag>Cómo funciona</Tag>
+          <h2 style={h2Brands}>Tu campaña en cuatro pasos.</h2>
+          <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
+            {CAMPAIGN_STEPS.map(({ n, t, d }) => (
+              <div key={n} style={{ ...cardShell, display: "flex", gap: "1.25rem", alignItems: "flex-start" }}>
+                <div
+                  aria-hidden="true"
+                  style={{
+                    flexShrink: 0,
+                    fontFamily: "'DM Serif Display',serif",
+                    fontSize: "1.5rem",
+                    color: T.cobalt,
+                    opacity: 0.55,
+                    lineHeight: 1,
+                    paddingTop: 2,
+                  }}
+                >
+                  {n}
+                </div>
+                <div>
+                  <div style={{ fontWeight: 600, fontSize: "0.95rem", color: T.ink, marginBottom: "0.35rem" }}>{t}</div>
+                  <div style={{ fontSize: "0.87rem", color: T.inkMd, lineHeight: 1.7 }}>{d}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section ref={safetyRef} style={sectionIvory} aria-label="Seguridad de marca">
+        <div className={`fade-up ${safetyVis ? "visible" : ""}`} style={inner}>
+          <Tag>Curación</Tag>
+          <h2 style={{ ...h2Brands, marginBottom: "1rem" }}>Tu marca, en buenas manos.</h2>
+          <p style={{ ...bodyMd, margin: 0 }}>
+            Trabajamos solo con conductores verificados y campañas de marcas profesionales. No aceptamos alcohol, tabaco, apuestas ni contenido que comprometa tu imagen.
+          </p>
+        </div>
+      </section>
+
+      <section ref={foundingRef} style={sectionWhite} aria-label="Marcas fundadoras">
+        <div className={`fade-up ${foundingVis ? "visible" : ""}`} style={inner}>
+          <Tag>Oportunidad</Tag>
+          <h2 style={{ ...h2Brands, marginBottom: "1rem" }}>Marcas fundadoras.</h2>
+          <p style={{ ...bodyMd, margin: 0 }}>
+            Cupos limitados para las primeras marcas en Medellín y Bogotá. Las marcas fundadoras tienen prioridad y condiciones preferenciales para campañas futuras.
+          </p>
+        </div>
+      </section>
+
+      <section ref={reportRef} style={sectionIvory} aria-label="Reportes semanales">
+        <div className={`fade-up ${reportVis ? "visible" : ""}`} style={inner}>
           <Tag>Reportes reales. No estimaciones.</Tag>
-          <h2
-            style={{
-              fontFamily: "'DM Serif Display',serif",
-              fontSize: "clamp(1.6rem, 4vw, 2.4rem)",
-              color: T.ink,
-              lineHeight: 1.2,
-              margin: "1rem 0 1.5rem",
-            }}
-          >
-            Lo que recibes cada semana.
-          </h2>
+          <h2 style={{ ...h2Brands, marginBottom: "1.5rem" }}>Lo que recibes cada semana.</h2>
           <ReportList />
           <div style={{ display: "flex", justifyContent: "center", marginTop: "2rem" }}>
             <button
@@ -278,26 +393,16 @@ export function BrandsContent() {
         </div>
       </section>
 
-      <section ref={r3} style={{ background: T.ivory, padding: "3.5rem 1.25rem" }}>
-        <div className={`fade-up ${v3 ? "visible" : ""}`} style={{ maxWidth: 680, margin: "0 auto" }}>
+      <section ref={fraudRef} style={sectionWhite} aria-label="Protección contra fraude">
+        <div className={`fade-up ${fraudVis ? "visible" : ""}`} style={inner}>
           <Tag>Verificación</Tag>
-          <h2
-            style={{
-              fontFamily: "'DM Serif Display',serif",
-              fontSize: "clamp(1.6rem, 4vw, 2.4rem)",
-              color: T.ink,
-              lineHeight: 1.2,
-              margin: "1rem 0 1.5rem",
-            }}
-          >
-            Protección contra fraude.
-          </h2>
-          <p style={{ fontSize: "0.95rem", color: T.inkMd, lineHeight: 1.75, marginTop: 0, marginBottom: "1.25rem" }}>
+          <h2 style={{ ...h2Brands, marginBottom: "1.5rem" }}>Protección contra fraude.</h2>
+          <p style={{ ...bodyMd, marginTop: 0, marginBottom: "1.25rem" }}>
             Cada campaña incluye controles para confirmar que la ejecución sea real, visible y monitoreada durante el ciclo activo.
           </p>
           <div
             style={{
-              background: T.white,
+              background: T.ivoryDk,
               borderRadius: 16,
               border: `1.5px solid ${T.stone}`,
               overflow: "hidden",
@@ -339,21 +444,23 @@ export function BrandsContent() {
         </div>
       </section>
 
-      {/* Multi-step form */}
-      <section ref={r4} id="brands-form" style={{ background: T.ivory, padding: "3.5rem 1.25rem" }}>
-        <div className={`fade-up ${v4 ? "visible" : ""}`} style={{ maxWidth: 680, margin: "0 auto" }}>
+      <section ref={faqRef} style={sectionIvory} aria-label="Preguntas frecuentes">
+        <div className={`fade-up ${faqVis ? "visible" : ""}`} style={inner}>
+          <Tag>FAQ</Tag>
+          <h2 style={{ ...h2Brands, marginBottom: "1.25rem" }}>Preguntas frecuentes.</h2>
+          <div style={faqPanelShell}>
+            <Accordion items={BRANDS_FAQ} />
+          </div>
+        </div>
+      </section>
+
+      <section ref={formRef} id="brands-form" style={sectionIvory}>
+        <div className={`fade-up ${formVis ? "visible" : ""}`} style={inner}>
           <Tag>Formulario</Tag>
-          <h2
-            style={{
-              fontFamily: "'DM Serif Display',serif",
-              fontSize: "clamp(1.6rem, 4vw, 2.4rem)",
-              color: T.ink,
-              lineHeight: 1.2,
-              margin: "1rem 0 2rem",
-            }}
-          >
-            Activa tu campaña
-          </h2>
+          <h2 style={{ ...h2Brands, marginBottom: "1rem" }}>Activa tu campaña</h2>
+          <p style={{ ...bodyMd, marginTop: 0, marginBottom: "2rem" }}>
+            Campañas diseñadas a la medida de tu objetivo y presupuesto. Cuéntanos qué buscas y te armamos una propuesta en menos de 24 horas.
+          </p>
 
           {sent ? (
             <SuccessCard

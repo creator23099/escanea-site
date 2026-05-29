@@ -3,6 +3,8 @@ import { NAV_ITEMS } from "@/lib/nav-items";
 import { T } from "@/lib/tokens";
 
 export function Footer() {
+  const year = new Date().getFullYear();
+
   return (
     <footer style={{ background: T.navy, padding: "3rem 1.25rem 2rem" }}>
       <div style={{ maxWidth: 680, margin: "0 auto" }}>
@@ -107,7 +109,7 @@ export function Footer() {
             gap: "0.5rem",
           }}
         >
-          <div style={{ fontSize: "0.75rem", color: "rgba(255,255,255,0.25)" }}>© 2026 Escanea. Colombia.</div>
+          <div style={{ fontSize: "0.75rem", color: "rgba(255,255,255,0.25)" }}>© {year} Escanea. Colombia.</div>
           <div style={{ fontSize: "0.75rem", color: "rgba(255,255,255,0.25)" }}>Media urbana en movimiento.</div>
         </div>
       </div>
