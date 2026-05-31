@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import Script from "next/script";
 import { DM_Sans, DM_Serif_Display } from "next/font/google";
 import "./globals.css";
 import { Footer } from "@/components/layout/Footer";
@@ -85,6 +86,8 @@ export const metadata: Metadata = {
   },
 };
 
+const GA_MEASUREMENT_ID = "G-EWRN6MJRRB";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -95,6 +98,21 @@ export default function RootLayout({
       lang="es"
       className={`${dmSans.variable} ${dmSerif.variable} h-full antialiased`}
     >
+      <head>
+        <Script
+          async
+          src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}
+          strategy="beforeInteractive"
+        />
+        <Script id="google-analytics" strategy="beforeInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', '${GA_MEASUREMENT_ID}');
+          `}
+        </Script>
+      </head>
       <body className="min-h-full flex flex-col">
         {/* Skip link — visible on keyboard focus, hidden otherwise */}
         <a href="#main-content" className="skip-link">
