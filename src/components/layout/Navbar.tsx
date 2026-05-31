@@ -3,6 +3,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { NAV_ITEMS } from "@/lib/nav-items";
+import { ROUTES } from "@/lib/routes";
 import { T } from "@/lib/tokens";
 
 /** Returns all focusable elements inside `root`, in DOM order. */
@@ -163,7 +164,7 @@ export function Navbar() {
             </Link>
           ))}
           <Link
-            href="/brands"
+            href={ROUTES.marcas}
             scroll={false}
             className="btn btn-primary"
             style={{ padding: "0.55rem 1.1rem" }}
@@ -246,7 +247,7 @@ export function Navbar() {
           ))}
           <div style={{ marginTop: "1rem", display: "flex", flexDirection: "column", gap: "0.75rem" }}>
             <Link
-              href="/brands"
+              href={ROUTES.marcas}
               scroll={false}
               onClick={closeMenu}
               className="btn btn-primary btn-full"
@@ -254,7 +255,7 @@ export function Navbar() {
               Anunciar mi marca
             </Link>
             <Link
-              href="/drivers"
+              href={ROUTES.conductores}
               scroll={false}
               onClick={closeMenu}
               className="btn btn-outline btn-full"

@@ -1,5 +1,6 @@
 "use client";
 import Link from "next/link";
+import { ROUTES } from "@/lib/routes";
 import { Accordion } from "@/components/primitives/Accordion";
 import { DarkTag } from "@/components/primitives/DarkTag";
 import { Tag } from "@/components/primitives/Tag";
@@ -173,8 +174,8 @@ export function WhyContent() {
             urbana en Colombia.
           </p>
           <div style={{ display: "flex", gap: "0.75rem", flexWrap: "wrap" }}>
-            <Link href="/brands" scroll={false} className="btn btn-primary">Anunciar mi marca</Link>
-            <Link href="/drivers" scroll={false} className="btn btn-outline">Conducir con Escanea</Link>
+            <Link href={ROUTES.marcas} scroll={false} className="btn btn-primary">Anunciar mi marca</Link>
+            <Link href={ROUTES.conductores} scroll={false} className="btn btn-outline">Conducir con Escanea</Link>
           </div>
         </div>
       </section>

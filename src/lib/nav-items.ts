@@ -1,4 +1,5 @@
 import type { NavItem } from "@/lib/types";
+import { ROUTES } from "@/lib/routes";
 
 /**
  * Single source of truth for the top-level navigation entries.
@@ -9,8 +10,8 @@ import type { NavItem } from "@/lib/types";
  * server-side `.map()` calls during prerender.
  */
 export const NAV_ITEMS: NavItem[] = [
-  { l: "Inicio",        href: "/" },
-  { l: "Marcas",        href: "/brands" },
-  { l: "Conductores",   href: "/drivers" },
-  { l: "Por Qué Ahora", href: "/why" },
+  { l: "Inicio",        href: ROUTES.home },
+  { l: "Marcas",        href: ROUTES.marcas },
+  { l: "Conductores",   href: ROUTES.conductores },
+  { l: "Por Qué Ahora", href: ROUTES.porQue },
 ];

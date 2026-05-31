@@ -5,6 +5,7 @@ import { DarkTag } from "@/components/primitives/DarkTag";
 import { ReportList } from "@/components/primitives/ReportList";
 import { Tag } from "@/components/primitives/Tag";
 import { T } from "@/lib/tokens";
+import { ROUTES } from "@/lib/routes";
 import type { AccordionItem } from "@/lib/types";
 import { useInView } from "@/lib/use-in-view";
 
@@ -141,10 +142,10 @@ export function HomeContent() {
           </p>
 
           <div style={{ display: "flex", gap: "0.75rem", flexWrap: "wrap", animation: "fadeUp 0.7s ease 0.5s both" }}>
-            <Link href="/brands" scroll={false} className="btn btn-primary">
+            <Link href={ROUTES.marcas} scroll={false} className="btn btn-primary">
               Anunciar mi marca
             </Link>
-            <Link href="/drivers" scroll={false} className="btn btn-outline">
+            <Link href={ROUTES.conductores} scroll={false} className="btn btn-outline">
               Conducir con Escanea
             </Link>
           </div>
@@ -289,8 +290,8 @@ export function HomeContent() {
         <div className={`fade-up ${v4 ? "visible" : ""}`} style={{ maxWidth: 680, margin: "0 auto" }}>
           <div className="grid-2col" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
             {[
-              { label: "Para Marcas",      h: "Transforma tráfico urbano en atención medible.", cta: "Anunciar mi marca",    href: "/brands",  accent: true  },
-              { label: "Para Conductores", h: "Genera ingresos sin cambiar tus rutas.",          cta: "Conducir con Escanea", href: "/drivers", accent: false },
+              { label: "Para Marcas",      h: "Transforma tráfico urbano en atención medible.", cta: "Anunciar mi marca",    href: ROUTES.marcas,  accent: true  },
+              { label: "Para Conductores", h: "Genera ingresos sin cambiar tus rutas.",          cta: "Conducir con Escanea", href: ROUTES.conductores, accent: false },
             ].map((c) => (
               <div
                 key={c.label}
@@ -395,7 +396,7 @@ export function HomeContent() {
           </p>
           <div style={{ display: "flex", gap: "0.75rem", justifyContent: "center", flexWrap: "wrap" }}>
             <Link
-              href="/brands"
+              href={ROUTES.marcas}
               scroll={false}
               className="btn"
               style={{
@@ -413,7 +414,7 @@ export function HomeContent() {
               Anunciar mi marca
             </Link>
             <Link
-              href="/drivers"
+              href={ROUTES.conductores}
               scroll={false}
               className="btn"
               style={{
