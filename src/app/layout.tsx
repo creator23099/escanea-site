@@ -98,13 +98,12 @@ export default function RootLayout({
       lang="es"
       className={`${dmSans.variable} ${dmSerif.variable} h-full antialiased`}
     >
-      <head>
+      <body className="min-h-full flex flex-col">
         <Script
-          async
           src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}
-          strategy="beforeInteractive"
+          strategy="afterInteractive"
         />
-        <Script id="google-analytics" strategy="beforeInteractive">
+        <Script id="google-analytics" strategy="afterInteractive">
           {`
             window.dataLayer = window.dataLayer || [];
             function gtag(){dataLayer.push(arguments);}
@@ -112,8 +111,6 @@ export default function RootLayout({
             gtag('config', '${GA_MEASUREMENT_ID}');
           `}
         </Script>
-      </head>
-      <body className="min-h-full flex flex-col">
         {/* Skip link — visible on keyboard focus, hidden otherwise */}
         <a href="#main-content" className="skip-link">
           Saltar al contenido

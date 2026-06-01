@@ -46,6 +46,11 @@ const HOW_STEPS = [
   },
 ];
 
+const HERO_BG_IMAGE = "/images/fleet-medellin.jpg";
+
+const HERO_GRADIENT =
+  "linear-gradient(to top, rgba(0,0,0,0.72) 0%, rgba(0,0,0,0.35) 50%, rgba(0,0,0,0.15) 100%)";
+
 const COMPARISON_ROWS = [
   {
     bad: {
@@ -80,46 +85,40 @@ export function HomeContent() {
     <div style={{ background: T.ivory }}>
       {/* -- HERO --------------------------------------------------------------- */}
       <section
-        aria-label="Bienvenida"
+        aria-label="Bienvenida — flota activa de vehículos con publicidad en Medellín"
         style={{
-          minHeight: "calc(100svh - 60px)", // svh for mobile browser chrome
+          minHeight: "90vh",
+          height: "90vh",
           paddingTop: 60,
+          paddingBottom: 64,
           display: "flex",
           flexDirection: "column",
-          justifyContent: "center",
-          background: `linear-gradient(160deg, ${T.white} 0%, ${T.ivory} 60%, ${T.ivoryDk} 100%)`,
+          justifyContent: "flex-end",
           position: "relative",
           overflow: "hidden",
+          backgroundImage: `${HERO_GRADIENT}, url(${HERO_BG_IMAGE})`,
+          backgroundSize: "cover",
+          backgroundPosition: "center 42%",
+          backgroundRepeat: "no-repeat",
         }}
       >
-        {/* Decorative blobs — aria-hidden */}
-        <div aria-hidden="true" style={{
-          position: "absolute", top: "-10%", right: "-15%",
-          width: "55vw", height: "55vw", maxWidth: 550, maxHeight: 550,
-          borderRadius: "50%",
-          background: "radial-gradient(circle, rgba(26,79,214,0.06) 0%, transparent 70%)",
-          pointerEvents: "none",
-        }} />
-        <div aria-hidden="true" style={{
-          position: "absolute", bottom: "5%", left: "-5%",
-          width: "30vw", height: "30vw", maxWidth: 300,
-          borderRadius: "50%",
-          background: "radial-gradient(circle, rgba(26,79,214,0.04) 0%, transparent 70%)",
-          pointerEvents: "none",
-        }} />
-
-        <div style={{ maxWidth: 680, margin: "0 auto", padding: "2.5rem 1.25rem", position: "relative", zIndex: 2 }}>
-          <div style={{ marginBottom: "1.5rem", animation: "fadeIn 0.6s ease 0.1s both" }}>
-            <Tag>La primera red de publicidad vehicular de Colombia</Tag>
-          </div>
-
+        <div
+          style={{
+            maxWidth: 680,
+            margin: "0 auto",
+            padding: "0 1.25rem",
+            width: "100%",
+            position: "relative",
+            zIndex: 1,
+          }}
+        >
           <h1
             style={{
               fontFamily: "'DM Serif Display',serif",
               fontSize: "clamp(2.4rem, 7vw, 4.2rem)",
               lineHeight: 1.1,
               letterSpacing: "-0.02em",
-              color: T.ink,
+              color: "#FFFFFF",
               marginBottom: "1.1rem",
               animation: "fadeUp 0.7s ease 0.25s both",
             }}
@@ -129,15 +128,17 @@ export function HomeContent() {
             <em style={{ color: T.cobalt, fontStyle: "italic" }}>Con datos reales.</em>
           </h1>
 
-          <p style={{
-            fontSize: "1.05rem",
-            fontWeight: 400,
-            color: T.inkMd,
-            lineHeight: 1.7,
-            maxWidth: 480,
-            marginBottom: "2.2rem",
-            animation: "fadeUp 0.7s ease 0.38s both",
-          }}>
+          <p
+            style={{
+              fontSize: "1.05rem",
+              fontWeight: 400,
+              color: "#FFFFFF",
+              lineHeight: 1.7,
+              maxWidth: 480,
+              marginBottom: "2.2rem",
+              animation: "fadeUp 0.7s ease 0.38s both",
+            }}
+          >
             Publicidad en vehículos que circulan por Medellín y Bogotá todos los días. Medible con QR, verificable con reportes semanales. No más adivinanzas.
           </p>
 
@@ -145,7 +146,17 @@ export function HomeContent() {
             <Link href={ROUTES.marcas} scroll={false} className="btn btn-primary">
               Anunciar mi marca
             </Link>
-            <Link href={ROUTES.conductores} scroll={false} className="btn btn-outline">
+            <Link
+              href={ROUTES.conductores}
+              scroll={false}
+              className="btn"
+              style={{
+                background: "#FFFFFF",
+                color: T.navy,
+                border: "2px solid #FFFFFF",
+                padding: "0.9rem 1.6rem",
+              }}
+            >
               Conducir con Escanea
             </Link>
           </div>
@@ -156,11 +167,11 @@ export function HomeContent() {
                 key={t}
                 style={{
                   padding: "0.35rem 0.85rem",
-                  background: T.white,
-                  border: `1px solid ${T.stone}`,
+                  background: "rgba(255,255,255,0.12)",
+                  border: "1px solid #fff",
                   borderRadius: 20,
                   fontSize: "0.75rem",
-                  color: T.inkMd,
+                  color: "#fff",
                   fontWeight: 500,
                 }}
               >
@@ -172,7 +183,7 @@ export function HomeContent() {
       </section>
 
       {/* -- CÓMO FUNCIONA ------------------------------------------------------ */}
-      <section ref={r1} style={{ background: T.navy, padding: "4rem 1.25rem" }} aria-label="Cómo funciona">
+      <section ref={r1} style={{ background: T.navy, padding: "100px 1.25rem 4rem" }} aria-label="Cómo funciona">
         <div className={`fade-up ${v1 ? "visible" : ""}`} style={{ maxWidth: 680, margin: "0 auto" }}>
           <div style={{ marginBottom: "1.2rem" }}>
             <DarkTag>Activando nuestras primeras campañas en Colombia</DarkTag>
