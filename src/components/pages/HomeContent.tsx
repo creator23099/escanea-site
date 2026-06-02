@@ -1,5 +1,4 @@
 "use client";
-import { useLayoutEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { Accordion } from "@/components/primitives/Accordion";
 import { DarkTag } from "@/components/primitives/DarkTag";
@@ -82,28 +81,6 @@ export function HomeContent() {
   const [r3, v3] = useInView<HTMLElement>();
   const [r4, v4] = useInView<HTMLElement>();
   const [r5, v5] = useInView<HTMLElement>();
-  const heroHeadlineRef = useRef<HTMLHeadingElement>(null);
-  const [heroItalicPadLeft, setHeroItalicPadLeft] = useState(0);
-
-  useLayoutEffect(() => {
-    const h1 = heroHeadlineRef.current;
-    if (!h1) return;
-
-    const updateHeroItalicPadLeft = () => {
-      const firstLineNode = h1.firstChild;
-      if (!firstLineNode || firstLineNode.nodeType !== Node.TEXT_NODE) return;
-
-      const range = document.createRange();
-      range.selectNodeContents(firstLineNode);
-      const line1Width = range.getBoundingClientRect().width;
-      setHeroItalicPadLeft(Math.max(0, (h1.offsetWidth - line1Width) / 2));
-    };
-
-    updateHeroItalicPadLeft();
-    const observer = new ResizeObserver(updateHeroItalicPadLeft);
-    observer.observe(h1);
-    return () => observer.disconnect();
-  }, []);
 
   return (
     <div style={{ background: T.ivory }}>
@@ -147,6 +124,10 @@ export function HomeContent() {
         </picture>
         <div
           aria-hidden="true"
+          className="home-hero-gradient-top"
+        />
+        <div
+          aria-hidden="true"
           style={{
             position: "absolute",
             inset: 0,
@@ -168,87 +149,89 @@ export function HomeContent() {
             textAlign: "center",
           }}
         >
-          <h1
-            ref={heroHeadlineRef}
-            className="home-hero-headline"
-            style={{
-              fontFamily: "'DM Serif Display',serif",
-              fontSize: "clamp(3.2rem, 5.5vw, 5.2rem)",
-              lineHeight: 1.1,
-              letterSpacing: "-0.02em",
-              color: "#FFFFFF",
-              marginBottom: "1.1rem",
-              animation: "fadeUp 0.7s ease 0.25s both",
-            }}
-          >
-            Tu marca recorre la ciudad.
-            <br />
-            <em
+          <div className="home-hero-top">
+            <h1
+              className="home-hero-headline"
               style={{
-                color: T.cobalt,
-                fontStyle: "italic",
-                display: "block",
-                textAlign: "left",
-                paddingLeft: heroItalicPadLeft,
+                fontFamily: "'DM Serif Display',serif",
+                fontSize: "clamp(3.2rem, 5.5vw, 5.2rem)",
+                lineHeight: 1.1,
+                letterSpacing: "-0.02em",
+                color: "#FFFFFF",
+                marginBottom: "1.1rem",
+                animation: "fadeUp 0.7s ease 0.25s both",
               }}
             >
-              Con datos reales.
-            </em>
-          </h1>
-
-          <p
-            style={{
-              fontSize: "1.05rem",
-              fontWeight: 400,
-              color: "#FFFFFF",
-              lineHeight: 1.7,
-              maxWidth: 480,
-              margin: "0 auto 2.2rem",
-              animation: "fadeUp 0.7s ease 0.38s both",
-            }}
-          >
-            Publicidad en vehículos que circulan por Medellín y Bogotá todos los días. Medible con QR, verificable con reportes semanales. No más adivinanzas.
-          </p>
-
-          <div
-            className="home-hero-ctas"
-            style={{ display: "flex", gap: "0.75rem", flexWrap: "wrap", justifyContent: "center", animation: "fadeUp 0.7s ease 0.5s both" }}
-          >
-            <Link href={ROUTES.marcas} scroll={false} className="btn btn-primary">
-              Anunciar mi marca
-            </Link>
-            <Link
-              href={ROUTES.conductores}
-              scroll={false}
-              className="btn"
-              style={{
-                background: "#FFFFFF",
-                color: T.navy,
-                border: "2px solid #FFFFFF",
-                padding: "0.9rem 1.6rem",
-              }}
-            >
-              Conducir con Escanea
-            </Link>
-          </div>
-
-          <div style={{ display: "flex", gap: "0.65rem", flexWrap: "wrap", justifyContent: "center", marginTop: "2.5rem", animation: "fadeUp 0.7s ease 0.62s both" }}>
-            {["Reportes semanales", "QR medible", "Sin contratos largos"].map((t) => (
-              <div
-                key={t}
+              Tu marca recorre la ciudad.
+              <br />
+              <em
+                className="home-hero-tagline"
                 style={{
-                  padding: "0.35rem 0.85rem",
-                  background: "rgba(255,255,255,0.12)",
-                  border: "1px solid #fff",
-                  borderRadius: 20,
-                  fontSize: "0.75rem",
-                  color: "#fff",
-                  fontWeight: 500,
+                  color: T.cobalt,
+                  fontStyle: "italic",
+                  display: "block",
                 }}
               >
-                {t}
-              </div>
-            ))}
+                Con datos reales.
+              </em>
+            </h1>
+          </div>
+
+          <div className="home-hero-bottom">
+            <p
+              style={{
+                fontSize: "1.05rem",
+                fontWeight: 400,
+                color: "#FFFFFF",
+                lineHeight: 1.7,
+                maxWidth: 480,
+                margin: "0 auto 2.2rem",
+                animation: "fadeUp 0.7s ease 0.38s both",
+              }}
+            >
+              Publicidad en vehículos que circulan por Medellín y Bogotá todos los días. Medible con QR, verificable con reportes semanales. No más adivinanzas.
+            </p>
+
+            <div
+              className="home-hero-ctas"
+              style={{ display: "flex", gap: "0.75rem", flexWrap: "wrap", justifyContent: "center", animation: "fadeUp 0.7s ease 0.5s both" }}
+            >
+              <Link href={ROUTES.marcas} scroll={false} className="btn btn-primary">
+                Anunciar mi marca
+              </Link>
+              <Link
+                href={ROUTES.conductores}
+                scroll={false}
+                className="btn"
+                style={{
+                  background: "#FFFFFF",
+                  color: T.navy,
+                  border: "2px solid #FFFFFF",
+                  padding: "0.9rem 1.6rem",
+                }}
+              >
+                Conducir con Escanea
+              </Link>
+            </div>
+
+            <div style={{ display: "flex", gap: "0.65rem", flexWrap: "wrap", justifyContent: "center", marginTop: "2.5rem", animation: "fadeUp 0.7s ease 0.62s both" }}>
+              {["Reportes semanales", "QR medible", "Sin contratos largos"].map((t) => (
+                <div
+                  key={t}
+                  style={{
+                    padding: "0.35rem 0.85rem",
+                    background: "rgba(255,255,255,0.12)",
+                    border: "1px solid #fff",
+                    borderRadius: 20,
+                    fontSize: "0.75rem",
+                    color: "#fff",
+                    fontWeight: 500,
+                  }}
+                >
+                  {t}
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </section>
