@@ -564,6 +564,7 @@ export function DriversContent() {
             inset: 0,
             width: "100%",
             height: "100%",
+            overflow: "hidden",
           }}
         >
           <source media="(max-width: 768px)" srcSet={CONDUCTORES_HERO_BG_IMAGE_MOBILE} />
@@ -572,11 +573,14 @@ export function DriversContent() {
             alt="Conductor con publicidad en el vehículo circulando por la ciudad"
             style={{
               position: "absolute",
-              inset: 0,
-              width: "100%",
-              height: "100%",
+              left: "50%",
+              top: "50%",
+              width: "calc(100% / 0.92)",
+              height: "calc(100% / 0.92)",
+              maxWidth: "none",
               objectFit: "cover",
-              objectPosition: "center center",
+              objectPosition: "center 20%",
+              transform: "translate(-50%, -50%)",
             }}
           />
         </picture>
@@ -617,14 +621,16 @@ export function DriversContent() {
                 animation: "fadeUp 0.7s ease 0.25s both",
               }}
             >
-              Una nueva red de medios urbanos.
-              <br />
+              <span style={{ display: "block", whiteSpace: "nowrap" }}>
+                Una nueva red de medios urbanos.
+              </span>
               <em
                 className="conductores-hero-tagline"
                 style={{
                   color: T.cobalt,
                   fontStyle: "italic",
                   display: "block",
+                  marginTop: "-0.45rem",
                 }}
               >
                 Para conductores seleccionados.
