@@ -1,83 +1,81 @@
 "use client";
 
-import { useCallback, useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { T } from "@/lib/tokens";
 import styles from "./HomeLaunchVideo.module.css";
 
 const VIDEO_SRC = "/videos/escanea-launch-hero-compressed.mp4";
 
-function ensureAutoplayAttrs(video: HTMLVideoElement) {
-  video.muted = true;
-  video.defaultMuted = true;
-  video.setAttribute("muted", "");
-  video.setAttribute("autoplay", "");
-  video.setAttribute("loop", "");
-  video.setAttribute("playsinline", "");
-  video.setAttribute("webkit-playsinline", "");
-}
-
-function tryPlay(video: HTMLVideoElement) {
-  ensureAutoplayAttrs(video);
-  const attempt = video.play();
-  if (attempt === undefined) return;
-  void attempt.catch(() => {
-    requestAnimationFrame(() => {
-      ensureAutoplayAttrs(video);
-      void video.play().catch(() => {});
-    });
-  });
-}
-
 export function HomeLaunchVideo() {
   const wrapperRef = useRef<HTMLDivElement>(null);
-  const videoRef = useRef<HTMLVideoElement | null>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const [mounted, setMounted] = useState(false);
 
-  const onVideoRef = useCallback((node: HTMLVideoElement | null) => {
-    videoRef.current = node;
-    if (!node) return;
-    ensureAutoplayAttrs(node);
-    tryPlay(node);
-  }, []);
-
+  // Mount the <video> only once the block is near the viewport so Safari sees
+  // autoplay+muted on an already-visible element (avoids off-screen autoplay failure).
   useEffect(() => {
-    const video = videoRef.current;
     const wrapper = wrapperRef.current;
-    if (!video) return;
+    if (!wrapper) return;
 
-    tryPlay(video);
+    const activate = () => setMounted((prev) => prev || true);
 
-    const onReady = () => tryPlay(video);
-    video.addEventListener("loadedmetadata", onReady);
-    video.addEventListener("loadeddata", onReady);
-    video.addEventListener("canplay", onReady);
-    video.addEventListener("canplaythrough", onReady);
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry?.isIntersecting) activate();
+      },
+      { threshold: 0.05, rootMargin: "120px 0px" }
+    );
 
-    const observer = wrapper
-      ? new IntersectionObserver(
-          ([entry]) => {
-            if (!entry) return;
-            if (entry.isIntersecting) {
-              tryPlay(video);
-            } else {
-              video.pause();
-            }
-          },
-          { threshold: 0.2, rootMargin: "0px 0px 10% 0px" }
-        )
-      : null;
+    observer.observe(wrapper);
 
-    if (wrapper && observer) {
-      observer.observe(wrapper);
+    const rect = wrapper.getBoundingClientRect();
+    if (rect.top < window.innerHeight && rect.bottom > 0) {
+      activate();
     }
 
+    return () => observer.disconnect();
+  }, []);
+
+  // Keep playback in sync with visibility after the video element exists.
+  useEffect(() => {
+    if (!mounted) return;
+
+    const wrapper = wrapperRef.current;
+    const video = videoRef.current;
+    if (!wrapper || !video) return;
+
+    const syncPlayback = () => {
+      video.muted = true;
+      if (video.paused) {
+        void video.play().catch(() => {});
+      }
+    };
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry?.isIntersecting) {
+          syncPlayback();
+        } else {
+          video.pause();
+        }
+      },
+      { threshold: 0.1, rootMargin: "0px" }
+    );
+
+    observer.observe(wrapper);
+
+    const onReady = () => syncPlayback();
+    video.addEventListener("loadeddata", onReady);
+    video.addEventListener("canplay", onReady);
+
+    syncPlayback();
+
     return () => {
-      video.removeEventListener("loadedmetadata", onReady);
       video.removeEventListener("loadeddata", onReady);
       video.removeEventListener("canplay", onReady);
-      video.removeEventListener("canplaythrough", onReady);
-      observer?.disconnect();
+      observer.disconnect();
     };
-  }, []);
+  }, [mounted]);
 
   return (
     <div
@@ -89,19 +87,21 @@ export function HomeLaunchVideo() {
         aspectRatio: "406 / 720",
       }}
     >
-      <video
-        ref={onVideoRef}
-        className={styles.video}
-        src={VIDEO_SRC}
-        autoPlay
-        muted
-        loop
-        playsInline
-        preload="auto"
-        disablePictureInPicture
-        disableRemotePlayback
-        aria-label="Instalación de publicidad en vehículo Escanea"
-      />
+      {mounted ? (
+        <video
+          ref={videoRef}
+          className={styles.video}
+          src={VIDEO_SRC}
+          autoPlay
+          muted
+          loop
+          playsInline
+          preload="auto"
+          disablePictureInPicture
+          disableRemotePlayback
+          aria-label="Instalación de publicidad en vehículo Escanea"
+        />
+      ) : null}
     </div>
   );
 }
