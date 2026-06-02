@@ -1,4 +1,5 @@
 "use client";
+import { useLayoutEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { Accordion } from "@/components/primitives/Accordion";
 import { DarkTag } from "@/components/primitives/DarkTag";
@@ -46,7 +47,7 @@ const HOW_STEPS = [
   },
 ];
 
-const HERO_BG_IMAGE = "/images/fleet-medellin.jpg";
+const HERO_BG_IMAGE = "/images/fleet-medellin-horizontal.jpg";
 
 const HERO_GRADIENT =
   "linear-gradient(to top, rgba(0,0,0,0.72) 0%, rgba(0,0,0,0.35) 50%, rgba(0,0,0,0.15) 100%)";
@@ -80,6 +81,28 @@ export function HomeContent() {
   const [r3, v3] = useInView<HTMLElement>();
   const [r4, v4] = useInView<HTMLElement>();
   const [r5, v5] = useInView<HTMLElement>();
+  const heroHeadlineRef = useRef<HTMLHeadingElement>(null);
+  const [heroItalicPadLeft, setHeroItalicPadLeft] = useState(0);
+
+  useLayoutEffect(() => {
+    const h1 = heroHeadlineRef.current;
+    if (!h1) return;
+
+    const updateHeroItalicPadLeft = () => {
+      const firstLineNode = h1.firstChild;
+      if (!firstLineNode || firstLineNode.nodeType !== Node.TEXT_NODE) return;
+
+      const range = document.createRange();
+      range.selectNodeContents(firstLineNode);
+      const line1Width = range.getBoundingClientRect().width;
+      setHeroItalicPadLeft(Math.max(0, (h1.offsetWidth - line1Width) / 2));
+    };
+
+    updateHeroItalicPadLeft();
+    const observer = new ResizeObserver(updateHeroItalicPadLeft);
+    observer.observe(h1);
+    return () => observer.disconnect();
+  }, []);
 
   return (
     <div style={{ background: T.ivory }}>
@@ -96,26 +119,47 @@ export function HomeContent() {
           justifyContent: "flex-end",
           position: "relative",
           overflow: "hidden",
-          backgroundImage: `${HERO_GRADIENT}, url(${HERO_BG_IMAGE})`,
-          backgroundSize: "cover",
-          backgroundPosition: "center 42%",
-          backgroundRepeat: "no-repeat",
         }}
       >
+        <img
+          src={HERO_BG_IMAGE}
+          alt="Vehículos de Escanea circulando por Medellín con publicidad vehicular"
+          style={{
+            position: "absolute",
+            inset: 0,
+            width: "100%",
+            height: "100%",
+            objectFit: "cover",
+            objectPosition: "right center",
+          }}
+        />
+        <div
+          aria-hidden="true"
+          style={{
+            position: "absolute",
+            inset: 0,
+            background: HERO_GRADIENT,
+            pointerEvents: "none",
+            zIndex: 1,
+          }}
+        />
         <div
           style={{
-            maxWidth: 680,
-            margin: "0 auto",
-            padding: "0 1.25rem",
+            position: "absolute",
+            bottom: 90,
+            left: "50%",
+            transform: "translateX(-50%)",
+            maxWidth: "80%",
             width: "100%",
-            position: "relative",
-            zIndex: 1,
+            zIndex: 10,
+            textAlign: "center",
           }}
         >
           <h1
+            ref={heroHeadlineRef}
             style={{
               fontFamily: "'DM Serif Display',serif",
-              fontSize: "clamp(2.4rem, 7vw, 4.2rem)",
+              fontSize: "clamp(3.2rem, 5.5vw, 5.2rem)",
               lineHeight: 1.1,
               letterSpacing: "-0.02em",
               color: "#FFFFFF",
@@ -125,7 +169,17 @@ export function HomeContent() {
           >
             Tu marca recorre la ciudad.
             <br />
-            <em style={{ color: T.cobalt, fontStyle: "italic" }}>Con datos reales.</em>
+            <em
+              style={{
+                color: T.cobalt,
+                fontStyle: "italic",
+                display: "block",
+                textAlign: "left",
+                paddingLeft: heroItalicPadLeft,
+              }}
+            >
+              Con datos reales.
+            </em>
           </h1>
 
           <p
@@ -135,14 +189,14 @@ export function HomeContent() {
               color: "#FFFFFF",
               lineHeight: 1.7,
               maxWidth: 480,
-              marginBottom: "2.2rem",
+              margin: "0 auto 2.2rem",
               animation: "fadeUp 0.7s ease 0.38s both",
             }}
           >
             Publicidad en vehículos que circulan por Medellín y Bogotá todos los días. Medible con QR, verificable con reportes semanales. No más adivinanzas.
           </p>
 
-          <div style={{ display: "flex", gap: "0.75rem", flexWrap: "wrap", animation: "fadeUp 0.7s ease 0.5s both" }}>
+          <div style={{ display: "flex", gap: "0.75rem", flexWrap: "wrap", justifyContent: "center", animation: "fadeUp 0.7s ease 0.5s both" }}>
             <Link href={ROUTES.marcas} scroll={false} className="btn btn-primary">
               Anunciar mi marca
             </Link>
@@ -161,7 +215,7 @@ export function HomeContent() {
             </Link>
           </div>
 
-          <div style={{ display: "flex", gap: "0.65rem", flexWrap: "wrap", marginTop: "2.5rem", animation: "fadeUp 0.7s ease 0.62s both" }}>
+          <div style={{ display: "flex", gap: "0.65rem", flexWrap: "wrap", justifyContent: "center", marginTop: "2.5rem", animation: "fadeUp 0.7s ease 0.62s both" }}>
             {["Reportes semanales", "QR medible", "Sin contratos largos"].map((t) => (
               <div
                 key={t}
