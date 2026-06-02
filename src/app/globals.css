@@ -404,6 +404,142 @@ textarea.fi { resize: vertical; min-height: 100px; }
   }
 }
 
+/* ---------- Marcas hero -------------------------------------------------- */
+.marcas-hero-tag-pill > div {
+  background: rgba(255, 255, 255, 0.25) !important;
+  border: 1.5px solid #fff !important;
+  color: #fff !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.08em !important;
+}
+
+.marcas-hero-gradient-top {
+  display: none;
+}
+
+.marcas-hero-top,
+.marcas-hero-bottom {
+  display: contents;
+}
+
+@media (min-width: 769px) {
+  .marcas-hero-content {
+    inset: 0 !important;
+    transform: none !important;
+    max-width: none !important;
+    pointer-events: none;
+  }
+
+  .marcas-hero-top,
+  .marcas-hero-bottom {
+    display: block;
+  }
+
+  .marcas-hero-top {
+    position: absolute;
+    top: 140px;
+    left: 0;
+    right: 0;
+    text-align: center;
+    padding: 0 1.25rem;
+    z-index: 10;
+    pointer-events: auto;
+  }
+
+  .marcas-hero-bottom {
+    position: absolute;
+    bottom: 40px;
+    left: 50%;
+    transform: translateX(-50%);
+    max-width: 80%;
+    width: 100%;
+    text-align: center;
+    padding: 0 1.25rem;
+    z-index: 10;
+    pointer-events: auto;
+  }
+
+  .marcas-hero-headline {
+    display: inline-block;
+    text-align: left;
+  }
+
+  .marcas-hero-tagline {
+    text-align: center;
+  }
+}
+
+@media (max-width: 768px) {
+  .marcas-hero {
+    min-height: 100svh !important;
+    height: auto !important;
+  }
+
+  .marcas-hero-gradient-top {
+    display: block;
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.55) 0%, transparent 35%);
+    pointer-events: none;
+    z-index: 2;
+  }
+
+  .marcas-hero-content {
+    position: absolute !important;
+    inset: 0 !important;
+    bottom: auto !important;
+    left: 0 !important;
+    right: 0 !important;
+    transform: none !important;
+    max-width: none !important;
+    width: 100% !important;
+    padding: 0 !important;
+    height: 100% !important;
+    pointer-events: none;
+  }
+
+  .marcas-hero-top,
+  .marcas-hero-bottom {
+    display: block;
+  }
+
+  .marcas-hero-top {
+    position: absolute !important;
+    top: 80px !important;
+    left: 0 !important;
+    right: 0 !important;
+    text-align: center !important;
+    padding: 0 1.25rem !important;
+    z-index: 10;
+    pointer-events: auto;
+  }
+
+  .marcas-hero-bottom {
+    position: absolute !important;
+    bottom: 24px !important;
+    left: 0 !important;
+    right: 0 !important;
+    text-align: center !important;
+    padding: 0 1.25rem !important;
+    z-index: 10;
+    pointer-events: auto;
+  }
+
+  .marcas-hero-headline {
+    font-size: clamp(1.7rem, 7vw, 2.4rem) !important;
+    margin-bottom: 1rem !important;
+  }
+
+  .marcas-hero-headline em,
+  .marcas-hero-tagline {
+    text-align: center !important;
+  }
+
+  .marcas-hero-ctas .btn {
+    width: 100% !important;
+  }
+}
+
 /* ---------- Responsive helpers ----------------------------------------- */
 .hide-desktop { display: none; }
 

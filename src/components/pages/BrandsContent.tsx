@@ -66,6 +66,12 @@ const CAMPAIGN_STEPS = [
 
 const BRANDS_STEP_LABELS = ["Ciudad", "Zonas", "Presupuesto", "Objetivo", "Problema", "Contacto", "Comentarios"];
 
+const MARCAS_HERO_BG_IMAGE = "/images/marcas-hero.jpg";
+const MARCAS_HERO_BG_IMAGE_MOBILE = "/images/marcas-hero-vertical.jpg";
+
+const MARCAS_HERO_GRADIENT =
+  "linear-gradient(to top, rgba(0,0,0,0.72) 0%, rgba(0,0,0,0.35) 50%, rgba(0,0,0,0.15) 100%)";
+
 const FRAUD_PROTECTION_ITEMS = [
   {
     label: "Check-ins fotográficos",
@@ -261,49 +267,117 @@ export function BrandsContent() {
   return (
     <div style={{ background: T.ivory }}>
       <section
+        className="marcas-hero"
         aria-label="Campaña para marcas"
         style={{
-          background: `linear-gradient(160deg, ${T.white} 0%, ${T.ivory} 100%)`,
-          padding: "100px 1.25rem 3rem",
+          minHeight: "90vh",
+          height: "90vh",
+          paddingTop: 60,
+          position: "relative",
+          overflow: "hidden",
         }}
       >
-        <div style={inner}>
-          <div style={{ animation: "fadeIn 0.6s ease 0.1s both", marginBottom: "1.2rem" }}>
-            <Tag>Para Marcas</Tag>
+        <picture
+          style={{
+            position: "absolute",
+            inset: 0,
+            width: "100%",
+            height: "100%",
+          }}
+        >
+          <source media="(max-width: 768px)" srcSet={MARCAS_HERO_BG_IMAGE_MOBILE} />
+          <img
+            src={MARCAS_HERO_BG_IMAGE}
+            alt="Vehículo con publicidad de marca circulando por la ciudad"
+            style={{
+              position: "absolute",
+              inset: 0,
+              width: "100%",
+              height: "100%",
+              objectFit: "cover",
+              objectPosition: "center center",
+            }}
+          />
+        </picture>
+        <div aria-hidden="true" className="marcas-hero-gradient-top" />
+        <div
+          aria-hidden="true"
+          style={{
+            position: "absolute",
+            inset: 0,
+            background: MARCAS_HERO_GRADIENT,
+            pointerEvents: "none",
+            zIndex: 1,
+          }}
+        />
+        <div
+          className="marcas-hero-content"
+          style={{
+            position: "absolute",
+            inset: 0,
+            width: "100%",
+            height: "100%",
+            zIndex: 10,
+            textAlign: "center",
+            pointerEvents: "none",
+          }}
+        >
+          <div className="marcas-hero-top">
+            <div className="marcas-hero-tag-pill" style={{ animation: "fadeIn 0.6s ease 0.1s both", marginBottom: "1.2rem" }}>
+              <Tag>Para Marcas</Tag>
+            </div>
+            <h1
+              className="marcas-hero-headline"
+              style={{
+                fontFamily: "'DM Serif Display',serif",
+                fontSize: "clamp(2.2rem, 6vw, 3.8rem)",
+                lineHeight: 1.1,
+                color: "#FFFFFF",
+                marginBottom: "1rem",
+                animation: "fadeUp 0.7s ease 0.25s both",
+              }}
+            >
+              ¿Y si el tráfico
+              <br />
+              <em
+                className="marcas-hero-tagline"
+                style={{
+                  color: T.cobalt,
+                  fontStyle: "italic",
+                  display: "block",
+                }}
+              >
+                sí funcionara?
+              </em>
+            </h1>
           </div>
-          <h1
-            style={{
-              fontFamily: "'DM Serif Display',serif",
-              fontSize: "clamp(2.2rem, 6vw, 3.8rem)",
-              lineHeight: 1.1,
-              color: T.ink,
-              marginBottom: "1rem",
-              animation: "fadeUp 0.7s ease 0.25s both",
-            }}
-          >
-            ¿Y si el tráfico<br />
-            <em style={{ color: T.cobalt, fontStyle: "italic" }}>sí funcionara?</em>
-          </h1>
-          <p
-            style={{
-              fontSize: "1rem",
-              color: T.inkMd,
-              lineHeight: 1.75,
-              maxWidth: 480,
-              marginBottom: "2rem",
-              animation: "fadeUp 0.7s ease 0.38s both",
-            }}
-          >
-            Tu campaña recorre la ciudad en vehículos reales. Medible, verificable y presente donde está tu audiencia.
-          </p>
-          <button
-            type="button"
-            className="btn btn-primary"
-            onClick={() => document.getElementById("brands-form")?.scrollIntoView({ behavior: "smooth" })}
-            style={{ animation: "fadeUp 0.7s ease 0.5s both" }}
-          >
-            Activar campaña →
-          </button>
+
+          <div className="marcas-hero-bottom">
+            <p
+              style={{
+                fontSize: "1rem",
+                color: "#FFFFFF",
+                lineHeight: 1.75,
+                maxWidth: 480,
+                margin: "0 auto 2rem",
+                animation: "fadeUp 0.7s ease 0.38s both",
+              }}
+            >
+              Tu campaña recorre la ciudad en vehículos reales. Medible, verificable y presente donde está tu audiencia.
+            </p>
+            <div
+              className="marcas-hero-ctas"
+              style={{ animation: "fadeUp 0.7s ease 0.5s both" }}
+            >
+              <button
+                type="button"
+                className="btn btn-primary"
+                onClick={() => document.getElementById("brands-form")?.scrollIntoView({ behavior: "smooth" })}
+              >
+                Activar campaña →
+              </button>
+            </div>
+          </div>
         </div>
       </section>
 
