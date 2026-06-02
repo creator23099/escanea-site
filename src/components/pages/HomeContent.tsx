@@ -108,6 +108,7 @@ export function HomeContent() {
     <div style={{ background: T.ivory }}>
       {/* -- HERO --------------------------------------------------------------- */}
       <section
+        className="home-hero"
         aria-label="Bienvenida — flota activa de vehículos con publicidad en Medellín"
         style={{
           minHeight: "90vh",
@@ -144,6 +145,7 @@ export function HomeContent() {
           }}
         />
         <div
+          className="home-hero-content"
           style={{
             position: "absolute",
             bottom: 60,
@@ -157,6 +159,7 @@ export function HomeContent() {
         >
           <h1
             ref={heroHeadlineRef}
+            className="home-hero-headline"
             style={{
               fontFamily: "'DM Serif Display',serif",
               fontSize: "clamp(3.2rem, 5.5vw, 5.2rem)",
@@ -196,7 +199,10 @@ export function HomeContent() {
             Publicidad en vehículos que circulan por Medellín y Bogotá todos los días. Medible con QR, verificable con reportes semanales. No más adivinanzas.
           </p>
 
-          <div style={{ display: "flex", gap: "0.75rem", flexWrap: "wrap", justifyContent: "center", animation: "fadeUp 0.7s ease 0.5s both" }}>
+          <div
+            className="home-hero-ctas"
+            style={{ display: "flex", gap: "0.75rem", flexWrap: "wrap", justifyContent: "center", animation: "fadeUp 0.7s ease 0.5s both" }}
+          >
             <Link href={ROUTES.marcas} scroll={false} className="btn btn-primary">
               Anunciar mi marca
             </Link>
