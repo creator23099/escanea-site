@@ -146,7 +146,7 @@ export function HomeContent() {
         <div
           style={{
             position: "absolute",
-            bottom: 90,
+            bottom: 60,
             left: "50%",
             transform: "translateX(-50%)",
             maxWidth: "80%",
