@@ -174,6 +174,12 @@ const PROCESS_STEPS = [
   },
 ] as const;
 
+const CONDUCTORES_HERO_BG_IMAGE = "/images/conductores-hero.jpg";
+const CONDUCTORES_HERO_BG_IMAGE_MOBILE = "/images/conductores-hero-vertical.jpg";
+
+const CONDUCTORES_HERO_GRADIENT =
+  "linear-gradient(to top, rgba(0,0,0,0.72) 0%, rgba(0,0,0,0.35) 50%, rgba(0,0,0,0.15) 100%)";
+
 function BrandedStackList({ items, background = T.ivoryDk }: { items: string[]; background?: string }) {
   return (
     <div
@@ -542,52 +548,118 @@ export function DriversContent() {
   return (
     <div style={{ background: T.ivory }}>
       <section
+        className="conductores-hero"
         aria-label="Programa para conductores"
         style={{
-          background: `linear-gradient(160deg, ${T.white} 0%, ${T.ivory} 100%)`,
-          padding: "100px 1.25rem 3rem",
-          overflow: "visible",
+          minHeight: "90vh",
+          height: "90vh",
+          paddingTop: 60,
+          position: "relative",
+          overflow: "hidden",
         }}
       >
-        <div style={inner}>
-          <div style={{ animation: "fadeIn 0.6s ease 0.1s both", marginBottom: "1.2rem" }}>
-            <Tag>Para Conductores</Tag>
+        <picture
+          style={{
+            position: "absolute",
+            inset: 0,
+            width: "100%",
+            height: "100%",
+          }}
+        >
+          <source media="(max-width: 768px)" srcSet={CONDUCTORES_HERO_BG_IMAGE_MOBILE} />
+          <img
+            src={CONDUCTORES_HERO_BG_IMAGE}
+            alt="Conductor con publicidad en el vehículo circulando por la ciudad"
+            style={{
+              position: "absolute",
+              inset: 0,
+              width: "100%",
+              height: "100%",
+              objectFit: "cover",
+              objectPosition: "center center",
+            }}
+          />
+        </picture>
+        <div aria-hidden="true" className="conductores-hero-gradient-top" />
+        <div
+          aria-hidden="true"
+          style={{
+            position: "absolute",
+            inset: 0,
+            background: CONDUCTORES_HERO_GRADIENT,
+            pointerEvents: "none",
+            zIndex: 1,
+          }}
+        />
+        <div
+          className="conductores-hero-content"
+          style={{
+            position: "absolute",
+            bottom: 60,
+            left: "50%",
+            transform: "translateX(-50%)",
+            maxWidth: "80%",
+            width: "100%",
+            zIndex: 10,
+            textAlign: "center",
+          }}
+        >
+          <div className="conductores-hero-top">
+            <h1
+              className="conductores-hero-headline"
+              style={{
+                fontFamily: "'DM Serif Display',serif",
+                fontSize: "clamp(3.2rem, 5.5vw, 5.2rem)",
+                lineHeight: 1.1,
+                letterSpacing: "-0.02em",
+                color: "#FFFFFF",
+                marginBottom: "1.1rem",
+                animation: "fadeUp 0.7s ease 0.25s both",
+              }}
+            >
+              Una nueva red de medios urbanos.
+              <br />
+              <em
+                className="conductores-hero-tagline"
+                style={{
+                  color: T.cobalt,
+                  fontStyle: "italic",
+                  display: "block",
+                }}
+              >
+                Para conductores seleccionados.
+              </em>
+            </h1>
           </div>
-          <h1
-            style={{
-              fontFamily: "'DM Serif Display',serif",
-              fontSize: "clamp(2.2rem, 6vw, 3.8rem)",
-              lineHeight: 1.1,
-              color: T.ink,
-              marginBottom: "1rem",
-              animation: "fadeUp 0.7s ease 0.25s both",
-            }}
-          >
-            Una nueva red de medios urbanos.
-            <br />
-            <em style={{ color: T.cobalt }}>Para conductores seleccionados.</em>
-          </h1>
-          <p
-            style={{
-              fontFamily: "'DM Sans',sans-serif",
-              fontSize: "1rem",
-              color: T.inkMd,
-              lineHeight: 1.75,
-              maxWidth: 480,
-              marginBottom: "2rem",
-              animation: "fadeUp 0.7s ease 0.38s both",
-            }}
-          >
-            Genera ingresos adicionales con los recorridos que ya haces.
-          </p>
-          <button
-            type="button"
-            className="btn btn-primary"
-            onClick={() => document.getElementById("drivers-form")?.scrollIntoView({ behavior: "smooth" })}
-            style={{ animation: "fadeUp 0.7s ease 0.5s both" }}
-          >
-            Postularme →
-          </button>
+
+          <div className="conductores-hero-bottom">
+            <p
+              style={{
+                fontFamily: "'DM Sans',sans-serif",
+                fontSize: "1.05rem",
+                fontWeight: 400,
+                color: "#FFFFFF",
+                lineHeight: 1.7,
+                maxWidth: 480,
+                margin: "0 auto 2.2rem",
+                animation: "fadeUp 0.7s ease 0.38s both",
+              }}
+            >
+              Genera ingresos adicionales con los recorridos que ya haces.
+            </p>
+            <div
+              className="conductores-hero-ctas"
+              style={{ animation: "fadeUp 0.7s ease 0.5s both" }}
+            >
+              <button
+                type="button"
+                className="btn btn-primary"
+                onClick={() => document.getElementById("drivers-form")?.scrollIntoView({ behavior: "smooth" })}
+              >
+                Postularme →
+              </button>
+            </div>
+          </div>
         </div>
       </section>
 
