@@ -621,10 +621,7 @@ export function DriversContent() {
                 animation: "fadeUp 0.7s ease 0.25s both",
               }}
             >
-              <span className="conductores-hero-headline-main">
-                <span className="conductores-hero-headline-line">Una nueva red </span>
-                <span className="conductores-hero-headline-line">de medios urbanos.</span>
-              </span>
+              <span className="conductores-hero-headline-main">Una nueva red de medios urbanos.</span>
               <em
                 className="conductores-hero-tagline"
                 style={{
