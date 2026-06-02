@@ -621,8 +621,9 @@ export function DriversContent() {
                 animation: "fadeUp 0.7s ease 0.25s both",
               }}
             >
-              <span style={{ display: "block", whiteSpace: "nowrap" }}>
-                Una nueva red de medios urbanos.
+              <span className="conductores-hero-headline-main">
+                <span className="conductores-hero-headline-line">Una nueva red </span>
+                <span className="conductores-hero-headline-line">de medios urbanos.</span>
               </span>
               <em
                 className="conductores-hero-tagline"
@@ -630,7 +631,6 @@ export function DriversContent() {
                   color: T.cobalt,
                   fontStyle: "italic",
                   display: "block",
-                  marginTop: "-0.45rem",
                 }}
               >
                 Para conductores seleccionados.

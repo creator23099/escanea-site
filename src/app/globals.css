@@ -565,8 +565,17 @@ textarea.fi { resize: vertical; min-height: 100px; }
     font-size: clamp(2.4rem, 3.84vw, 3.6rem) !important;
   }
 
+  .conductores-hero-headline-main {
+    white-space: nowrap;
+  }
+
+  .conductores-hero-headline-line {
+    display: inline;
+  }
+
   .conductores-hero-tagline {
     text-align: center;
+    margin-top: -0.45rem;
   }
 }
 
@@ -627,18 +636,34 @@ textarea.fi { resize: vertical; min-height: 100px; }
   }
 
   .conductores-hero-headline {
-    font-size: clamp(1.45rem, 5.5vw, 2rem) !important;
+    font-size: clamp(2rem, 7.5vw, 2.65rem) !important;
+    line-height: 1.08 !important;
+    letter-spacing: -0.02em !important;
     margin-bottom: 0 !important;
+    max-width: 11.5em;
+    margin-left: auto !important;
+    margin-right: auto !important;
   }
 
-  .conductores-hero-headline span {
-    white-space: normal !important;
+  .conductores-hero-headline-main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.08em;
+    text-wrap: balance;
+  }
+
+  .conductores-hero-headline-line {
+    display: block;
+    white-space: normal;
   }
 
   .conductores-hero-headline em,
   .conductores-hero-tagline {
     text-align: center !important;
     padding-left: 0 !important;
+    font-size: clamp(1.1rem, 4.5vw, 1.4rem) !important;
+    margin-top: 0.4rem !important;
   }
 
   .conductores-hero-ctas {
