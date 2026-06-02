@@ -22,6 +22,10 @@
 
 # misc
 .DS_Store
+
+# source video (use escanea-launch-hero-compressed.mp4 only)
+public/videos/Instalación V1.mp4
+public/videos/Instalacion V1.mp4
 *.pem
 
 # debug

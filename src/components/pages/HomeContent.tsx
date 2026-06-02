@@ -2,6 +2,8 @@
 import Link from "next/link";
 import { Accordion } from "@/components/primitives/Accordion";
 import { DarkTag } from "@/components/primitives/DarkTag";
+import { HomeLaunchVideo } from "@/components/primitives/HomeLaunchVideo";
+import launchStyles from "./HomeLaunchSection.module.css";
 import { ReportList } from "@/components/primitives/ReportList";
 import { Tag } from "@/components/primitives/Tag";
 import { T } from "@/lib/tokens";
@@ -56,21 +58,21 @@ const COMPARISON_ROWS = [
   {
     bad: {
       label: "Publicidad estática",
-      text: "Un punto fijo. Todo el día, mismo lugar. Espera a que tu audiencia pase — una sola vez.",
+      text: "Un punto fijo. Mismo lugar. Espera a que tu audiencia pase.",
     },
     good: {
       label: "Escanea",
-      text: "Tu campaña recorre la ciudad. Zonas residenciales, comerciales y corporativas en una sola campaña.",
+      text: "Tu campaña recorre la ciudad. Zonas residenciales, comerciales y corporativas.",
     },
   },
   {
     bad: {
       label: "Publicidad digital",
-      text: "Ignorada por saturación. Bloqueada por hábito. El usuario promedio ignora la mayoría de anuncios que ve.",
+      text: "Ignorada por saturación. Bloqueada por hábito.",
     },
     good: {
       label: "Escanea",
-      text: "Atención física real. Exposición repetida en múltiples zonas. Interacción QR medible y verificable.",
+      text: "Atención física real. Exposición repetida. QR medible.",
     },
   },
 ];
@@ -80,7 +82,6 @@ export function HomeContent() {
   const [r2, v2] = useInView<HTMLElement>();
   const [r3, v3] = useInView<HTMLElement>();
   const [r4, v4] = useInView<HTMLElement>();
-  const [r5, v5] = useInView<HTMLElement>();
 
   return (
     <div style={{ background: T.ivory }}>
@@ -294,46 +295,56 @@ export function HomeContent() {
         </div>
       </section>
 
-      {/* -- COMPARISON --------------------------------------------------------- */}
-      <section ref={r2} style={{ background: T.ivory, padding: "4rem 1.25rem" }} aria-label="Comparación">
-        <div className={`fade-up ${v2 ? "visible" : ""}`} style={{ maxWidth: 680, margin: "0 auto" }}>
-          <Tag>La diferencia</Tag>
-          <h2
-            style={{
-              fontFamily: "'DM Serif Display',serif",
-              fontSize: "clamp(1.7rem, 4.5vw, 2.6rem)",
-              color: T.ink,
-              lineHeight: 1.15,
-              margin: "1rem 0 2rem",
-            }}
-          >
-            No toda publicidad<br />funciona igual.
-          </h2>
+      {/* -- VIDEO + COMPARISON --------------------------------------------------- */}
+      <section
+        style={{ background: T.ivory, padding: "4rem 1.25rem" }}
+        aria-label="Campaña en acción y comparación"
+      >
+        <div className={launchStyles.inner}>
+          <div className={launchStyles.grid}>
+            <div className={launchStyles.media}>
+              <HomeLaunchVideo />
+            </div>
+            <div className={launchStyles.copy}>
+              <Tag>La diferencia</Tag>
+              <h2
+                style={{
+                  fontFamily: "'DM Serif Display',serif",
+                  fontSize: "clamp(1.7rem, 4.5vw, 2.6rem)",
+                  color: T.ink,
+                  lineHeight: 1.15,
+                  margin: "1rem 0 1.25rem",
+                }}
+              >
+                No toda publicidad funciona igual.
+              </h2>
 
-          <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
-            {COMPARISON_ROWS.map((row, i) => (
-              <div key={i} className="grid-2col" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.75rem" }}>
-                <div className="cmp-bad">
-                  <div style={{ fontSize: "0.68rem", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: T.inkLt, marginBottom: "0.6rem" }}>
-                    {row.bad.label}
+              <div className={launchStyles.compareStack}>
+                {COMPARISON_ROWS.map((row, i) => (
+                  <div key={i} className={launchStyles.comparePair}>
+                    <div className={launchStyles.compareMuted}>
+                      <div className={launchStyles.compareLabelMuted}>{row.bad.label}</div>
+                      <p className={launchStyles.compareTextMuted}>{row.bad.text}</p>
+                    </div>
+                    <div className={launchStyles.compareHighlight}>
+                      <div className={launchStyles.compareLabelHighlight}>{row.good.label}</div>
+                      <p className={launchStyles.compareTextHighlight}>{row.good.text}</p>
+                    </div>
                   </div>
-                  <p style={{ fontSize: "0.87rem", color: T.inkMd, lineHeight: 1.7 }}>{row.bad.text}</p>
-                </div>
-                <div className="cmp-good">
-                  <div style={{ fontSize: "0.68rem", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: "rgba(150,185,255,0.8)", marginBottom: "0.6rem" }}>
-                    {row.good.label}
-                  </div>
-                  <p style={{ fontSize: "0.87rem", color: "rgba(255,255,255,0.8)", lineHeight: 1.7 }}>{row.good.text}</p>
-                </div>
+                ))}
               </div>
-            ))}
+
+              <Link href={ROUTES.marcas} scroll={false} className="btn btn-primary">
+                Anunciar mi marca
+              </Link>
+            </div>
           </div>
         </div>
       </section>
 
       {/* -- WHY IT WORKS ------------------------------------------------------- */}
-      <section ref={r3} style={{ background: T.white, padding: "4rem 1.25rem" }}>
-        <div className={`fade-up ${v3 ? "visible" : ""}`} style={{ maxWidth: 680, margin: "0 auto" }}>
+      <section ref={r2} style={{ background: T.white, padding: "4rem 1.25rem" }}>
+        <div className={`fade-up ${v2 ? "visible" : ""}`} style={{ maxWidth: 680, margin: "0 auto" }}>
           <Tag>Cómo funciona</Tag>
           <h2
             style={{
@@ -351,8 +362,8 @@ export function HomeContent() {
       </section>
 
       {/* -- SPLIT CTA ---------------------------------------------------------- */}
-      <section ref={r4} style={{ background: T.ivory, padding: "4rem 1.25rem" }}>
-        <div className={`fade-up ${v4 ? "visible" : ""}`} style={{ maxWidth: 680, margin: "0 auto" }}>
+      <section ref={r3} style={{ background: T.ivory, padding: "4rem 1.25rem" }}>
+        <div className={`fade-up ${v3 ? "visible" : ""}`} style={{ maxWidth: 680, margin: "0 auto" }}>
           <div className="grid-2col" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
             {[
               { label: "Para Marcas",      h: "Transforma tráfico urbano en atención medible.", cta: "Anunciar mi marca",    href: ROUTES.marcas,  accent: true  },
@@ -405,8 +416,8 @@ export function HomeContent() {
       </section>
 
       {/* -- REPORTING ---------------------------------------------------------- */}
-      <section ref={r5} style={{ background: T.white, padding: "4rem 1.25rem" }}>
-        <div className={`fade-up ${v5 ? "visible" : ""}`} style={{ maxWidth: 680, margin: "0 auto" }}>
+      <section ref={r4} style={{ background: T.white, padding: "4rem 1.25rem" }}>
+        <div className={`fade-up ${v4 ? "visible" : ""}`} style={{ maxWidth: 680, margin: "0 auto" }}>
           <Tag>Reportes reales</Tag>
           <h2
             style={{
