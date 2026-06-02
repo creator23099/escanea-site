@@ -627,8 +627,12 @@ textarea.fi { resize: vertical; min-height: 100px; }
   }
 
   .conductores-hero-headline {
-    font-size: clamp(1.7rem, 7vw, 2.4rem) !important;
+    font-size: clamp(1.45rem, 5.5vw, 2rem) !important;
     margin-bottom: 0 !important;
+  }
+
+  .conductores-hero-headline span {
+    white-space: normal !important;
   }
 
   .conductores-hero-headline em,
