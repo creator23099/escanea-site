@@ -48,6 +48,7 @@ const HOW_STEPS = [
 ];
 
 const HERO_BG_IMAGE = "/images/fleet-medellin-horizontal.jpg";
+const HERO_BG_IMAGE_MOBILE = "/images/fleet-medellin-vertical.jpg";
 
 const HERO_GRADIENT =
   "linear-gradient(to top, rgba(0,0,0,0.72) 0%, rgba(0,0,0,0.35) 50%, rgba(0,0,0,0.15) 100%)";
@@ -122,18 +123,28 @@ export function HomeContent() {
           overflow: "hidden",
         }}
       >
-        <img
-          src={HERO_BG_IMAGE}
-          alt="Vehículos de Escanea circulando por Medellín con publicidad vehicular"
+        <picture
           style={{
             position: "absolute",
             inset: 0,
             width: "100%",
             height: "100%",
-            objectFit: "cover",
-            objectPosition: "right center",
           }}
-        />
+        >
+          <source media="(max-width: 768px)" srcSet={HERO_BG_IMAGE_MOBILE} />
+          <img
+            src={HERO_BG_IMAGE}
+            alt="Vehículos de Escanea circulando por Medellín con publicidad vehicular"
+            style={{
+              position: "absolute",
+              inset: 0,
+              width: "100%",
+              height: "100%",
+              objectFit: "cover",
+              objectPosition: "right center",
+            }}
+          />
+        </picture>
         <div
           aria-hidden="true"
           style={{
