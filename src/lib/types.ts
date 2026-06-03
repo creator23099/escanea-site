@@ -31,7 +31,7 @@ export interface DriversFormData {
   zonasOtra: string;
   km: string;
   vehiculo: string;
-  premium: string;
+  dispuestoPublicidad: string;
   nombre: string;
   whatsapp: string;
   email: string;

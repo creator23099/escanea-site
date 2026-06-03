@@ -6,7 +6,7 @@ export const DRIVERS_STEP_LABELS = [
   "Kilómetros promedio que manejas al mes",
   "Vehículo: año, marca, modelo y color",
   "Información de contacto",
-  "Tipo de campaña",
+  "Publicidad en tu vehículo",
   "Información adicional",
 ] as const;
 
@@ -44,11 +44,7 @@ export const KM_OPTIONS = [
   "Más de 4.000 km / mes",
 ] as const;
 
-export const PREMIUM_OPTIONS = [
-  "Sí, me interesa ganar más con la campaña premium (vinilo en puertas + ventana = $400.000 COP / mes)",
-  "Solo la campaña estándar (vinilo en puertas = $300.000 COP / mes)",
-  "No estoy seguro — quiero saber más antes de decidir",
-] as const;
+export const ADVERTISING_WILLINGNESS_OPTIONS = ["Sí", "No"] as const;
 
 export const INITIAL_DRIVERS: DriversFormData = {
   ciudad: "",
@@ -56,7 +52,7 @@ export const INITIAL_DRIVERS: DriversFormData = {
   zonasOtra: "",
   km: "",
   vehiculo: "",
-  premium: "",
+  dispuestoPublicidad: "",
   nombre: "",
   whatsapp: "",
   email: "",
@@ -81,7 +77,7 @@ export function driversPayloadForApi(fd: DriversFormData): Record<string, string
     zonas: buildZonasPayload(fd),
     km: fd.km,
     vehiculo: fd.vehiculo,
-    premium: fd.premium,
+    dispuestoPublicidad: fd.dispuestoPublicidad,
     nombre: fd.nombre,
     whatsapp: fd.whatsapp,
     email: fd.email,

@@ -33,7 +33,7 @@ const WHY_ITEMS: AccordionItem[] = [
 
 const MISSION_POINTS = [
   ["Red urbana activa",     "Vehículos que circulan diariamente generando exposición real en múltiples zonas."],
-  ["Atribución QR",         "Cada instalación incluye seguimiento QR único para medir interacciones reales."],
+  ["Atribución QR",         "Cada vehículo incluye seguimiento QR único para medir interacciones reales."],
   ["Reportes verificables", "Datos reales de campaña: no estimaciones, no proyecciones."],
 ] as const;
 

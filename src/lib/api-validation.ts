@@ -9,7 +9,7 @@
  * for the mappers.
  */
 
-import { PREMIUM_OPTIONS } from "@/lib/drivers-form";
+import { ADVERTISING_WILLINGNESS_OPTIONS } from "@/lib/drivers-form";
 import type { BrandsFormData, DriversFormData } from "@/lib/types";
 
 const MAX_TEXT = 5000;
@@ -73,12 +73,12 @@ export function parseDriversPayload(raw: unknown): ParseResult<DriversFormData> 
   if (!isPlainObject(raw)) return { ok: false, error: "Payload inválido." };
 
   const zonasStr = pickString(raw, "zonas", MAX_TEXT);
-  const premiumRaw = raw.premium;
-  let premium = "";
-  if (isString(premiumRaw)) {
-    premium = premiumRaw.slice(0, MAX_TEXT);
-  } else if (premiumRaw === true) {
-    premium = PREMIUM_OPTIONS[0];
+  const dispuestoRaw = raw.dispuestoPublicidad ?? raw.premium;
+  let dispuestoPublicidad = "";
+  if (isString(dispuestoRaw)) {
+    dispuestoPublicidad = dispuestoRaw.slice(0, MAX_TEXT);
+  } else if (dispuestoRaw === true) {
+    dispuestoPublicidad = ADVERTISING_WILLINGNESS_OPTIONS[0];
   }
 
   const value: DriversFormData = {
@@ -87,7 +87,7 @@ export function parseDriversPayload(raw: unknown): ParseResult<DriversFormData> 
     zonasOtra: "",
     km: pickString(raw, "km", MAX_TINY),
     vehiculo: pickString(raw, "vehiculo", MAX_SHORT),
-    premium,
+    dispuestoPublicidad,
     nombre: pickString(raw, "nombre", MAX_SHORT),
     whatsapp: pickString(raw, "whatsapp", MAX_TINY),
     email: pickString(raw, "email", MAX_SHORT),
@@ -105,7 +105,16 @@ export function parseDriversPayload(raw: unknown): ParseResult<DriversFormData> 
     return { ok: false, error: "Por favor ingresa un email válido." };
   }
   if (!value.vehiculo.trim()) return { ok: false, error: "Por favor ingresa los datos de tu vehículo." };
-  if (!value.premium.trim()) return { ok: false, error: "Por favor selecciona una opción de campaña." };
+  if (!value.dispuestoPublicidad.trim()) {
+    return { ok: false, error: "Por favor selecciona una opción." };
+  }
+  if (
+    !ADVERTISING_WILLINGNESS_OPTIONS.includes(
+      value.dispuestoPublicidad as (typeof ADVERTISING_WILLINGNESS_OPTIONS)[number]
+    )
+  ) {
+    return { ok: false, error: "Por favor selecciona Sí o No." };
+  }
 
   return { ok: true, value };
 }

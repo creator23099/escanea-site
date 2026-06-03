@@ -4,11 +4,10 @@
  * no side effects — safe to unit-test by inspection.
  *
  * Driver submissions map 1:1 to the "Driver Form Submissions" table columns.
- * Ciudad, KM por mes, and Tipo de campaña use form values (with short labels
- * for campaign type only).
+ * Ciudad and KM por mes use form values; willingness to carry ads is stored as Sí/No.
  */
 
-import { PREMIUM_OPTIONS, buildZonasPayload } from "@/lib/drivers-form";
+import { buildZonasPayload } from "@/lib/drivers-form";
 import type { BrandsFormData, DriversFormData } from "@/lib/types";
 
 const todayISO = (): string => new Date().toISOString().slice(0, 10);
@@ -56,16 +55,6 @@ export function toAdvertiserRecord(fd: BrandsFormData): Record<string, unknown> 
 /* Drivers form → Driver Form Submissions table                               */
 /* -------------------------------------------------------------------------- */
 
-const PREMIUM_AIRTABLE_LABELS: Record<string, string> = {
-  [PREMIUM_OPTIONS[0]]: "Premium (puertas + ventana)",
-  [PREMIUM_OPTIONS[1]]: "Estándar (puertas)",
-  [PREMIUM_OPTIONS[2]]: "No está seguro",
-};
-
-function mapPremiumToAirtable(premium: string): string {
-  return PREMIUM_AIRTABLE_LABELS[premium] ?? premium;
-}
-
 export function toDriverRecord(fd: DriversFormData): Record<string, unknown> {
   const record: Record<string, unknown> = {
     Ciudad: fd.ciudad.trim(),
@@ -75,7 +64,7 @@ export function toDriverRecord(fd: DriversFormData): Record<string, unknown> {
     Nombre: fd.nombre.trim(),
     WhatsApp: fd.whatsapp.trim(),
     Email: fd.email.trim(),
-    "Tipo de campaña": mapPremiumToAirtable(fd.premium.trim()),
+    "Tipo de campaña": fd.dispuestoPublicidad.trim(),
     Estado: "Nuevo",
   };
 

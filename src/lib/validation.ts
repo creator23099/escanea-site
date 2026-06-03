@@ -1,3 +1,4 @@
+import { ADVERTISING_WILLINGNESS_OPTIONS } from "@/lib/drivers-form";
 import type { BrandsFormData, DriversFormData } from "@/lib/types";
 
 /** Returns an error message string or null if valid. */
@@ -44,8 +45,17 @@ export function validateDriversStep(step: number, fd: DriversFormData): string |
       }
       return null;
     }
-    case 5:
-      return fd.premium ? null : "Por favor selecciona una opción de campaña.";
+    case 5: {
+      if (!fd.dispuestoPublicidad) return "Por favor selecciona una opción.";
+      if (
+        !ADVERTISING_WILLINGNESS_OPTIONS.includes(
+          fd.dispuestoPublicidad as (typeof ADVERTISING_WILLINGNESS_OPTIONS)[number]
+        )
+      ) {
+        return "Por favor selecciona Sí o No.";
+      }
+      return null;
+    }
     case 6:
       return null;
     default:

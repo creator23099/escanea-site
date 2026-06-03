@@ -10,7 +10,7 @@ const REPORT_ITEMS = [
   { label: "Zonas recorridas",            desc: "Barrios y sectores cubiertos por la flota" },
   { label: "Escaneos QR",                 desc: "Interacciones directas con tu código QR" },
   { label: "Conversaciones WhatsApp",     desc: "Contactos iniciados a través de campaña" },
-  { label: "Fotografías de verificación", desc: "Evidencia visual de la instalación activa" },
+  { label: "Fotografías de verificación", desc: "Evidencia visual de la campaña activa" },
   { label: "Resumen semanal",             desc: "Informe consolidado de cada semana de campaña" },
 ];
 

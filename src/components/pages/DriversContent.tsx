@@ -9,7 +9,7 @@ import {
   DRIVERS_STEP_LABELS,
   INITIAL_DRIVERS,
   KM_OPTIONS,
-  PREMIUM_OPTIONS,
+  ADVERTISING_WILLINGNESS_OPTIONS,
   driversPayloadForApi,
   zonesForCity,
 } from "@/lib/drivers-form";
@@ -20,11 +20,11 @@ import { validateDriversStep } from "@/lib/validation";
 const DRIVER_SPEC_FAQ: AccordionItem[] = [
   {
     q: "¿Daña la pintura o los vidrios?",
-    a: "No. Los materiales son de calidad profesional, removibles sin residuo. Se retiran con un proceso especializado que no compromete la pintura ni los vidrios originales.",
+    a: "No. La publicidad vehicular es de calidad profesional y removible sin residuo. Se retira con un proceso que no compromete la pintura ni los vidrios originales.",
   },
   {
     q: "¿Es difícil de quitar?",
-    a: "No. La mayoría de materiales se retiran en minutos sin herramientas especiales. Coordinamos contigo al final de la campaña — con instrucciones paso a paso o ayuda directa si la necesitas.",
+    a: "No. La mayoría de la publicidad se retira en minutos sin herramientas especiales. Coordinamos contigo al final de la campaña — con instrucciones paso a paso o ayuda directa si la necesitas.",
   },
   {
     q: "¿Tengo que cambiar mis rutas o mis horarios?",
@@ -157,7 +157,7 @@ const PROCESS_STEPS = [
     body: (
       <>
         Si calificas, te asignamos una campaña disponible
-        <br />y coordinamos la instalación.
+        <br />y coordinamos la activación de la publicidad.
       </>
     ),
   },
@@ -506,21 +506,21 @@ export function DriversContent() {
     <div key={5}>
       <fieldset style={{ border: 0, margin: 0, padding: 0 }}>
         <legend style={{ ...FL, padding: 0, marginBottom: 0 }}>
-          ¿Te interesa la campaña premium con vinilo adicional en la ventana trasera?
+          ¿Estás dispuesto a llevar publicidad en tu vehículo para generar ingresos extra mensuales?
         </legend>
         <div
           role="radiogroup"
-          aria-label="Tipo de campaña"
+          aria-label="Disposición para llevar publicidad"
           style={{ display: "flex", flexDirection: "column", gap: "0.85rem", marginTop: "0.75rem" }}
         >
-          {PREMIUM_OPTIONS.map((opt) => (
+          {ADVERTISING_WILLINGNESS_OPTIONS.map((opt) => (
             <label key={opt} style={zoneLabel}>
               <input
                 type="radio"
-                name="d-premium"
-                checked={fd.premium === opt}
+                name="d-dispuesto-publicidad"
+                checked={fd.dispuestoPublicidad === opt}
                 onChange={() => {
-                  setFd((f) => ({ ...f, premium: opt }));
+                  setFd((f) => ({ ...f, dispuestoPublicidad: opt }));
                   setError(null);
                 }}
                 style={{ marginTop: "0.25rem", flexShrink: 0, accentColor: T.cobalt }}
@@ -530,7 +530,6 @@ export function DriversContent() {
           ))}
         </div>
       </fieldset>
-      <p style={fieldHint}>Los conductores piloto reciben prioridad para futuras campañas</p>
     </div>,
     <div key={6}>
       <label htmlFor="d-notas" style={FL}>¿Algo más que quieras compartir?</label>
@@ -672,7 +671,7 @@ export function DriversContent() {
             <article style={cardShell}>
               <div style={cardEyebrow}>01 · EL VEHÍCULO</div>
               <h3 style={{ fontFamily: "'DM Serif Display',serif", fontSize: "1.35rem", color: T.ink, marginBottom: "0.65rem" }}>Vehículo seguro</h3>
-              <p style={bodyMd}>Materiales de calidad profesional, removibles y seguros para pintura y vidrios. Sin daño. Sin residuo permanente.</p>
+              <p style={bodyMd}>Publicidad vehicular profesional, removible y segura para pintura y vidrios. Sin daño. Sin residuo permanente.</p>
             </article>
             <article style={cardShell}>
               <div style={cardEyebrow}>02 · LA RUTINA</div>
@@ -720,16 +719,16 @@ export function DriversContent() {
           <Tag>Tu vehículo</Tag>
           <h2 style={h2Drivers}>Cuidamos tu vehículo como si fuera el nuestro.</h2>
           <p style={{ ...bodyMd, marginTop: 0, marginBottom: 48 }}>
-            Usamos materiales de calidad profesional, los mismos estándares utilizados por flotas vehiculares en todo el mundo.
+            Usamos publicidad vehicular de calidad profesional, con los mismos estándares utilizados por flotas en todo el mundo.
           </p>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div style={darkTrustCardShell}>
-              <DarkTrustAccentTitle>REMOVIBLES SIN RESIDUO</DarkTrustAccentTitle>
-              <p style={darkTrustBody}>Los materiales se diseñan para retirarse sin adhesivo ni marcas en la pintura ni los vidrios. Según el tipo de campaña, los retiras tú mismo o coordinamos un retiro guiado sin costo.</p>
+              <DarkTrustAccentTitle>REMOVIBLE SIN RESIDUO</DarkTrustAccentTitle>
+              <p style={darkTrustBody}>La publicidad se retira sin dejar marcas en la pintura ni los vidrios. Al final de la campaña, la retiras tú mismo o coordinamos un retiro guiado sin costo.</p>
             </div>
             <div style={darkTrustCardShell}>
-              <DarkTrustAccentTitle>INSTALACIÓN COORDINADA</DarkTrustAccentTitle>
-              <p style={darkTrustBody}>Coordinamos cada instalación según el material de la campaña. La mayoría se colocan en minutos — imanes o vinilos diseñados para ser simples. Soporte disponible si lo necesitas.</p>
+              <DarkTrustAccentTitle>ACTIVACIÓN COORDINADA</DarkTrustAccentTitle>
+              <p style={darkTrustBody}>Coordinamos la activación de publicidad en ventana trasera y puertas. El proceso es rápido y sencillo. Soporte disponible si lo necesitas.</p>
             </div>
             <div style={darkTrustCardShell}>
               <DarkTrustAccentTitle>SIN MODIFICACIONES PERMANENTES</DarkTrustAccentTitle>
@@ -737,7 +736,7 @@ export function DriversContent() {
             </div>
             <div style={darkTrustCardShell}>
               <DarkTrustAccentTitle>DOCUMENTACIÓN PREVIA</DarkTrustAccentTitle>
-              <p style={darkTrustBody}>Antes de la instalación, documentas tú mismo el estado de tu vehículo con una guía simple. Queda registro para ambas partes — tu protección y la nuestra.</p>
+              <p style={darkTrustBody}>Antes de activar la campaña, documentas tú mismo el estado de tu vehículo con una guía simple. Queda registro para ambas partes — tu protección y la nuestra.</p>
             </div>
           </div>
           <p style={{ fontFamily: "'DM Serif Display',serif", fontSize: "1.08rem", fontStyle: "italic", fontWeight: 400, color: MUTED_COBALT, marginTop: 48, lineHeight: 1.6 }}>
@@ -755,8 +754,8 @@ export function DriversContent() {
             <div style={{ width: 24, height: 2, background: T.cobalt, marginBottom: 12 }} aria-hidden />
             <div style={{ display: "grid", gap: "0.85rem" }}>
               {[
-                ["Apariencia profesional", "No son stickers llamativos ni publicidad tradicional."],
-                ["Ubicación sin interferir", "Los materiales se ubican en zonas que no afectan la visibilidad ni la experiencia del pasajero."],
+                ["Apariencia profesional", "Publicidad vehicular discreta y de calidad — no publicidad tradicional invasiva."],
+                ["Ubicación sin interferir", "La publicidad se ubica en zonas que no afectan la visibilidad ni la experiencia del pasajero."],
                 ["Relación intacta", "Tu calificación, tus propinas y tu relación con los pasajeros se mantienen."],
               ].map(([title, desc]) => (
                 <div key={title}>
@@ -774,7 +773,7 @@ export function DriversContent() {
           <Tag>Ingresos</Tag>
           <h2 style={h2Drivers}>Ingresos adicionales por los recorridos que ya haces.</h2>
           <p style={{ ...bodyMd, marginTop: 0 }}>
-            Cada campaña tiene un pago definido que conoces antes de aceptar. La compensación varía según el tipo de campaña que selecciones, tu ciudad y tu vehículo. Una vez completes tu postulación, alguien de nuestro equipo de onboarding te contactará con los detalles específicos de las campañas disponibles para ti.
+            Cada campaña tiene un pago definido que conoces antes de aceptar. La compensación varía según tu ciudad, tu vehículo y la campaña disponible. Una vez completes tu postulación, alguien de nuestro equipo de onboarding te contactará con los detalles específicos.
           </p>
           <div style={{ marginTop: "1rem" }}>
             <BrandedStackList items={INGRESOS_ITEMS} background={T.white} />
@@ -795,7 +794,7 @@ export function DriversContent() {
             {[
               ["Continuar", "con una nueva campaña."],
               ["Pausar", "tu participación temporalmente."],
-              ["Terminar", "retiramos los materiales sin costo."],
+              ["Terminar", "retiramos la publicidad sin costo."],
             ].map(([title, desc]) => (
               <div key={title} style={whiteTrustCardShell}>
                 <strong style={{ color: T.cobalt, display: "block", fontSize: "0.92rem", marginBottom: "0.35rem" }}>{title}</strong>

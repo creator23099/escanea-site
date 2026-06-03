@@ -99,7 +99,7 @@ export function HomeLaunchVideo() {
           preload="auto"
           disablePictureInPicture
           disableRemotePlayback
-          aria-label="Instalación de publicidad en vehículo Escanea"
+          aria-label="Publicidad vehicular en vehículo Escanea"
         />
       ) : null}
     </div>

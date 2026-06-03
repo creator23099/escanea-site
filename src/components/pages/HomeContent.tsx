@@ -33,8 +33,8 @@ const HOME_WHY_ITEMS: AccordionItem[] = [
 const HOW_STEPS = [
   {
     n: "01",
-    t: "Instalación en flota activa",
-    d: "Diseños profesionales instalados en vehículos que circulan por zonas estratégicas de la ciudad.",
+    t: "Publicidad en flota activa",
+    d: "Publicidad vehicular activada en vehículos que circulan por zonas estratégicas de la ciudad.",
   },
   {
     n: "02",

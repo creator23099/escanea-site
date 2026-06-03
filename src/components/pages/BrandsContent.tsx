@@ -59,7 +59,7 @@ const PROBLEM_COLUMNS = [
 
 const CAMPAIGN_STEPS = [
   { n: "01", t: "Eliges zona y objetivo", d: "Definimos dónde debe estar tu marca según tu audiencia y metas de campaña." },
-  { n: "02", t: "Instalamos en flota activa", d: "Diseños profesionales en vehículos verificados que circulan todos los días." },
+  { n: "02", t: "Activamos publicidad en flota activa", d: "Publicidad vehicular en vehículos verificados que circulan todos los días." },
   { n: "03", t: "Tu marca circula con QR único", d: "Cada vehículo lleva un código QR para medir interacción y alcance en tiempo real." },
   { n: "04", t: "Recibes reportes semanales verificables", d: "Kilómetros, zonas, escaneos y conversaciones — datos reales cada semana." },
 ] as const;
@@ -75,7 +75,7 @@ const MARCAS_HERO_GRADIENT =
 const FRAUD_PROTECTION_ITEMS = [
   {
     label: "Check-ins fotográficos",
-    desc: "Evidencia visual durante la instalación y el ciclo activo de campaña.",
+    desc: "Evidencia visual durante la activación y el ciclo activo de campaña.",
   },
   {
     label: "Conductores verificados",
@@ -83,7 +83,7 @@ const FRAUD_PROTECTION_ITEMS = [
   },
   {
     label: "Verificación de campaña",
-    desc: "Confirmamos que la campaña esté instalada y visible según lo acordado.",
+    desc: "Confirmamos que la campaña esté activa y visible según lo acordado.",
   },
   {
     label: "Confirmación de ubicación",
