@@ -356,7 +356,7 @@ export function DriversContent() {
   };
 
   const submit = async () => {
-    for (let i = 0; i <= 5; i++) {
+    for (let i = 0; i < TOTAL - 1; i++) {
       const err = validateDriversStep(i, fd);
       if (err) {
         setError(err);

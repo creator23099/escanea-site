@@ -30,7 +30,11 @@ export async function POST(req: Request) {
     return NextResponse.json({ ok: false, error: parsed.error }, { status: 400 });
   }
 
-  const result = await createAirtableRecord(DRIVERS_TABLE_ID, toDriverRecord(parsed.value));
+  const result = await createAirtableRecord(
+    DRIVERS_TABLE_ID,
+    toDriverRecord(parsed.value),
+    { typecast: true },
+  );
   if (!result.ok) {
     return NextResponse.json(
       { ok: false, error: "No se pudo enviar el registro. Intenta nuevamente." },

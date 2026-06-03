@@ -56,6 +56,8 @@ export function toAdvertiserRecord(fd: BrandsFormData): Record<string, unknown> 
 /* -------------------------------------------------------------------------- */
 
 export function toDriverRecord(fd: DriversFormData): Record<string, unknown> {
+  const dispuesto = fd.dispuestoPublicidad.trim();
+
   const record: Record<string, unknown> = {
     Ciudad: fd.ciudad.trim(),
     Zonas: buildZonasPayload(fd),
@@ -64,11 +66,14 @@ export function toDriverRecord(fd: DriversFormData): Record<string, unknown> {
     Nombre: fd.nombre.trim(),
     WhatsApp: fd.whatsapp.trim(),
     Email: fd.email.trim(),
-    "Tipo de campaña": fd.dispuestoPublicidad.trim(),
+    "Tipo de campaña": dispuesto,
     Estado: "Nuevo",
   };
 
-  const notas = fd.notas.trim();
+  const notas = joinNotes([
+    dispuesto ? `Dispuesto a llevar publicidad: ${dispuesto}` : null,
+    fd.notas.trim() || null,
+  ]);
   if (notas) record["Notas adicionales"] = notas;
 
   return record;

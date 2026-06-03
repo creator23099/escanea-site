@@ -29,13 +29,19 @@ export type AirtableResult =
  * `tableIdOrName` may be either the table id (`tblXXXX`) or the visible
  * name. Table ids are preferred for stability against renames.
  *
- * `typecast` is intentionally false: every singleSelect value sent by the
- * mappers is pre-validated against the live schema, so an unknown value
- * should fail loudly rather than be silently coerced.
+ * `typecast` defaults to false. Driver submissions pass `typecast: true` so
+ * new single-select options (e.g. Sí / No) can be created when the form
+ * question changes before the Airtable schema is updated manually.
  */
+export type CreateAirtableRecordOptions = {
+  /** When true, Airtable may add new single-select options (e.g. Sí / No). */
+  typecast?: boolean;
+};
+
 export async function createAirtableRecord(
   tableIdOrName: string,
   fields: Record<string, unknown>,
+  options: CreateAirtableRecordOptions = {},
 ): Promise<AirtableResult> {
   const baseId = process.env.AIRTABLE_BASE_ID;
   const token = process.env.AIRTABLE_TOKEN;
@@ -55,7 +61,7 @@ export async function createAirtableRecord(
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ fields, typecast: false }),
+        body: JSON.stringify({ fields, typecast: options.typecast ?? false }),
         signal: controller.signal,
         cache: "no-store",
       },
