@@ -29,7 +29,7 @@ export default function CampaignRootLayout({
   return (
     <main
       id="main-content"
-      className={`${inter.variable} ${playfair.variable} font-[family-name:var(--font-campaign-sans)]`}
+      className={`${inter.variable} ${playfair.variable} w-full font-[family-name:var(--font-campaign-sans)]`}
     >
       <HideDevIndicator />
       {children}

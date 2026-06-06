@@ -8,10 +8,23 @@ import {
 } from "@/lib/client-campaign";
 
 const WHATSAPP_GREEN = "#25D366";
+const DARK_PAGE_BACKGROUND_MOBILE =
+  "radial-gradient(ellipse at top center, #142236 0%, #0A1520 50%, #060D14 100%)";
+const DARK_PAGE_BACKGROUND_DESKTOP =
+  "radial-gradient(ellipse at 50% 20%, #142236 0%, #0A1520 50%, #060D14 100%)";
+const HEADLINE_GLOW = "0 0 40px rgba(201, 168, 76, 0.15)";
 
 type ClientCampaignPageProps = {
   config: ClientCampaignConfig;
 };
+
+function GoldStarIcon() {
+  return (
+    <svg aria-hidden="true" width={14} height={14} viewBox="0 0 24 24" fill="#C9A84C">
+      <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+    </svg>
+  );
+}
 
 function WhatsAppIcon() {
   return (
@@ -51,10 +64,10 @@ function CtaButton({
       href={href}
       target="_blank"
       rel="noopener noreferrer"
-      className="flex w-full items-center justify-center gap-2 rounded-[14px] px-6 py-[18px] text-base font-semibold tracking-[0.01em] text-white transition-[background-color,transform,box-shadow] duration-200 hover:-translate-y-px hover:brightness-110 active:translate-y-0"
+      className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-[14px] px-6 py-[18px] text-base font-semibold tracking-[0.01em] text-white transition-[background-color,transform,box-shadow] duration-200 hover:-translate-y-px hover:brightness-110 active:translate-y-0 md:py-5 md:px-6"
       style={{
         backgroundColor,
-        boxShadow: "0 4px 14px rgba(27, 43, 75, 0.25)",
+        boxShadow: "0 4px 20px rgba(37, 211, 102, 0.3)",
       }}
     >
       <WhatsAppIcon />
@@ -167,22 +180,36 @@ export function ClientCampaignPage({ config }: ClientCampaignPageProps) {
             nextjs-portal {
               display: none !important;
             }
+            .campaign-page--dark {
+              background: ${DARK_PAGE_BACKGROUND_MOBILE};
+            }
+            @media (min-width: 768px) {
+              .campaign-page--dark {
+                background: ${DARK_PAGE_BACKGROUND_DESKTOP};
+              }
+              .campaign-content {
+                max-width: 480px;
+                margin-left: auto;
+                margin-right: auto;
+                width: 100%;
+              }
+            }
           `,
         }}
       />
       <div
-        className="min-h-svh text-[#1A1A1A]"
+        className={`min-h-svh w-full text-[#1A1A1A]${config.isDark ? " campaign-page--dark" : ""}`}
         style={
           {
-            backgroundColor: config.backgroundColor,
+            background: config.isDark ? undefined : config.backgroundColor,
             "--campaign-primary": config.primaryColor,
             "--campaign-secondary": config.secondaryColor,
           } as CSSProperties
         }
       >
-        <div className="mx-auto w-full max-w-lg px-6 pb-8 pt-8 sm:max-w-xl lg:max-w-2xl">
+        <div className="campaign-content mx-auto w-full max-w-lg px-6 pb-8">
         {/* 1. ABOVE THE FOLD */}
-        <header className="flex flex-col items-center gap-[10px] text-center">
+        <header className="flex flex-col items-center gap-[14px] pt-10 text-center md:pt-[60px]">
           {/* Logo or client name */}
           {config.logo ? (
             <div className="flex justify-center">
@@ -196,12 +223,23 @@ export function ClientCampaignPage({ config }: ClientCampaignPageProps) {
               />
             </div>
           ) : (
-            <p
-              className="mb-[2px] text-[15px] font-medium uppercase tracking-[0.15em]"
-              style={{ color: TEXT.clinicName }}
-            >
-              {config.clientName}
-            </p>
+            <div className="flex flex-col items-center">
+              <p
+                className="text-[15px] font-medium uppercase tracking-[0.15em] md:text-base"
+                style={{ color: TEXT.clinicName }}
+              >
+                {config.clientName}
+              </p>
+              <span
+                aria-hidden="true"
+                className="mt-2 block"
+                style={{
+                  width: 40,
+                  height: 1,
+                  background: "rgba(201, 168, 76, 0.4)",
+                }}
+              />
+            </div>
           )}
 
           {/* Context line */}
@@ -214,15 +252,18 @@ export function ClientCampaignPage({ config }: ClientCampaignPageProps) {
 
           {/* Headline */}
           <h1
-            className="my-2 font-[family-name:var(--font-campaign-serif)] text-[3.25rem] font-bold italic leading-[1.1] tracking-[-0.02em]"
-            style={{ color: TEXT.headline }}
+            className="my-2 font-[family-name:var(--font-campaign-serif)] text-[3.25rem] font-bold italic leading-[1.1] tracking-[-0.02em] md:text-[3.5rem]"
+            style={{
+              color: TEXT.headline,
+              textShadow: config.isDark ? HEADLINE_GLOW : undefined,
+            }}
           >
             {config.headline}
           </h1>
 
           {/* Subheadline */}
           <p
-            className="text-[1.1rem] font-normal tracking-[-0.01em]"
+            className="text-[1.1rem] font-normal tracking-[-0.01em] md:text-[1.2rem]"
             style={{ color: TEXT.subheadline }}
           >
             {config.subheadline}
@@ -239,24 +280,25 @@ export function ClientCampaignPage({ config }: ClientCampaignPageProps) {
           {/* Social proof pill */}
           {showSocialProof && (
             <div
-              className="inline-flex items-center justify-center rounded-full border px-[14px] py-[6px] text-xs font-medium"
+              className="inline-flex items-center justify-center gap-1.5 rounded-full border px-[14px] py-[6px] text-xs font-medium"
               style={{
                 color: TEXT.socialProofText,
                 backgroundColor: TEXT.socialProofBg,
                 borderColor: TEXT.socialProofBorder,
               }}
             >
-              ⭐ {config.reviewCount} reseñas 5 estrellas
+              <GoldStarIcon />
+              {config.reviewCount} reseñas 5 estrellas
             </div>
           )}
 
           {/* Primary CTA */}
-          <div className="w-full">
+          <div className="w-full md:mt-[34px]">
             <CtaButton href={waLink} label={config.ctaText} backgroundColor={WHATSAPP_GREEN} />
           </div>
         </header>
 
-        <div className="py-6" aria-hidden="true">
+        <div className="py-6 md:py-10" aria-hidden="true">
           <hr className="border-0 border-t" style={{ borderColor: SURFACE.divider }} />
         </div>
 
@@ -264,7 +306,7 @@ export function ClientCampaignPage({ config }: ClientCampaignPageProps) {
         <section>
           {/* Gallery title */}
           <h2
-            className="mb-1 text-left font-[family-name:var(--font-campaign-serif)] text-2xl font-semibold"
+            className="mb-1 text-left font-[family-name:var(--font-campaign-serif)] text-2xl font-semibold md:text-[1.75rem]"
             style={{ color: TEXT.sectionTitle }}
           >
             Nuestro trabajo
@@ -279,22 +321,24 @@ export function ClientCampaignPage({ config }: ClientCampaignPageProps) {
           </p>
 
           {/* Photo grid */}
-          <div className="grid grid-cols-2 gap-2">
+          <div className="grid grid-cols-2 gap-2 md:gap-3">
             {galleryPhotos.map((photo, index) =>
               photo ? (
                 <div
                   key={`photo-${index}`}
-                  className="relative aspect-[1/1] aspect-square w-full overflow-hidden rounded-[12px] border"
+                  className="aspect-square w-full"
                   style={{
-                    aspectRatio: "1 / 1",
-                    borderColor: SURFACE.photoCardBorder,
+                    position: "relative",
+                    overflow: "hidden",
+                    borderRadius: 12,
+                    border: `1px solid ${SURFACE.photoCardBorder}`,
                   }}
                 >
                   <Image
                     src={photo}
                     alt={`Trabajo ${index + 1} — ${config.clientName}`}
                     fill
-                    sizes="(max-width: 640px) 175px, 280px"
+                    sizes="(max-width: 768px) 50vw, 228px"
                     className="object-cover object-center"
                     loading="lazy"
                   />
@@ -302,12 +346,24 @@ export function ClientCampaignPage({ config }: ClientCampaignPageProps) {
               ) : (
                 <div
                   key={`placeholder-${index}`}
-                  className="flex aspect-[1/1] aspect-square w-full items-center justify-center overflow-hidden rounded-[12px] border px-2 text-center text-xs leading-tight"
+                  className="aspect-square w-full"
                   style={{
-                    aspectRatio: "1 / 1",
-                    backgroundColor: SURFACE.placeholderBg,
-                    borderColor: SURFACE.placeholderBorder,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    overflow: "hidden",
+                    borderRadius: 12,
+                    border: `1px solid ${
+                      config.isDark ? "rgba(201, 168, 76, 0.08)" : SURFACE.placeholderBorder
+                    }`,
+                    background: config.isDark
+                      ? "linear-gradient(135deg, #1A2535 0%, #141E2C 100%)"
+                      : SURFACE.placeholderBg,
                     color: SURFACE.placeholderLabel,
+                    padding: "0 8px",
+                    textAlign: "center",
+                    fontSize: "0.75rem",
+                    lineHeight: 1.25,
                   }}
                 >
                   {photoPlaceholderLabel(index)}
@@ -323,8 +379,8 @@ export function ClientCampaignPage({ config }: ClientCampaignPageProps) {
         </section>
 
         {/* 3. FOOTER */}
-        <footer className="mt-10 text-center">
-          <p className="text-xs" style={{ color: TEXT.footerText }}>
+        <footer className="mt-10 text-center md:pb-10">
+          <p className="text-xs md:text-sm" style={{ color: TEXT.footerText }}>
             Campaña gestionada por{" "}
             <a
               href="https://escanea.co"
