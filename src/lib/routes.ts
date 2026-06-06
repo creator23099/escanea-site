@@ -4,4 +4,5 @@ export const ROUTES = {
   marcas: "/marcas",
   conductores: "/conductores",
   porQue: "/por-que",
+  campaign: (slug: string) => `/c/${slug}`,
 } as const;
