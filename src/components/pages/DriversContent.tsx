@@ -36,7 +36,7 @@ const DRIVER_SPEC_FAQ: AccordionItem[] = [
   },
   {
     q: "¿Cuánto tiempo dura una campaña?",
-    a: "Entre 1 y 3 meses, dependiendo del cliente y la campaña activa. Al finalizar cada ciclo, tú decides si continúas.",
+    a: "Campañas desde 3 meses. Sin permanencia obligatoria más allá del ciclo.",
   },
   {
     q: "¿Puedo participar si tengo más de un vehículo?",
@@ -789,7 +789,7 @@ export function DriversContent() {
         <div className={`fade-up ${exitVis ? "visible" : ""}`} style={inner}>
           <Tag>Flexibilidad</Tag>
           <h2 style={h2Drivers}>Compromiso por campaña, no a largo plazo.</h2>
-          <p style={{ ...bodyMd, marginTop: 0 }}>Cada campaña tiene una duración definida — generalmente entre 1 y 3 meses. Al finalizar, tú decides:</p>
+          <p style={{ ...bodyMd, marginTop: 0 }}>Campañas desde 3 meses. Sin permanencia obligatoria más allá del ciclo. Al finalizar, tú decides:</p>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4" style={{ marginTop: 24 }}>
             {[
               ["Continuar", "con una nueva campaña."],

@@ -30,7 +30,7 @@ const BRANDS_FAQ: AccordionItem[] = [
   },
   {
     q: "¿Cuánto dura una campaña?",
-    a: "Las campañas van generalmente de 1 a 3 meses. Sin contratos largos ni permanencia obligatoria.",
+    a: "Campañas desde 3 meses. Sin permanencia obligatoria más allá del ciclo.",
   },
   {
     q: "¿Qué pasa si no veo resultados?",
@@ -71,6 +71,33 @@ const MARCAS_HERO_BG_IMAGE_MOBILE = "/images/marcas-hero-vertical.jpg";
 
 const MARCAS_HERO_GRADIENT =
   "linear-gradient(to top, rgba(0,0,0,0.72) 0%, rgba(0,0,0,0.35) 50%, rgba(0,0,0,0.15) 100%)";
+
+const MUTED_COBALT = "rgba(26,79,214,0.58)";
+
+const STATS_BAR = [
+  {
+    value: "100+",
+    label: "Conductores en la red",
+    desc: "",
+  },
+  {
+    value: "~850K",
+    label: "Impresiones / 90 días",
+    desc: "Con 5 vehículos × 3.000–5.000 km/mes en zonas de alto tráfico. Los escaneos QR son verificables — las impresiones son el estimado conservador.",
+  },
+  {
+    value: "5–20",
+    label: "Vehículos por campaña",
+    desc: "Según tu zona y objetivo",
+  },
+] as const;
+
+const FOUNDING_BENEFITS = [
+  "Tarifa bloqueada al renovar",
+  "Exclusividad de nicho en tu zona durante la campaña",
+  "Prioridad en nuevas zonas y ciudades",
+  "Cupos limitados — primeras marcas en la ciudad",
+] as const;
 
 const FRAUD_PROTECTION_ITEMS = [
   {
@@ -137,7 +164,19 @@ const cardShell: CSSProperties = {
   padding: "1.5rem",
 };
 
+const urgencyLine: CSSProperties = {
+  fontFamily: "'DM Serif Display',serif",
+  fontSize: "0.88rem",
+  fontStyle: "italic",
+  fontWeight: 400,
+  color: MUTED_COBALT,
+  lineHeight: 1.6,
+  margin: 0,
+  textAlign: "center",
+};
+
 export function BrandsContent() {
+  const [statsRef, statsVis] = useInView<HTMLElement>();
   const [problemRef, problemVis] = useInView<HTMLElement>();
   const [stepsRef, stepsVis] = useInView<HTMLElement>();
   const [safetyRef, safetyVis] = useInView<HTMLElement>();
@@ -381,6 +420,32 @@ export function BrandsContent() {
         </div>
       </section>
 
+      <section ref={statsRef} style={sectionWhite} aria-label="Cifras de la red">
+        <div className={`fade-up ${statsVis ? "visible" : ""}`} style={inner}>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {STATS_BAR.map(({ value, label, desc }) => (
+              <div key={label} style={cardShell}>
+                <div
+                  style={{
+                    fontFamily: "'DM Serif Display',serif",
+                    fontSize: "clamp(1.75rem, 4vw, 2.25rem)",
+                    color: T.cobalt,
+                    lineHeight: 1,
+                    marginBottom: "0.65rem",
+                  }}
+                >
+                  {value}
+                </div>
+                <div style={{ fontWeight: 600, fontSize: "0.95rem", color: T.ink, marginBottom: "0.35rem" }}>
+                  {label}
+                </div>
+                <p style={{ fontSize: "0.87rem", color: T.inkMd, lineHeight: 1.7, margin: 0 }}>{desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       <section ref={problemRef} style={sectionIvory} aria-label="El problema">
         <div className={`fade-up ${problemVis ? "visible" : ""}`} style={inner}>
           <Tag>El contexto</Tag>
@@ -443,9 +508,50 @@ export function BrandsContent() {
         <div className={`fade-up ${foundingVis ? "visible" : ""}`} style={inner}>
           <Tag>Oportunidad</Tag>
           <h2 style={{ ...h2Brands, marginBottom: "1rem" }}>Marcas fundadoras.</h2>
-          <p style={{ ...bodyMd, margin: 0 }}>
-            Cupos limitados para las primeras marcas en Medellín y Bogotá. Las marcas fundadoras tienen prioridad y condiciones preferenciales para campañas futuras.
+          <p style={{ ...bodyMd, marginTop: 0, marginBottom: "1.25rem" }}>
+            Cupos limitados disponibles en Medellín.
           </p>
+          <p style={{ ...bodyMd, marginTop: 0, marginBottom: "1rem", fontWeight: 600, color: T.ink }}>
+            Lo que incluye ser marca fundadora:
+          </p>
+          <div
+            style={{
+              background: T.ivoryDk,
+              borderRadius: 16,
+              border: `1.5px solid ${T.stone}`,
+              overflow: "hidden",
+            }}
+          >
+            {FOUNDING_BENEFITS.map((item, i) => (
+              <div
+                key={item}
+                style={{
+                  display: "flex",
+                  alignItems: "flex-start",
+                  gap: "1rem",
+                  padding: "1rem 1.25rem",
+                  borderBottom: i < FOUNDING_BENEFITS.length - 1 ? `1px solid ${T.stone}` : "none",
+                }}
+              >
+                <div
+                  aria-hidden="true"
+                  style={{
+                    flexShrink: 0,
+                    fontFamily: "'DM Serif Display',serif",
+                    fontSize: "1.15rem",
+                    color: T.cobalt,
+                    opacity: 0.55,
+                    lineHeight: 1,
+                    minWidth: "1.6rem",
+                    paddingTop: 2,
+                  }}
+                >
+                  {String(i + 1).padStart(2, "0")}
+                </div>
+                <div style={{ fontWeight: 600, fontSize: "0.88rem", color: T.ink, lineHeight: 1.6 }}>{item}</div>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 
@@ -555,7 +661,12 @@ export function BrandsContent() {
               <div style={{ minHeight: 120, marginBottom: "1rem" }}>{stepContent[step]}</div>
               {error && <p className="field-error" role="alert">{error}</p>}
               {submitError && <p className="field-error" role="alert">{submitError}</p>}
-              <div style={{ display: "flex", gap: "0.65rem", justifyContent: "space-between", marginTop: "1rem" }}>
+              {step === TOTAL - 1 && (
+                <p style={{ ...urgencyLine, marginTop: "1rem", marginBottom: "0.75rem" }}>
+                  Activa tu campaña en 14 días.
+                </p>
+              )}
+              <div style={{ display: "flex", gap: "0.65rem", justifyContent: "space-between", marginTop: step === TOTAL - 1 ? 0 : "1rem" }}>
                 {step > 0 && (
                   <button type="button" className="btn btn-outline" onClick={prev} disabled={submitting} style={{ fontSize: "0.78rem" }}>
                     ← Anterior
