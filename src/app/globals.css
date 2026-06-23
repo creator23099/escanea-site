@@ -32,9 +32,20 @@
 
 /* Reset (scoped enough to coexist with Tailwind Preflight) */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-html { font-size: 16px; scroll-behavior: smooth; }
+html {
+  font-size: 16px;
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
 
 /* Override Tailwind's default Arial body font from the scaffold */
+html,
+body {
+  overflow-x: clip;
+  max-width: 100%;
+}
+
 body {
   background: var(--c-ivory);
   font-family: var(--font-stack-sans);
@@ -670,7 +681,7 @@ textarea.fi { resize: vertical; min-height: 100px; }
 /* ---------- Responsive helpers ----------------------------------------- */
 .hide-desktop { display: none; }
 
-@media (max-width: 640px) {
+@media (max-width: 768px) {
   .hide-mobile  { display: none !important; }
   .hide-desktop { display: flex !important; }
   .stack-mobile { flex-direction: column !important; }
