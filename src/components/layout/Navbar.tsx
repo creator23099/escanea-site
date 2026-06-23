@@ -151,7 +151,7 @@ export function Navbar() {
         </Link>
 
         {/* Desktop nav */}
-        <div className="hide-mobile" style={{ display: "flex", gap: "1.75rem", alignItems: "center" }}>
+        <div className="hide-mobile nav-desktop-row">
           {NAV_ITEMS.map((x) => (
             <Link
               key={x.href}
@@ -185,9 +185,6 @@ export function Navbar() {
             background: "none",
             border: "none",
             cursor: "pointer",
-            display: "none", // shown via media query class below
-            flexDirection: "column",
-            gap: 5,
             padding: "8px 4px",
           }}
           id="mob-btn"

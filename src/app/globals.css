@@ -37,6 +37,7 @@ html {
   scroll-behavior: smooth;
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;
+  width: 100%;
 }
 
 /* Override Tailwind's default Arial body font from the scaffold */
@@ -51,6 +52,8 @@ body {
   font-family: var(--font-stack-sans);
   color: var(--c-ink);
   -webkit-font-smoothing: antialiased;
+  width: 100%;
+  overflow-x: clip;
 }
 body.nav-open { overflow: hidden; }
 
@@ -679,15 +682,51 @@ textarea.fi { resize: vertical; min-height: 100px; }
 }
 
 /* ---------- Responsive helpers ----------------------------------------- */
-.hide-desktop { display: none; }
+/* Mobile-first nav: hamburger by default; desktop row from 769px up.
+   Avoid inline display on nav elements — inline styles win over classes
+   and force desktop chrome if this sheet loads late. */
+.hide-mobile {
+  display: none !important;
+}
+
+.hide-desktop {
+  display: flex !important;
+}
+
+#mob-btn {
+  display: flex !important;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.nav-desktop-row {
+  display: none !important;
+  gap: 1.75rem;
+  align-items: center;
+}
+
+@media (min-width: 769px) {
+  .hide-mobile {
+    display: flex !important;
+  }
+
+  .hide-desktop {
+    display: none !important;
+  }
+
+  .nav-desktop-row {
+    display: flex !important;
+  }
+
+  #mob-btn {
+    display: none !important;
+  }
+}
 
 @media (max-width: 768px) {
-  .hide-mobile  { display: none !important; }
-  .hide-desktop { display: flex !important; }
   .stack-mobile { flex-direction: column !important; }
   .full-mobile  { width: 100% !important; }
   .grid-2col    { grid-template-columns: 1fr !important; }
-  #mob-btn      { display: flex !important; }
 }
 
 /* ---------- Reduced motion --------------------------------------------- */
