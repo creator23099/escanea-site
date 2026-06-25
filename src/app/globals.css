@@ -91,11 +91,31 @@ body.nav-open { overflow: hidden; }
 @keyframes slideDown { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: translateY(0); } }
 @keyframes pulse     { 0%, 100% { opacity: 1; } 50% { opacity: 0.55; } }
 
-.fade-up         { opacity: 0; transform: translateY(24px); transition: opacity 0.7s cubic-bezier(.22,.8,.36,1), transform 0.7s cubic-bezier(.22,.8,.36,1); }
-.fade-up.visible { opacity: 1; transform: translateY(0); }
-.fade-up.d1      { transition-delay: 0.1s; }
-.fade-up.d2      { transition-delay: 0.2s; }
-.fade-up.d3      { transition-delay: 0.3s; }
+/* Scroll-triggered fade-up — CSS view() timeline, no JS hydration */
+.fade-up { opacity: 0; transform: translateY(24px); }
+
+@supports (animation-timeline: view()) {
+  .fade-up {
+    animation: fade-up-scroll 0.7s cubic-bezier(0.22, 0.8, 0.36, 1) both;
+    animation-timeline: view();
+    animation-range: entry 0% entry 35%;
+  }
+}
+
+@supports not (animation-timeline: view()) {
+  .fade-up {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes fade-up-scroll {
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.fade-up.d1 { animation-delay: 0.1s; }
+.fade-up.d2 { animation-delay: 0.2s; }
+.fade-up.d3 { animation-delay: 0.3s; }
 
 /* ---------- Form inputs ------------------------------------------------- */
 .fi {
@@ -157,6 +177,10 @@ textarea.fi { resize: vertical; min-height: 100px; }
 .btn-outline:hover { border-color: var(--c-ink-md); background: rgba(0,0,0,0.04); }
 .btn-navy { background: var(--c-navy); color: #fff; padding: 0.9rem 1.6rem; }
 .btn-navy:hover { background: var(--c-navy-md); transform: translateY(-1px); }
+.btn-cta-white { background: #fff; color: var(--c-cobalt); padding: 0.9rem 1.6rem; font-size: 0.78rem; letter-spacing: 0.04em; text-transform: uppercase; border-radius: 8px; }
+.btn-cta-white:hover { background: var(--c-ivory); }
+.btn-cta-outline-light { background: transparent; color: #fff; border: 1.5px solid rgba(255,255,255,0.35); padding: 0.9rem 1.6rem; font-size: 0.78rem; letter-spacing: 0.04em; text-transform: uppercase; border-radius: 8px; }
+.btn-cta-outline-light:hover { border-color: rgba(255,255,255,0.7); }
 .btn-full { width: 100%; }
 /* Disabled state: used while form submissions are in flight. Neutralizes
    hover transforms and box-shadows so the loading-button reads as inert. */
@@ -783,10 +807,9 @@ textarea.fi { resize: vertical; min-height: 100px; }
     scroll-behavior: auto !important;
   }
 
-  .fade-up,
-  .fade-up.visible {
+  .fade-up {
     opacity: 1 !important;
     transform: none !important;
-    transition: none !important;
+    animation: none !important;
   }
 }

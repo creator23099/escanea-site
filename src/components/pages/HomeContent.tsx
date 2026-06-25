@@ -1,16 +1,37 @@
+import dynamic from "next/dynamic";
 import Link from "next/link";
-import { Accordion } from "@/components/primitives/Accordion";
 import { DarkTag } from "@/components/primitives/DarkTag";
 import { FadeUpSection } from "@/components/primitives/FadeUpSection";
 import { HeroBackgroundImage } from "@/components/primitives/HeroBackgroundImage";
-import { HomeLaunchVideo } from "@/components/primitives/HomeLaunchVideo";
-import launchStyles from "./HomeLaunchSection.module.css";
 import { ReportList } from "@/components/primitives/ReportList";
 import { Tag } from "@/components/primitives/Tag";
-import { T } from "@/lib/tokens";
 import { ROUTES } from "@/lib/routes";
+import { T } from "@/lib/tokens";
 import type { AccordionItem } from "@/lib/types";
 import { HomeFinalCtaSection } from "./HomeFinalCtaSection";
+import launchStyles from "./HomeLaunchSection.module.css";
+
+const Accordion = dynamic(
+  () => import("@/components/primitives/Accordion").then((m) => m.Accordion),
+);
+
+const HomeLaunchVideo = dynamic(
+  () => import("@/components/primitives/HomeLaunchVideo").then((m) => m.HomeLaunchVideo),
+  {
+    loading: () => (
+      <div
+        aria-hidden
+        style={{
+          width: "100%",
+          aspectRatio: "406 / 720",
+          border: `1.5px solid ${T.stone}`,
+          borderRadius: 12,
+          background: T.ivory,
+        }}
+      />
+    ),
+  },
+);
 
 const HOME_WHY_ITEMS: AccordionItem[] = [
   {

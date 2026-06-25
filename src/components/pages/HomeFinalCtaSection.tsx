@@ -1,5 +1,3 @@
-"use client";
-
 import Link from "next/link";
 import { ROUTES } from "@/lib/routes";
 import { T } from "@/lib/tokens";
@@ -41,49 +39,10 @@ export function HomeFinalCtaSection() {
           Espacios limitados para marcas fundadoras.
         </p>
         <div style={{ display: "flex", gap: "0.75rem", justifyContent: "center", flexWrap: "wrap" }}>
-          <Link
-            href={ROUTES.marcas}
-            scroll={false}
-            className="btn"
-            style={{
-              background: "#fff",
-              color: T.cobalt,
-              padding: "0.9rem 1.6rem",
-              fontSize: "0.78rem",
-              letterSpacing: "0.04em",
-              textTransform: "uppercase",
-              borderRadius: 8,
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.background = T.ivory;
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.background = "#fff";
-            }}
-          >
+          <Link href={ROUTES.marcas} scroll={false} className="btn btn-cta-white">
             Anunciar mi marca
           </Link>
-          <Link
-            href={ROUTES.conductores}
-            scroll={false}
-            className="btn"
-            style={{
-              background: "transparent",
-              color: "#fff",
-              border: "1.5px solid rgba(255,255,255,0.35)",
-              padding: "0.9rem 1.6rem",
-              fontSize: "0.78rem",
-              letterSpacing: "0.04em",
-              textTransform: "uppercase",
-              borderRadius: 8,
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.borderColor = "rgba(255,255,255,0.7)";
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.borderColor = "rgba(255,255,255,0.35)";
-            }}
-          >
+          <Link href={ROUTES.conductores} scroll={false} className="btn btn-cta-outline-light">
             Conducir con Escanea
           </Link>
         </div>

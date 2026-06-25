@@ -1,6 +1,3 @@
-"use client";
-
-import { useInView } from "@/lib/use-in-view";
 import type { CSSProperties, ReactNode } from "react";
 
 type FadeUpSectionProps = {
@@ -11,6 +8,7 @@ type FadeUpSectionProps = {
   "aria-label"?: string;
 };
 
+/** Scroll-triggered fade-up via CSS view() timeline — no client JS or hydration. */
 export function FadeUpSection({
   children,
   style,
@@ -18,14 +16,9 @@ export function FadeUpSection({
   id,
   "aria-label": ariaLabel,
 }: FadeUpSectionProps) {
-  const [ref, visible] = useInView<HTMLElement>();
-
   return (
-    <section ref={ref} id={id} style={style} aria-label={ariaLabel}>
-      <div
-        className={`fade-up ${visible ? "visible" : ""}`}
-        style={innerStyle}
-      >
+    <section id={id} style={style} aria-label={ariaLabel}>
+      <div className="fade-up" style={innerStyle}>
         {children}
       </div>
     </section>
