@@ -7,12 +7,20 @@ import "./globals.css";
  * Fonts are self-hosted via next/font (no external Google Fonts request at runtime),
  * preventing CLS and the previous @import url(...) waterfall inside <style>.
  */
+/** Above-the-fold weights (hero body, CTAs, tags). Preloaded at build time. */
 const dmSans = DM_Sans({
   subsets: ["latin"],
   variable: "--font-sans",
   display: "swap",
-  // Weights actually used by the design (400-700).
-  weight: ["400", "500", "600", "700"],
+  weight: ["400", "500", "600"],
+});
+
+/** Bold sans — mobile nav active state, footer labels; below fold or on interaction. */
+const dmSansBold = DM_Sans({
+  subsets: ["latin"],
+  display: "swap",
+  weight: "700",
+  preload: false,
 });
 
 const dmSerif = DM_Serif_Display({
@@ -85,6 +93,8 @@ export default function RootLayout({
       className={`${dmSans.variable} ${dmSerif.variable} h-full antialiased`}
     >
       <body className="min-h-full w-full flex flex-col overflow-x-hidden">
+        {/* Registers DM Sans 700 @font-face without applying weight to the tree */}
+        <span className={dmSansBold.className} aria-hidden="true" hidden />
         {/* Skip link — visible on keyboard focus, hidden otherwise */}
         <a href="#main-content" className="skip-link">
           Saltar al contenido
