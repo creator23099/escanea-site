@@ -1,12 +1,11 @@
-"use client";
 import Link from "next/link";
 import { ROUTES } from "@/lib/routes";
 import { Accordion } from "@/components/primitives/Accordion";
 import { DarkTag } from "@/components/primitives/DarkTag";
+import { FadeUpSection } from "@/components/primitives/FadeUpSection";
 import { Tag } from "@/components/primitives/Tag";
 import { T } from "@/lib/tokens";
 import type { AccordionItem } from "@/lib/types";
-import { useInView } from "@/lib/use-in-view";
 
 const WHY_ITEMS: AccordionItem[] = [
   {
@@ -37,10 +36,9 @@ const MISSION_POINTS = [
   ["Reportes verificables", "Datos reales de campaña: no estimaciones, no proyecciones."],
 ] as const;
 
-export function WhyContent() {
-  const [r1, v1] = useInView<HTMLElement>();
-  const [r2, v2] = useInView<HTMLElement>();
+const sectionInner = { maxWidth: 680, margin: "0 auto" } as const;
 
+export function WhyContent() {
   return (
     <div style={{ background: T.ivory }}>
       <section
@@ -50,7 +48,7 @@ export function WhyContent() {
           padding: "100px 1.25rem 3.5rem",
         }}
       >
-        <div style={{ maxWidth: 680, margin: "0 auto" }}>
+        <div style={sectionInner}>
           <div style={{ animation: "fadeIn 0.6s ease 0.1s both", marginBottom: "1.2rem" }}>
             <Tag>Por Qué Ahora</Tag>
           </div>
@@ -82,8 +80,7 @@ export function WhyContent() {
         </div>
       </section>
 
-      <section ref={r1} style={{ background: T.white, padding: "3.5rem 1.25rem" }}>
-        <div className={`fade-up ${v1 ? "visible" : ""}`} style={{ maxWidth: 680, margin: "0 auto" }}>
+      <FadeUpSection style={{ background: T.white, padding: "3.5rem 1.25rem" }} innerStyle={sectionInner}>
           <Tag>El contexto</Tag>
           <h2
             style={{
@@ -97,12 +94,11 @@ export function WhyContent() {
             Cinco razones que hacen esto urgente.
           </h2>
           <Accordion items={WHY_ITEMS} />
-        </div>
-      </section>
+      </FadeUpSection>
 
       {/* Mission — navy section */}
       <section style={{ background: T.navy, padding: "4rem 1.25rem" }} aria-label="La misión">
-        <div style={{ maxWidth: 680, margin: "0 auto" }}>
+        <div style={sectionInner}>
           <div style={{ marginBottom: "1.2rem" }}>
             <DarkTag>La misión</DarkTag>
           </div>
@@ -156,8 +152,7 @@ export function WhyContent() {
         </div>
       </section>
 
-      <section ref={r2} style={{ background: T.ivory, padding: "4rem 1.25rem" }}>
-        <div className={`fade-up ${v2 ? "visible" : ""}`} style={{ maxWidth: 680, margin: "0 auto" }}>
+      <FadeUpSection style={{ background: T.ivory, padding: "4rem 1.25rem" }} innerStyle={sectionInner}>
           <h2
             style={{
               fontFamily: "'DM Serif Display',serif",
@@ -177,8 +172,7 @@ export function WhyContent() {
             <Link href={ROUTES.marcas} scroll={false} className="btn btn-primary">Anunciar mi marca</Link>
             <Link href={ROUTES.conductores} scroll={false} className="btn btn-outline">Conducir con Escanea</Link>
           </div>
-        </div>
-      </section>
+      </FadeUpSection>
     </div>
   );
 }

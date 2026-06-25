@@ -97,6 +97,7 @@ export function HomeLaunchVideo() {
           loop
           playsInline
           preload="auto"
+          poster="/images/escanea-launch-video-poster.jpg"
           disablePictureInPicture
           disableRemotePlayback
           aria-label="Publicidad vehicular en vehículo Escanea"

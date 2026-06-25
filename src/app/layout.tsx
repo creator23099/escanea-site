@@ -1,5 +1,4 @@
 import type { Metadata, Viewport } from "next";
-import Script from "next/script";
 import { DM_Sans, DM_Serif_Display } from "next/font/google";
 import "./globals.css";
 
@@ -11,8 +10,8 @@ const dmSans = DM_Sans({
   subsets: ["latin"],
   variable: "--font-sans",
   display: "swap",
-  // Weights actually used by the design (300-700).
-  weight: ["300", "400", "500", "600", "700"],
+  // Weights actually used by the design (400-700).
+  weight: ["400", "500", "600", "700"],
 });
 
 const dmSerif = DM_Serif_Display({
@@ -82,8 +81,6 @@ export const metadata: Metadata = {
   },
 };
 
-const GA_MEASUREMENT_ID = "G-EWRN6MJRRB";
-
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -95,18 +92,6 @@ export default function RootLayout({
       className={`${dmSans.variable} ${dmSerif.variable} h-full antialiased`}
     >
       <body className="min-h-full w-full flex flex-col overflow-x-hidden">
-        <Script
-          src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}
-          strategy="afterInteractive"
-        />
-        <Script id="google-analytics" strategy="afterInteractive">
-          {`
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
-            gtag('js', new Date());
-            gtag('config', '${GA_MEASUREMENT_ID}');
-          `}
-        </Script>
         {/* Skip link — visible on keyboard focus, hidden otherwise */}
         <a href="#main-content" className="skip-link">
           Saltar al contenido

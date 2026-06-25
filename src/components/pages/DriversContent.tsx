@@ -1,21 +1,16 @@
-"use client";
-import { useCallback, useState, type CSSProperties, type ReactNode } from "react";
+import dynamic from "next/dynamic";
+import type { CSSProperties, ReactNode } from "react";
 import { Accordion } from "@/components/primitives/Accordion";
-import { StepBar } from "@/components/primitives/StepBar";
-import { SuccessCard } from "@/components/primitives/SuccessCard";
+import { FadeUpSection } from "@/components/primitives/FadeUpSection";
+import { HeroBackgroundImage } from "@/components/primitives/HeroBackgroundImage";
+import { ScrollToIdButton } from "@/components/primitives/ScrollToIdButton";
 import { Tag } from "@/components/primitives/Tag";
-import { T, FL } from "@/lib/tokens";
-import {
-  DRIVERS_STEP_LABELS,
-  INITIAL_DRIVERS,
-  KM_OPTIONS,
-  ADVERTISING_WILLINGNESS_OPTIONS,
-  driversPayloadForApi,
-  zonesForCity,
-} from "@/lib/drivers-form";
-import type { AccordionItem, DriversFormData } from "@/lib/types";
-import { useInView } from "@/lib/use-in-view";
-import { validateDriversStep } from "@/lib/validation";
+import { T } from "@/lib/tokens";
+import type { AccordionItem } from "@/lib/types";
+
+const DriversContactForm = dynamic(() =>
+  import("./DriversContactForm").then((mod) => mod.DriversContactForm)
+);
 
 const DRIVER_SPEC_FAQ: AccordionItem[] = [
   {
@@ -43,25 +38,6 @@ const DRIVER_SPEC_FAQ: AccordionItem[] = [
     a: "Sí. Si tienes una flota o conoces otros conductores activos, podemos coordinar postulaciones adicionales.",
   },
 ];
-
-const fieldHint: CSSProperties = {
-  fontFamily: "'DM Sans',sans-serif",
-  fontSize: "0.82rem",
-  color: T.inkMd,
-  marginTop: "0.35rem",
-  lineHeight: 1.5,
-};
-
-const zoneLabel: CSSProperties = {
-  display: "flex",
-  alignItems: "flex-start",
-  gap: "0.65rem",
-  cursor: "pointer",
-  fontFamily: "'DM Sans',sans-serif",
-  fontSize: "0.9rem",
-  color: T.inkMd,
-  lineHeight: 1.45,
-};
 
 const inner: CSSProperties = {
   maxWidth: 680,
@@ -174,8 +150,8 @@ const PROCESS_STEPS = [
   },
 ] as const;
 
-const CONDUCTORES_HERO_BG_IMAGE = "/images/conductores-hero.jpg";
-const CONDUCTORES_HERO_BG_IMAGE_MOBILE = "/images/conductores-hero-vertical.jpg";
+const CONDUCTORES_HERO_BG_IMAGE = "/images/conductores-hero.webp";
+const CONDUCTORES_HERO_BG_IMAGE_MOBILE = "/images/conductores-hero-vertical.webp";
 
 const CONDUCTORES_HERO_GRADIENT =
   "linear-gradient(to top, rgba(0,0,0,0.72) 0%, rgba(0,0,0,0.35) 50%, rgba(0,0,0,0.15) 100%)";
@@ -265,285 +241,34 @@ function ItalicClosing({ children }: { children: ReactNode }) {
 function CenteredApplyButton() {
   return (
     <div style={{ display: "flex", justifyContent: "center", marginTop: "2rem" }}>
-      <button
-        type="button"
-        className="btn btn-primary"
-        onClick={() => document.getElementById("drivers-form")?.scrollIntoView({ behavior: "smooth" })}
-        style={{ fontSize: "0.78rem" }}
-      >
+      <ScrollToIdButton className="btn btn-primary" targetId="drivers-form" style={{ fontSize: "0.78rem" }}>
         Postularme →
-      </button>
+      </ScrollToIdButton>
     </div>
   );
 }
 
+const h2Drivers: CSSProperties = {
+  fontFamily: "'DM Serif Display',serif",
+  fontSize: "clamp(1.6rem, 4vw, 2.4rem)",
+  color: T.ink,
+  lineHeight: 1.2,
+  margin: "1rem 0 1.75rem",
+};
+
+const trustBody: CSSProperties = {
+  fontFamily: "'DM Sans',sans-serif",
+  fontSize: "0.92rem",
+  color: T.inkMd,
+  lineHeight: 1.75,
+};
+
+const darkTrustBody: CSSProperties = {
+  ...trustBody,
+  color: "rgba(255,255,255,0.72)",
+};
+
 export function DriversContent() {
-  const [cardsRef, cardsVis] = useInView<HTMLElement>();
-  const [stepsRef, stepsVis] = useInView<HTMLElement>();
-  const [whoRef, whoVis] = useInView<HTMLElement>();
-  const [vehRef, vehVis] = useInView<HTMLElement>();
-  const [pasRef, pasVis] = useInView<HTMLElement>();
-  const [ingRef, ingVis] = useInView<HTMLElement>();
-  const [exitRef, exitVis] = useInView<HTMLElement>();
-  const [faqRef, faqVis] = useInView<HTMLElement>();
-  const [formRef, formVis] = useInView<HTMLElement>();
-  const [step, setStep] = useState(0);
-  const [fd, setFd] = useState<DriversFormData>(INITIAL_DRIVERS);
-  const [error, setError] = useState<string | null>(null);
-  const [submitting, setSubmitting] = useState(false);
-  const [submitError, setSubmitError] = useState<string | null>(null);
-  const [sent, setSent] = useState(false);
-  const TOTAL = DRIVERS_STEP_LABELS.length;
-
-  const trustBody: CSSProperties = {
-    fontFamily: "'DM Sans',sans-serif",
-    fontSize: "0.92rem",
-    color: T.inkMd,
-    lineHeight: 1.75,
-  };
-
-  const darkTrustBody: CSSProperties = {
-    ...trustBody,
-    color: "rgba(255,255,255,0.72)",
-  };
-
-  const h2Drivers: CSSProperties = {
-    fontFamily: "'DM Serif Display',serif",
-    fontSize: "clamp(1.6rem, 4vw, 2.4rem)",
-    color: T.ink,
-    lineHeight: 1.2,
-    margin: "1rem 0 1.75rem",
-  };
-
-  const upd = useCallback(
-    (k: keyof DriversFormData) =>
-      (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-        setFd((f) => ({ ...f, [k]: e.target.value as never }));
-        setError(null);
-      },
-    []
-  );
-
-  const setCiudad = (ciudad: string) => {
-    setFd((f) => ({ ...f, ciudad, zonas: [], zonasOtra: "" }));
-    setError(null);
-  };
-
-  const toggleZone = (zone: string) => {
-    setFd((f) => {
-      const selected = f.zonas.includes(zone);
-      const zonas = selected ? f.zonas.filter((z) => z !== zone) : [...f.zonas, zone];
-      const zonasOtra = zone === "Otra" && selected ? "" : f.zonasOtra;
-      return { ...f, zonas, zonasOtra };
-    });
-    setError(null);
-  };
-
-  const next = () => {
-    const err = validateDriversStep(step, fd);
-    if (err) {
-      setError(err);
-      return;
-    }
-    setError(null);
-    setStep((s) => s + 1);
-  };
-
-  const prev = () => {
-    setError(null);
-    setSubmitError(null);
-    setStep((s) => s - 1);
-  };
-
-  const submit = async () => {
-    for (let i = 0; i < TOTAL - 1; i++) {
-      const err = validateDriversStep(i, fd);
-      if (err) {
-        setError(err);
-        setStep(i);
-        return;
-      }
-    }
-    if (submitting) return;
-    setSubmitting(true);
-    setSubmitError(null);
-    try {
-      const res = await fetch("/api/contact/drivers", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(driversPayloadForApi(fd)),
-      });
-      const body = (await res.json().catch(() => null)) as { ok?: boolean; error?: string } | null;
-      if (!res.ok || !body?.ok) {
-        setSubmitError(body?.error || "No se pudo enviar el registro. Intenta nuevamente.");
-        return;
-      }
-      setSent(true);
-    } catch {
-      setSubmitError("Error de conexión. Verifica tu internet e intenta nuevamente.");
-    } finally {
-      setSubmitting(false);
-    }
-  };
-
-  const zoneOptions = zonesForCity(fd.ciudad);
-
-  const stepContent: ReactNode[] = [
-    <div key={0}>
-      <label htmlFor="d-ciudad" style={FL}>Ciudad principal donde manejas</label>
-      <select
-        id="d-ciudad"
-        className={`fi ${error ? "error" : ""}`}
-        value={fd.ciudad}
-        onChange={(e) => setCiudad(e.target.value)}
-        required
-        aria-required="true"
-      >
-        <option value="">Selecciona tu ciudad</option>
-        <option>Medellín</option>
-        <option>Bogotá</option>
-      </select>
-    </div>,
-    <div key={1}>
-      <fieldset style={{ border: 0, margin: 0, padding: 0 }}>
-        <legend style={{ ...FL, padding: 0, marginBottom: 0 }}>Zonas que manejas con más frecuencia</legend>
-        <div
-          role="group"
-          aria-label="Zonas que manejas con más frecuencia"
-          style={{ display: "flex", flexDirection: "column", gap: "0.65rem", marginTop: "0.75rem" }}
-        >
-          {zoneOptions.map((zone) => (
-            <label key={zone} style={zoneLabel}>
-              <input
-                type="checkbox"
-                checked={fd.zonas.includes(zone)}
-                onChange={() => toggleZone(zone)}
-                style={{ marginTop: "0.2rem", flexShrink: 0, accentColor: T.cobalt }}
-              />
-              <span>{zone}</span>
-            </label>
-          ))}
-        </div>
-        {fd.zonas.includes("Otra") && (
-          <input
-            id="d-zonas-otra"
-            className={`fi ${error ? "error" : ""}`}
-            type="text"
-            value={fd.zonasOtra}
-            onChange={upd("zonasOtra")}
-            placeholder="Especifica tu zona"
-            style={{ marginTop: "0.75rem" }}
-            aria-label="Especifica tu zona"
-          />
-        )}
-      </fieldset>
-    </div>,
-    <div key={2}>
-      <label htmlFor="d-km" style={FL}>Kilómetros promedio que manejas al mes</label>
-      <select id="d-km" className={`fi ${error ? "error" : ""}`} value={fd.km} onChange={upd("km")} required aria-required="true">
-        <option value="">Seleccionar</option>
-        {KM_OPTIONS.map((opt) => (
-          <option key={opt}>{opt}</option>
-        ))}
-      </select>
-      <p style={fieldHint}>Manejas tus rutas normales — no necesitas cambiar nada</p>
-    </div>,
-    <div key={3}>
-      <label htmlFor="d-vehiculo" style={FL}>Vehículo: año, marca, modelo y color</label>
-      <input
-        id="d-vehiculo"
-        className={`fi ${error ? "error" : ""}`}
-        type="text"
-        value={fd.vehiculo}
-        onChange={upd("vehiculo")}
-        placeholder="Ej: 2018 Chevrolet Spark, Blanco"
-        required
-        aria-required="true"
-      />
-    </div>,
-    <div key={4} style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
-      <div style={{ ...FL, marginBottom: "0.15rem" }}>Información de contacto</div>
-      <div>
-        <label htmlFor="d-nombre" style={FL}>Nombre completo</label>
-        <input
-          id="d-nombre"
-          className={`fi ${error && !fd.nombre ? "error" : ""}`}
-          type="text"
-          value={fd.nombre}
-          onChange={upd("nombre")}
-          placeholder="Tu nombre"
-          required
-          aria-required="true"
-        />
-      </div>
-      <div>
-        <label htmlFor="d-whatsapp" style={FL}>WhatsApp</label>
-        <input
-          id="d-whatsapp"
-          className={`fi ${error && !fd.whatsapp ? "error" : ""}`}
-          type="tel"
-          value={fd.whatsapp}
-          onChange={upd("whatsapp")}
-          placeholder="+57 300 000 0000"
-          required
-          aria-required="true"
-        />
-      </div>
-      <div>
-        <label htmlFor="d-email" style={FL}>Email</label>
-        <input
-          id="d-email"
-          className={`fi ${error && !fd.email ? "error" : ""}`}
-          type="email"
-          value={fd.email}
-          onChange={upd("email")}
-          placeholder="tu@correo.com"
-          required
-          aria-required="true"
-        />
-      </div>
-    </div>,
-    <div key={5}>
-      <fieldset style={{ border: 0, margin: 0, padding: 0 }}>
-        <legend style={{ ...FL, padding: 0, marginBottom: 0 }}>
-          ¿Estás dispuesto a llevar publicidad en tu vehículo para generar ingresos extra mensuales?
-        </legend>
-        <div
-          role="radiogroup"
-          aria-label="Disposición para llevar publicidad"
-          style={{ display: "flex", flexDirection: "column", gap: "0.85rem", marginTop: "0.75rem" }}
-        >
-          {ADVERTISING_WILLINGNESS_OPTIONS.map((opt) => (
-            <label key={opt} style={zoneLabel}>
-              <input
-                type="radio"
-                name="d-dispuesto-publicidad"
-                checked={fd.dispuestoPublicidad === opt}
-                onChange={() => {
-                  setFd((f) => ({ ...f, dispuestoPublicidad: opt }));
-                  setError(null);
-                }}
-                style={{ marginTop: "0.25rem", flexShrink: 0, accentColor: T.cobalt }}
-              />
-              <span>{opt}</span>
-            </label>
-          ))}
-        </div>
-      </fieldset>
-    </div>,
-    <div key={6}>
-      <label htmlFor="d-notas" style={FL}>¿Algo más que quieras compartir?</label>
-      <textarea
-        id="d-notas"
-        className="fi"
-        rows={4}
-        value={fd.notas}
-        onChange={upd("notas")}
-        placeholder="Cualquier información adicional, preguntas, o comentarios"
-      />
-    </div>,
-  ];
-
   return (
     <div style={{ background: T.ivory }}>
       <section
@@ -557,32 +282,12 @@ export function DriversContent() {
           overflow: "hidden",
         }}
       >
-        <picture
-          style={{
-            position: "absolute",
-            inset: 0,
-            width: "100%",
-            height: "100%",
-            overflow: "hidden",
-          }}
-        >
-          <source media="(max-width: 768px)" srcSet={CONDUCTORES_HERO_BG_IMAGE_MOBILE} />
-          <img
-            src={CONDUCTORES_HERO_BG_IMAGE}
-            alt="Conductor con publicidad en el vehículo circulando por la ciudad"
-            style={{
-              position: "absolute",
-              left: "50%",
-              top: "50%",
-              width: "calc(100% / 0.92)",
-              height: "calc(100% / 0.92)",
-              maxWidth: "none",
-              objectFit: "cover",
-              objectPosition: "center 20%",
-              transform: "translate(-50%, -50%)",
-            }}
-          />
-        </picture>
+        <HeroBackgroundImage
+          desktopSrc={CONDUCTORES_HERO_BG_IMAGE}
+          mobileSrc={CONDUCTORES_HERO_BG_IMAGE_MOBILE}
+          alt="Conductor con publicidad en el vehículo circulando por la ciudad"
+          variant="conductores"
+        />
         <div aria-hidden="true" className="conductores-hero-gradient-top" />
         <div
           aria-hidden="true"
@@ -653,20 +358,15 @@ export function DriversContent() {
               className="conductores-hero-ctas"
               style={{ animation: "fadeUp 0.7s ease 0.5s both" }}
             >
-              <button
-                type="button"
-                className="btn btn-primary"
-                onClick={() => document.getElementById("drivers-form")?.scrollIntoView({ behavior: "smooth" })}
-              >
+              <ScrollToIdButton className="btn btn-primary" targetId="drivers-form">
                 Postularme →
-              </button>
+              </ScrollToIdButton>
             </div>
           </div>
         </div>
       </section>
 
-      <section ref={cardsRef} style={sectionIvory} aria-label="En qué consiste">
-        <div className={`fade-up ${cardsVis ? "visible" : ""}`} style={inner}>
+      <FadeUpSection style={sectionIvory} innerStyle={inner} aria-label="En qué consiste">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <article style={cardShell}>
               <div style={cardEyebrow}>01 · EL VEHÍCULO</div>
@@ -684,11 +384,9 @@ export function DriversContent() {
               <p style={bodyMd}>Cada campaña tiene un valor definido que conoces antes de aceptar. Transferencia bancaria mensual.</p>
             </article>
           </div>
-        </div>
-      </section>
+      </FadeUpSection>
 
-      <section ref={stepsRef} style={sectionIvory} aria-label="Cómo funciona">
-        <div className={`fade-up ${stepsVis ? "visible" : ""}`} style={inner}>
+      <FadeUpSection style={sectionIvory} innerStyle={inner} aria-label="Cómo funciona">
           <Tag>El proceso</Tag>
           <h2 style={{ ...h2Drivers, marginBottom: "2.5rem" }}>Tres pasos.</h2>
           <div style={{ display: "flex", flexWrap: "wrap", gap: "0.75rem" }}>
@@ -701,21 +399,17 @@ export function DriversContent() {
             ))}
           </div>
           <CenteredApplyButton />
-        </div>
-      </section>
+      </FadeUpSection>
 
-      <section ref={whoRef} style={sectionIvory} aria-label="Perfil">
-        <div className={`fade-up ${whoVis ? "visible" : ""}`} style={inner}>
+      <FadeUpSection style={sectionIvory} innerStyle={inner} aria-label="Perfil">
           <Tag>Requisitos</Tag>
           <h2 style={h2Drivers}>Trabajamos con conductores activos.</h2>
           <p style={{ ...bodyMd, marginTop: 0, marginBottom: "1.25rem" }}>Buscamos conductores con:</p>
           <BrandedStackList items={CRITERIA_ITEMS} background={T.white} />
           <ItalicClosing>No es una plataforma masiva. Es una red curada.</ItalicClosing>
-        </div>
-      </section>
+      </FadeUpSection>
 
-      <section ref={vehRef} style={sectionIvory} aria-label="Cuidado del vehículo">
-        <div className={`fade-up ${vehVis ? "visible" : ""}`} style={inner}>
+      <FadeUpSection style={sectionIvory} innerStyle={inner} aria-label="Cuidado del vehículo">
           <Tag>Tu vehículo</Tag>
           <h2 style={h2Drivers}>Cuidamos tu vehículo como si fuera el nuestro.</h2>
           <p style={{ ...bodyMd, marginTop: 0, marginBottom: 48 }}>
@@ -743,11 +437,9 @@ export function DriversContent() {
             Tu vehículo es tu herramienta de trabajo. Lo tratamos con el mismo respeto.
           </p>
           <CenteredApplyButton />
-        </div>
-      </section>
+      </FadeUpSection>
 
-      <section ref={pasRef} style={sectionIvory} aria-label="Experiencia del pasajero">
-        <div className={`fade-up ${pasVis ? "visible" : ""}`} style={inner}>
+      <FadeUpSection style={sectionIvory} innerStyle={inner} aria-label="Experiencia del pasajero">
           <Tag>Tus pasajeros</Tag>
           <h2 style={h2Drivers}>Diseñado para no afectar la experiencia del pasajero.</h2>
           <div style={whiteTrustCardShell}>
@@ -765,11 +457,9 @@ export function DriversContent() {
               ))}
             </div>
           </div>
-        </div>
-      </section>
+      </FadeUpSection>
 
-      <section ref={ingRef} style={sectionIvory} aria-label="Ingresos">
-        <div className={`fade-up ${ingVis ? "visible" : ""}`} style={inner}>
+      <FadeUpSection style={sectionIvory} innerStyle={inner} aria-label="Ingresos">
           <Tag>Ingresos</Tag>
           <h2 style={h2Drivers}>Ingresos adicionales por los recorridos que ya haces.</h2>
           <p style={{ ...bodyMd, marginTop: 0 }}>
@@ -782,11 +472,9 @@ export function DriversContent() {
             El pago se realiza mensualmente por transferencia bancaria.
           </p>
           <CenteredApplyButton />
-        </div>
-      </section>
+      </FadeUpSection>
 
-      <section ref={exitRef} style={sectionIvory} aria-label="Flexibilidad">
-        <div className={`fade-up ${exitVis ? "visible" : ""}`} style={inner}>
+      <FadeUpSection style={sectionIvory} innerStyle={inner} aria-label="Flexibilidad">
           <Tag>Flexibilidad</Tag>
           <h2 style={h2Drivers}>Compromiso por campaña, no a largo plazo.</h2>
           <p style={{ ...bodyMd, marginTop: 0 }}>Campañas desde 3 meses. Sin permanencia obligatoria más allá del ciclo. Al finalizar, tú decides:</p>
@@ -805,73 +493,17 @@ export function DriversContent() {
           <p style={{ ...bodyMd, fontSize: "0.88rem", marginTop: 32, fontFamily: "'DM Serif Display',serif", fontStyle: "italic", color: MUTED_COBALT }}>
             Sin permanencia obligatoria más allá del ciclo activo. Sin penalizaciones por terminar al final de una campaña.
           </p>
-        </div>
-      </section>
+      </FadeUpSection>
 
-      <section ref={faqRef} style={sectionIvory} aria-label="Preguntas frecuentes">
-        <div className={`fade-up ${faqVis ? "visible" : ""}`} style={inner}>
+      <FadeUpSection style={sectionIvory} innerStyle={inner} aria-label="Preguntas frecuentes">
           <Tag>FAQ</Tag>
           <h2 style={{ ...h2Drivers, marginBottom: "1.25rem" }}>Preguntas frecuentes.</h2>
           <div style={faqPanelShell}>
             <Accordion items={DRIVER_SPEC_FAQ} />
           </div>
-        </div>
-      </section>
+      </FadeUpSection>
 
-      <section ref={formRef} id="drivers-form" style={sectionIvory}>
-        <div className={`fade-up ${formVis ? "visible" : ""}`} style={inner}>
-          <div style={{ marginBottom: "1rem" }}>
-            <Tag>Registro</Tag>
-          </div>
-          <h2 style={{ ...h2Drivers, margin: "1rem 0 2rem" }}>Postúlate a la red</h2>
-          <p style={{ fontSize: "0.95rem", color: T.inkMd, lineHeight: 1.65, marginBottom: "1.75rem" }}>
-            Si calificas, te contactamos en menos de 48 horas.
-          </p>
-
-          {sent ? (
-            <SuccessCard
-              title="¡Gracias! Tu postulación está registrada."
-              message="Te contactaremos cuando lancemos la próxima campaña en tu ciudad."
-              bg={T.white}
-            />
-          ) : (
-            <div
-              style={{ background: T.white, border: `1.5px solid ${T.stone}`, borderRadius: 16, padding: "1.75rem" }}
-              role="form"
-              aria-label="Formulario de registro para conductores"
-            >
-              <StepBar current={step} total={TOTAL} />
-              <div style={{ fontSize: "0.72rem", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: T.inkLt, marginBottom: "1rem" }}>
-                Paso {step + 1} de {TOTAL}: {DRIVERS_STEP_LABELS[step]}
-              </div>
-              <div style={{ minHeight: 120, marginBottom: "1rem" }}>{stepContent[step]}</div>
-              {error && <p className="field-error" role="alert">{error}</p>}
-              {submitError && <p className="field-error" role="alert">{submitError}</p>}
-              <div style={{ display: "flex", gap: "0.65rem", justifyContent: "space-between", marginTop: "1rem", flexWrap: "wrap" }}>
-                {step > 0 && (
-                  <button type="button" className="btn btn-outline" onClick={prev} disabled={submitting} style={{ fontSize: "0.78rem" }}>← Anterior</button>
-                )}
-                <div style={{ marginLeft: "auto" }}>
-                  {step < TOTAL - 1 ? (
-                    <button type="button" className="btn btn-primary" onClick={next} disabled={submitting} style={{ fontSize: "0.78rem" }}>Siguiente →</button>
-                  ) : (
-                    <button
-                      type="button"
-                      className="btn btn-primary"
-                      onClick={submit}
-                      disabled={submitting}
-                      aria-busy={submitting}
-                      style={{ fontSize: "0.78rem" }}
-                    >
-                      {submitting ? "Enviando…" : "Enviar postulación"}
-                    </button>
-                  )}
-                </div>
-              </div>
-            </div>
-          )}
-        </div>
-      </section>
+      <DriversContactForm />
     </div>
   );
 }

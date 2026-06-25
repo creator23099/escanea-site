@@ -1,7 +1,8 @@
-"use client";
 import Link from "next/link";
 import { Accordion } from "@/components/primitives/Accordion";
 import { DarkTag } from "@/components/primitives/DarkTag";
+import { FadeUpSection } from "@/components/primitives/FadeUpSection";
+import { HeroBackgroundImage } from "@/components/primitives/HeroBackgroundImage";
 import { HomeLaunchVideo } from "@/components/primitives/HomeLaunchVideo";
 import launchStyles from "./HomeLaunchSection.module.css";
 import { ReportList } from "@/components/primitives/ReportList";
@@ -9,7 +10,7 @@ import { Tag } from "@/components/primitives/Tag";
 import { T } from "@/lib/tokens";
 import { ROUTES } from "@/lib/routes";
 import type { AccordionItem } from "@/lib/types";
-import { useInView } from "@/lib/use-in-view";
+import { HomeFinalCtaSection } from "./HomeFinalCtaSection";
 
 const HOME_WHY_ITEMS: AccordionItem[] = [
   {
@@ -48,8 +49,8 @@ const HOW_STEPS = [
   },
 ];
 
-const HERO_BG_IMAGE = "/images/fleet-medellin-horizontal.jpg";
-const HERO_BG_IMAGE_MOBILE = "/images/fleet-medellin-vertical.jpg";
+const HERO_BG_IMAGE = "/images/fleet-medellin-horizontal.webp";
+const HERO_BG_IMAGE_MOBILE = "/images/fleet-medellin-vertical.webp";
 
 const HERO_GRADIENT =
   "linear-gradient(to top, rgba(0,0,0,0.72) 0%, rgba(0,0,0,0.35) 50%, rgba(0,0,0,0.15) 100%)";
@@ -77,12 +78,9 @@ const COMPARISON_ROWS = [
   },
 ];
 
-export function HomeContent() {
-  const [r1, v1] = useInView<HTMLElement>();
-  const [r2, v2] = useInView<HTMLElement>();
-  const [r3, v3] = useInView<HTMLElement>();
-  const [r4, v4] = useInView<HTMLElement>();
+const sectionInner = { maxWidth: 680, margin: "0 auto" } as const;
 
+export function HomeContent() {
   return (
     <div style={{ background: T.ivory }}>
       {/* -- HERO --------------------------------------------------------------- */}
@@ -101,28 +99,12 @@ export function HomeContent() {
           overflow: "hidden",
         }}
       >
-        <picture
-          style={{
-            position: "absolute",
-            inset: 0,
-            width: "100%",
-            height: "100%",
-          }}
-        >
-          <source media="(max-width: 768px)" srcSet={HERO_BG_IMAGE_MOBILE} />
-          <img
-            src={HERO_BG_IMAGE}
-            alt="Vehículos de Escanea circulando por Medellín con publicidad vehicular"
-            style={{
-              position: "absolute",
-              inset: 0,
-              width: "100%",
-              height: "100%",
-              objectFit: "cover",
-              objectPosition: "right center",
-            }}
-          />
-        </picture>
+        <HeroBackgroundImage
+          desktopSrc={HERO_BG_IMAGE}
+          mobileSrc={HERO_BG_IMAGE_MOBILE}
+          alt="Vehículos de Escanea circulando por Medellín con publicidad vehicular"
+          objectPosition="right center"
+        />
         <div
           aria-hidden="true"
           className="home-hero-gradient-top"
@@ -238,8 +220,11 @@ export function HomeContent() {
       </section>
 
       {/* -- CÓMO FUNCIONA ------------------------------------------------------ */}
-      <section ref={r1} style={{ background: T.navy, padding: "100px 1.25rem 4rem" }} aria-label="Cómo funciona">
-        <div className={`fade-up ${v1 ? "visible" : ""}`} style={{ maxWidth: 680, margin: "0 auto" }}>
+      <FadeUpSection
+        style={{ background: T.navy, padding: "100px 1.25rem 4rem" }}
+        innerStyle={sectionInner}
+        aria-label="Cómo funciona"
+      >
           <div style={{ marginBottom: "1.2rem" }}>
             <DarkTag>Activando nuestras primeras campañas en Colombia</DarkTag>
           </div>
@@ -292,8 +277,7 @@ export function HomeContent() {
               </li>
             ))}
           </ol>
-        </div>
-      </section>
+      </FadeUpSection>
 
       {/* -- VIDEO + COMPARISON --------------------------------------------------- */}
       <section
@@ -343,8 +327,7 @@ export function HomeContent() {
       </section>
 
       {/* -- WHY IT WORKS ------------------------------------------------------- */}
-      <section ref={r2} style={{ background: T.white, padding: "4rem 1.25rem" }}>
-        <div className={`fade-up ${v2 ? "visible" : ""}`} style={{ maxWidth: 680, margin: "0 auto" }}>
+      <FadeUpSection style={{ background: T.white, padding: "4rem 1.25rem" }} innerStyle={sectionInner}>
           <Tag>Cómo funciona</Tag>
           <h2
             style={{
@@ -358,12 +341,10 @@ export function HomeContent() {
             Diseñado para<br />resultados reales.
           </h2>
           <Accordion items={HOME_WHY_ITEMS} />
-        </div>
-      </section>
+      </FadeUpSection>
 
       {/* -- SPLIT CTA ---------------------------------------------------------- */}
-      <section ref={r3} style={{ background: T.ivory, padding: "4rem 1.25rem" }}>
-        <div className={`fade-up ${v3 ? "visible" : ""}`} style={{ maxWidth: 680, margin: "0 auto" }}>
+      <FadeUpSection style={{ background: T.ivory, padding: "4rem 1.25rem" }} innerStyle={sectionInner}>
           <div className="grid-2col" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
             {[
               { label: "Para Marcas",      h: "Transforma tráfico urbano en atención medible.", cta: "Anunciar mi marca",    href: ROUTES.marcas,  accent: true  },
@@ -412,12 +393,10 @@ export function HomeContent() {
               </div>
             ))}
           </div>
-        </div>
-      </section>
+      </FadeUpSection>
 
       {/* -- REPORTING ---------------------------------------------------------- */}
-      <section ref={r4} style={{ background: T.white, padding: "4rem 1.25rem" }}>
-        <div className={`fade-up ${v4 ? "visible" : ""}`} style={{ maxWidth: 680, margin: "0 auto" }}>
+      <FadeUpSection style={{ background: T.white, padding: "4rem 1.25rem" }} innerStyle={sectionInner}>
           <Tag>Reportes reales</Tag>
           <h2
             style={{
@@ -434,83 +413,10 @@ export function HomeContent() {
             Cada campaña incluye un reporte semanal con datos verificables de tu inversión.
           </p>
           <ReportList showDesc />
-        </div>
-      </section>
+      </FadeUpSection>
 
       {/* -- FINAL CTA ---------------------------------------------------------- */}
-      <section
-        aria-label="Llamado a la acción"
-        style={{
-          background: `linear-gradient(135deg, ${T.cobalt} 0%, #0A2FA0 100%)`,
-          padding: "4rem 1.25rem",
-        }}
-      >
-        <div style={{ maxWidth: 680, margin: "0 auto", textAlign: "center" }}>
-          <h2
-            style={{
-              fontFamily: "'DM Serif Display',serif",
-              fontSize: "clamp(1.8rem, 5vw, 3rem)",
-              color: "#fff",
-              lineHeight: 1.2,
-              marginBottom: "1rem",
-            }}
-          >
-            ¿Listo para<br />activar tu campaña?
-          </h2>
-          <p style={{ fontSize: "0.95rem", color: "rgba(255,255,255,0.65)", marginBottom: "2rem", lineHeight: 1.7 }}>
-            Nuestro equipo te contacta en menos de 24 horas.
-          </p>
-          <p style={{
-            fontSize: "0.85rem",
-            fontWeight: 500,
-            color: "rgba(150,180,255,1)",
-            lineHeight: 1.6,
-            marginTop: "-1.25rem",
-            marginBottom: "0.75rem",
-          }}>
-            Espacios limitados para marcas fundadoras.
-          </p>
-          <div style={{ display: "flex", gap: "0.75rem", justifyContent: "center", flexWrap: "wrap" }}>
-            <Link
-              href={ROUTES.marcas}
-              scroll={false}
-              className="btn"
-              style={{
-                background: "#fff",
-                color: T.cobalt,
-                padding: "0.9rem 1.6rem",
-                fontSize: "0.78rem",
-                letterSpacing: "0.04em",
-                textTransform: "uppercase",
-                borderRadius: 8,
-              }}
-              onMouseEnter={(e) => { e.currentTarget.style.background = T.ivory; }}
-              onMouseLeave={(e) => { e.currentTarget.style.background = "#fff"; }}
-            >
-              Anunciar mi marca
-            </Link>
-            <Link
-              href={ROUTES.conductores}
-              scroll={false}
-              className="btn"
-              style={{
-                background: "transparent",
-                color: "#fff",
-                border: "1.5px solid rgba(255,255,255,0.35)",
-                padding: "0.9rem 1.6rem",
-                fontSize: "0.78rem",
-                letterSpacing: "0.04em",
-                textTransform: "uppercase",
-                borderRadius: 8,
-              }}
-              onMouseEnter={(e) => { e.currentTarget.style.borderColor = "rgba(255,255,255,0.7)"; }}
-              onMouseLeave={(e) => { e.currentTarget.style.borderColor = "rgba(255,255,255,0.35)"; }}
-            >
-              Conducir con Escanea
-            </Link>
-          </div>
-        </div>
-      </section>
+      <HomeFinalCtaSection />
     </div>
   );
 }
