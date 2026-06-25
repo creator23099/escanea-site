@@ -272,7 +272,7 @@ export function HomeContent() {
                 </div>
                 <div>
                   <div style={{ fontWeight: 600, color: "#fff", marginBottom: "0.35rem", fontSize: "0.95rem" }}>{s.t}</div>
-                  <div style={{ fontSize: "0.87rem", color: "rgba(255,255,255,0.45)", lineHeight: 1.7 }}>{s.d}</div>
+                  <div style={{ fontSize: "0.87rem", color: "rgba(255,255,255,0.65)", lineHeight: 1.7 }}>{s.d}</div>
                 </div>
               </li>
             ))}

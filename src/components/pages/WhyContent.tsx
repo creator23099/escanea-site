@@ -144,7 +144,7 @@ export function WhyContent() {
                 </div>
                 <div>
                   <div style={{ fontWeight: 600, color: "#fff", fontSize: "0.92rem", marginBottom: "0.3rem" }}>{t}</div>
-                  <div style={{ fontSize: "0.85rem", color: "rgba(255,255,255,0.45)", lineHeight: 1.7 }}>{d}</div>
+                  <div style={{ fontSize: "0.85rem", color: "rgba(255,255,255,0.65)", lineHeight: 1.7 }}>{d}</div>
                 </div>
               </li>
             ))}

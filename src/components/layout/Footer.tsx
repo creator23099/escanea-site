@@ -29,7 +29,7 @@ export function Footer() {
             >
               Escanea
             </div>
-            <div style={{ fontSize: "0.82rem", color: "rgba(255,255,255,0.45)", lineHeight: 1.6 }}>
+            <div style={{ fontSize: "0.82rem", color: "rgba(255,255,255,0.65)", lineHeight: 1.6 }}>
               Transformando el tráfico<br />en atención medible.
             </div>
           </div>
@@ -109,8 +109,8 @@ export function Footer() {
             gap: "0.5rem",
           }}
         >
-          <div style={{ fontSize: "0.75rem", color: "rgba(255,255,255,0.25)" }}>© {year} Escanea. Colombia.</div>
-          <div style={{ fontSize: "0.75rem", color: "rgba(255,255,255,0.25)" }}>Media urbana en movimiento.</div>
+          <div style={{ fontSize: "0.75rem", color: "rgba(255,255,255,0.45)" }}>© {year} Escanea. Colombia.</div>
+          <div style={{ fontSize: "0.75rem", color: "rgba(255,255,255,0.45)" }}>Media urbana en movimiento.</div>
         </div>
       </div>
     </footer>
