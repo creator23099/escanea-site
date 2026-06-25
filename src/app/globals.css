@@ -352,26 +352,19 @@ textarea.fi { resize: vertical; min-height: 100px; }
   overflow: hidden;
 }
 
+.hero-bg picture {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
 .hero-bg-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
   object-fit: cover;
-}
-
-.hero-bg-img--mobile {
-  display: block;
-}
-
-.hero-bg-img--desktop {
-  display: none;
-}
-
-@media (min-width: 769px) {
-  .hero-bg-img--mobile {
-    display: none;
-  }
-
-  .hero-bg-img--desktop {
-    display: block;
-  }
 }
 
 .conductores-hero-bg-img {

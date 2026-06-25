@@ -66,8 +66,8 @@ const CAMPAIGN_STEPS = [
   { n: "04", t: "Recibes reportes semanales verificables", d: "Kilómetros, zonas, escaneos y conversaciones — datos reales cada semana." },
 ] as const;
 
-const MARCAS_HERO_BG_IMAGE = "/images/marcas-hero.webp";
-const MARCAS_HERO_BG_IMAGE_MOBILE = "/images/marcas-hero-vertical.webp";
+export const MARCAS_HERO_BG_IMAGE = "/images/marcas-hero.webp";
+export const MARCAS_HERO_BG_IMAGE_MOBILE = "/images/marcas-hero-vertical.webp";
 
 const MARCAS_HERO_GRADIENT =
   "linear-gradient(to top, rgba(0,0,0,0.72) 0%, rgba(0,0,0,0.35) 50%, rgba(0,0,0,0.15) 100%)";

@@ -70,8 +70,8 @@ const HOW_STEPS = [
   },
 ];
 
-const HERO_BG_IMAGE = "/images/fleet-medellin-horizontal.webp";
-const HERO_BG_IMAGE_MOBILE = "/images/fleet-medellin-vertical.webp";
+export const HERO_BG_IMAGE = "/images/fleet-medellin-horizontal.webp";
+export const HERO_BG_IMAGE_MOBILE = "/images/fleet-medellin-vertical.webp";
 
 const HERO_GRADIENT =
   "linear-gradient(to top, rgba(0,0,0,0.72) 0%, rgba(0,0,0,0.35) 50%, rgba(0,0,0,0.15) 100%)";

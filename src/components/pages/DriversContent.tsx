@@ -150,8 +150,8 @@ const PROCESS_STEPS = [
   },
 ] as const;
 
-const CONDUCTORES_HERO_BG_IMAGE = "/images/conductores-hero.webp";
-const CONDUCTORES_HERO_BG_IMAGE_MOBILE = "/images/conductores-hero-vertical.webp";
+export const CONDUCTORES_HERO_BG_IMAGE = "/images/conductores-hero.webp";
+export const CONDUCTORES_HERO_BG_IMAGE_MOBILE = "/images/conductores-hero-vertical.webp";
 
 const CONDUCTORES_HERO_GRADIENT =
   "linear-gradient(to top, rgba(0,0,0,0.72) 0%, rgba(0,0,0,0.35) 50%, rgba(0,0,0,0.15) 100%)";

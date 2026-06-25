@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { DM_Sans, DM_Serif_Display } from "next/font/google";
+import { SITE_ICONS } from "@/lib/site-icons";
 import "./globals.css";
 
 /**
@@ -70,15 +71,7 @@ export const metadata: Metadata = {
   // icon as explicit metadata guarantees the head exposes every rel a
   // Safari version may look for, and lets us reference the PNG variants
   // we generate via app/icon.tsx and app/apple-icon.tsx.
-  icons: {
-    icon: [
-      { url: "/icon", type: "image/png", sizes: "32x32" },
-    ],
-    shortcut: ["/icon"],
-    apple: [
-      { url: "/apple-icon", type: "image/png", sizes: "180x180" },
-    ],
-  },
+  icons: SITE_ICONS,
 };
 
 export default function RootLayout({

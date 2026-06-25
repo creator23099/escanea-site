@@ -1,4 +1,3 @@
-import Image from "next/image";
 import type { CSSProperties } from "react";
 
 type HeroBackgroundImageProps = {
@@ -27,26 +26,18 @@ export function HeroBackgroundImage({
 
   return (
     <div aria-hidden className="hero-bg">
-      <Image
-        src={mobileSrc}
-        alt=""
-        fill
-        priority
-        fetchPriority="high"
-        sizes="100vw"
-        className={`${imageClass} hero-bg-img--mobile`}
-        style={imageStyle}
-      />
-      <Image
-        src={desktopSrc}
-        alt={alt}
-        fill
-        priority
-        fetchPriority="high"
-        sizes="100vw"
-        className={`${imageClass} hero-bg-img--desktop`}
-        style={imageStyle}
-      />
+      <picture>
+        <source media="(min-width: 769px)" srcSet={desktopSrc} />
+        {/* Pre-optimized WebP served directly — skips /_next/image optimizer hop */}
+        <img
+          src={mobileSrc}
+          alt={alt}
+          fetchPriority="high"
+          decoding="async"
+          className={imageClass}
+          style={imageStyle}
+        />
+      </picture>
     </div>
   );
 }
