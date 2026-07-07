@@ -1,0 +1,47 @@
+.compactGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+  margin-bottom: 1.25rem;
+  align-items: start;
+}
+
+.compactStat {
+  min-width: 0;
+}
+
+.compactValue {
+  margin-bottom: 0.65rem;
+  font-family: var(--font-stack-serif);
+  font-size: clamp(1.75rem, 4vw, 2.25rem);
+  color: var(--c-cobalt);
+  line-height: 1;
+}
+
+.compactValueSmall {
+  font-size: clamp(1.35rem, 3.5vw, 1.75rem);
+}
+
+@media (min-width: 1024px) {
+  .compactGrid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+  }
+
+  /* Keep captions on the same baseline when values wrap unevenly */
+  .compactValue {
+    min-height: 4.5rem;
+  }
+}
+
+.cardsGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+}
+
+@media (min-width: 768px) {
+  .cardsGrid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}

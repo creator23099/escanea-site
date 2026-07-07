@@ -4,7 +4,9 @@ import { FadeUpSection } from "@/components/primitives/FadeUpSection";
 import { HeroBackgroundImage } from "@/components/primitives/HeroBackgroundImage";
 import { ReportList } from "@/components/primitives/ReportList";
 import { ScrollToIdButton } from "@/components/primitives/ScrollToIdButton";
+import { NetworkStatsGrid } from "@/components/primitives/NetworkStatsGrid";
 import { Tag } from "@/components/primitives/Tag";
+import { MARCAS_STATS_BAR } from "@/lib/network-stats";
 import { T } from "@/lib/tokens";
 import type { AccordionItem } from "@/lib/types";
 import type { CSSProperties } from "react";
@@ -71,24 +73,6 @@ export const MARCAS_HERO_BG_IMAGE_MOBILE = "/images/marcas-hero-vertical.webp";
 
 const MARCAS_HERO_GRADIENT =
   "linear-gradient(to top, rgba(0,0,0,0.72) 0%, rgba(0,0,0,0.35) 50%, rgba(0,0,0,0.15) 100%)";
-
-const STATS_BAR = [
-  {
-    value: "100+",
-    label: "Conductores en la red",
-    desc: "",
-  },
-  {
-    value: "~850K",
-    label: "Impresiones / 90 días",
-    desc: "Con 5 vehículos × 3.000–5.000 km/mes en zonas de alto tráfico. Los escaneos QR son verificables — las impresiones son el estimado conservador.",
-  },
-  {
-    value: "5–20",
-    label: "Vehículos por campaña",
-    desc: "Según tu zona y objetivo",
-  },
-] as const;
 
 const FOUNDING_BENEFITS = [
   "Tarifa bloqueada al renovar",
@@ -254,27 +238,7 @@ export function BrandsContent() {
       </section>
 
       <FadeUpSection style={sectionWhite} innerStyle={inner} aria-label="Cifras de la red">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {STATS_BAR.map(({ value, label, desc }) => (
-              <div key={label} style={cardShell}>
-                <div
-                  style={{
-                    fontFamily: "'DM Serif Display',serif",
-                    fontSize: "clamp(1.75rem, 4vw, 2.25rem)",
-                    color: T.cobalt,
-                    lineHeight: 1,
-                    marginBottom: "0.65rem",
-                  }}
-                >
-                  {value}
-                </div>
-                <div style={{ fontWeight: 600, fontSize: "0.95rem", color: T.ink, marginBottom: "0.35rem" }}>
-                  {label}
-                </div>
-                <p style={{ fontSize: "0.87rem", color: T.inkMd, lineHeight: 1.7, margin: 0 }}>{desc}</p>
-              </div>
-            ))}
-          </div>
+          <NetworkStatsGrid stats={MARCAS_STATS_BAR} variant="cards" />
       </FadeUpSection>
 
       <FadeUpSection style={sectionIvory} innerStyle={inner} aria-label="El problema">

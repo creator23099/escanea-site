@@ -2,9 +2,11 @@ import dynamic from "next/dynamic";
 import Link from "next/link";
 import { DarkTag } from "@/components/primitives/DarkTag";
 import { FadeUpSection } from "@/components/primitives/FadeUpSection";
+import { NetworkStatsGrid } from "@/components/primitives/NetworkStatsGrid";
 import { HeroBackgroundImage } from "@/components/primitives/HeroBackgroundImage";
 import { ReportList } from "@/components/primitives/ReportList";
 import { Tag } from "@/components/primitives/Tag";
+import { HOME_STATS_ROW } from "@/lib/network-stats";
 import { ROUTES } from "@/lib/routes";
 import { T } from "@/lib/tokens";
 import type { AccordionItem } from "@/lib/types";
@@ -257,6 +259,7 @@ export function HomeContent() {
           <div style={{ marginBottom: "1.2rem" }}>
             <DarkTag>Activando nuestras primeras campañas en Colombia</DarkTag>
           </div>
+          <NetworkStatsGrid stats={HOME_STATS_ROW} variant="compact-dark" />
           <h2
             style={{
               fontFamily: "'DM Serif Display',serif",

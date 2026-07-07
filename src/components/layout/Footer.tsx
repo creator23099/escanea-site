@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { formatFooterLegalMeta } from "@/lib/footer-meta";
 import { NAV_ITEMS } from "@/lib/nav-items";
 import { T } from "@/lib/tokens";
 
@@ -103,14 +104,28 @@ export function Footer() {
           style={{
             borderTop: "1px solid rgba(255,255,255,0.08)",
             paddingTop: "1.5rem",
-            display: "flex",
-            justifyContent: "space-between",
-            flexWrap: "wrap",
-            gap: "0.5rem",
           }}
         >
+          <div
+            style={{
+              fontSize: "0.75rem",
+              color: "rgba(255,255,255,0.45)",
+              marginBottom: "0.75rem",
+            }}
+          >
+            {formatFooterLegalMeta()}
+          </div>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              flexWrap: "wrap",
+              gap: "0.5rem",
+            }}
+          >
           <div style={{ fontSize: "0.75rem", color: "rgba(255,255,255,0.45)" }}>© {year} Escanea. Colombia.</div>
           <div style={{ fontSize: "0.75rem", color: "rgba(255,255,255,0.45)" }}>Media urbana en movimiento.</div>
+          </div>
         </div>
       </div>
     </footer>
