@@ -33,6 +33,11 @@ const HomeLaunchVideo = dynamic(
   },
 );
 
+const HomeActionVideo = dynamic(
+  () => import("@/components/primitives/HomeActionVideo").then((m) => m.HomeActionVideo),
+  { loading: () => null },
+);
+
 const HOME_WHY_ITEMS: AccordionItem[] = [
   {
     q: "Exposición repetida",
@@ -239,6 +244,9 @@ export function HomeContent() {
           </div>
         </div>
       </section>
+
+      {/* -- ESCANEA EN ACCIÓN -------------------------------------------------- */}
+      <HomeActionVideo />
 
       {/* -- CÓMO FUNCIONA ------------------------------------------------------ */}
       <FadeUpSection

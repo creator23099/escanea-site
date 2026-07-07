@@ -1,0 +1,136 @@
+.section {
+  width: 100%;
+  padding: 0;
+  margin: 0;
+  background: var(--c-navy);
+}
+
+.header {
+  padding: 1.5rem 1.25rem 1.25rem;
+}
+
+.headerInner {
+  max-width: 680px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.eyebrow {
+  margin-bottom: 1rem;
+}
+
+.title {
+  margin: 0 0 0.75rem;
+  font-family: var(--font-stack-serif);
+  font-size: clamp(1.75rem, 5vw, 2.5rem);
+  font-weight: 400;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  color: var(--c-white);
+}
+
+.title em {
+  font-style: italic;
+  color: rgba(150, 180, 255, 0.9);
+}
+
+.subline {
+  margin: 0 auto;
+  max-width: 32rem;
+  font-family: var(--font-stack-sans);
+  font-size: 0.95rem;
+  font-weight: 400;
+  line-height: 1.8;
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.wrapper {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  background: #000;
+}
+
+.video {
+  width: 100%;
+  height: auto;
+  display: block;
+  vertical-align: middle;
+  background: #000;
+}
+
+@media (min-width: 1024px) {
+  .header {
+    padding: 2rem 1.25rem 1.5rem;
+  }
+
+  .wrapper {
+    width: 100%;
+    height: min(75vh, calc(100vw * 9 / 16));
+    max-height: 80vh;
+  }
+
+  .video {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+}
+
+.video::-webkit-media-controls {
+  display: none !important;
+}
+
+.video::-webkit-media-controls-enclosure {
+  display: none !important;
+}
+
+.video::-webkit-media-controls-start-playback-button {
+  display: none !important;
+  opacity: 0 !important;
+  width: 0 !important;
+  height: 0 !important;
+  pointer-events: none !important;
+}
+
+.video::-webkit-media-controls-overlay-play-button {
+  display: none !important;
+  opacity: 0 !important;
+  width: 0 !important;
+  height: 0 !important;
+  pointer-events: none !important;
+}
+
+.muteToggle {
+  position: absolute;
+  right: 0.75rem;
+  bottom: 0.75rem;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  padding: 0;
+  border: none;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.45);
+  color: #fff;
+  cursor: pointer;
+  backdrop-filter: blur(4px);
+  transition: background 0.15s ease;
+}
+
+.muteToggle:hover {
+  background: rgba(0, 0, 0, 0.6);
+}
+
+.muteToggle:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 2px;
+}
+
+.muteToggle svg {
+  width: 1rem;
+  height: 1rem;
+}

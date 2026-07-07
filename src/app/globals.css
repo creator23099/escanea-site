@@ -378,6 +378,10 @@ textarea.fi { resize: vertical; min-height: 100px; }
 }
 
 /* ---------- Home hero mobile ------------------------------------------- */
+.home-hero {
+  padding-bottom: 0 !important;
+}
+
 .home-hero-gradient-top {
   display: none;
 }
