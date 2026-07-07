@@ -250,7 +250,7 @@ export function HomeContent() {
 
       {/* -- CÓMO FUNCIONA ------------------------------------------------------ */}
       <FadeUpSection
-        style={{ background: T.navy, padding: "100px 1.25rem 4rem" }}
+        className="home-como-funciona"
         innerStyle={sectionInner}
         aria-label="Cómo funciona"
       >

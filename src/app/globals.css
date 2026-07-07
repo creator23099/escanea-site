@@ -480,6 +480,18 @@ textarea.fi { resize: vertical; min-height: 100px; }
   }
 }
 
+/* Cómo funciona — tight to Escanea en acción video on mobile */
+.home-como-funciona {
+  background: var(--c-navy);
+  padding: 6.25rem 1.25rem 4rem;
+}
+
+@media (max-width: 768px) {
+  .home-como-funciona {
+    padding: 1.75rem 1.25rem 4rem;
+  }
+}
+
 /* ---------- Marcas hero -------------------------------------------------- */
 .marcas-hero-tag-pill > div {
   background: rgba(255, 255, 255, 0.25) !important;
