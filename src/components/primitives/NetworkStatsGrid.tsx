@@ -46,7 +46,7 @@ export function NetworkStatsGrid({ stats, variant }: NetworkStatsGridProps) {
 
     return (
       <div className={styles.compactGrid} aria-label="Cifras de la red">
-        {stats.map(({ value, label, valueStyle: statValueStyle }) => (
+        {stats.map(({ value, label, desc, valueStyle: statValueStyle }) => (
           <div key={label} className={styles.compactStat}>
             <div
               className={`${styles.compactValue}${statValueStyle === "small" ? ` ${styles.compactValueSmall}` : ""}`}
@@ -54,6 +54,7 @@ export function NetworkStatsGrid({ stats, variant }: NetworkStatsGridProps) {
               {value}
             </div>
             <div style={compactLabelStyle}>{label}</div>
+            {desc ? <p className={styles.compactFootnote}>{desc}</p> : null}
           </div>
         ))}
       </div>

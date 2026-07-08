@@ -172,7 +172,7 @@ export function BrandsContactForm() {
         <input id="b-whatsapp" className={`fi ${error && !fd.whatsapp ? "error" : ""}`} type="tel" value={fd.whatsapp} onChange={upd("whatsapp")} placeholder="+57 300 000 0000" required aria-required="true" />
       </div>
       <div>
-        <label htmlFor="b-email" style={FL}>Email</label>
+        <label htmlFor="b-email" style={FL}>Correo electrónico</label>
         <input id="b-email" className={`fi ${error && !fd.email ? "error" : ""}`} type="email" value={fd.email} onChange={upd("email")} placeholder="tu@empresa.co" required aria-required="true" />
       </div>
       <div>
@@ -197,7 +197,7 @@ export function BrandsContactForm() {
       {sent ? (
         <SuccessCard
           title="¡Solicitud recibida!"
-          message="Nuestro equipo te contacta en menos de 24 horas."
+          message="Nuestro equipo te contactará en menos de 24 horas."
           bg={T.white}
         />
       ) : (

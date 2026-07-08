@@ -230,7 +230,7 @@ export function DriversContactForm() {
         />
       </div>
       <div>
-        <label htmlFor="d-email" style={FL}>Email</label>
+        <label htmlFor="d-email" style={FL}>Correo electrónico</label>
         <input
           id="d-email"
           className={`fi ${error && !fd.email ? "error" : ""}`}

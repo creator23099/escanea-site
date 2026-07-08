@@ -19,9 +19,9 @@ export const NETWORK_STAT_IMPRESSIONS: NetworkStat = {
 };
 
 export const NETWORK_STAT_IMPRESSIONS_HYPERLOCAL: NetworkStat = {
-  value: NETWORK_STAT_IMPRESSIONS.value,
-  label: "Impresiones hiperlocales / 90 días",
-  desc: "",
+  value: "850.000",
+  label: "Vistas hiperlocales / 90 días",
+  desc: "Basado en una campaña piloto de 5 vehículos",
 };
 
 export const NETWORK_STAT_VEHICLES_PER_CAMPAIGN: NetworkStat = {

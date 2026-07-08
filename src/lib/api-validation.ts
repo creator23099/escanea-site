@@ -59,7 +59,7 @@ export function parseBrandsPayload(raw: unknown): ParseResult<BrandsFormData> {
   if (!value.empresa.trim()) return { ok: false, error: "El nombre de la empresa es obligatorio." };
   if (!value.whatsapp.trim()) return { ok: false, error: "El número de WhatsApp es obligatorio." };
   if (!value.email.trim() || !EMAIL_RE.test(value.email)) {
-    return { ok: false, error: "Por favor ingresa un email válido." };
+    return { ok: false, error: "Por favor ingresa un correo electrónico válido." };
   }
 
   return { ok: true, value };
@@ -102,7 +102,7 @@ export function parseDriversPayload(raw: unknown): ParseResult<DriversFormData> 
   if (!value.nombre.trim()) return { ok: false, error: "Por favor ingresa tu nombre." };
   if (!value.whatsapp.trim()) return { ok: false, error: "Por favor ingresa tu número de WhatsApp." };
   if (!value.email.trim() || !EMAIL_RE.test(value.email)) {
-    return { ok: false, error: "Por favor ingresa un email válido." };
+    return { ok: false, error: "Por favor ingresa un correo electrónico válido." };
   }
   if (!value.vehiculo.trim()) return { ok: false, error: "Por favor ingresa los datos de tu vehículo." };
   if (!value.dispuestoPublicidad.trim()) {

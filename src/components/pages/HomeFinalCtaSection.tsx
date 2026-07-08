@@ -24,7 +24,7 @@ export function HomeFinalCtaSection() {
           ¿Listo para<br />activar tu campaña?
         </h2>
         <p style={{ fontSize: "0.95rem", color: "rgba(255,255,255,0.65)", marginBottom: "2rem", lineHeight: 1.7 }}>
-          Nuestro equipo te contacta en menos de 24 horas.
+          Nuestro equipo te contactará en menos de 24 horas.
         </p>
         <p
           style={{

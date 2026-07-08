@@ -12,7 +12,7 @@ export function validateBrandsStep(step: number, fd: BrandsFormData): string | n
     case 5: {
       if (!fd.empresa.trim()) return "Por favor ingresa el nombre de tu empresa.";
       if (!fd.whatsapp.trim()) return "Por favor ingresa tu número de WhatsApp.";
-      if (!fd.email.trim() || !/\S+@\S+\.\S+/.test(fd.email)) return "Por favor ingresa un email válido.";
+      if (!fd.email.trim() || !/\S+@\S+\.\S+/.test(fd.email)) return "Por favor ingresa un correo electrónico válido.";
       return null;
     }
     case 6: return null; // notas optional
@@ -41,7 +41,7 @@ export function validateDriversStep(step: number, fd: DriversFormData): string |
       if (!fd.nombre.trim()) return "Por favor ingresa tu nombre.";
       if (!fd.whatsapp.trim()) return "Por favor ingresa tu número de WhatsApp.";
       if (!fd.email.trim() || !/\S+@\S+\.\S+/.test(fd.email)) {
-        return "Por favor ingresa un email válido.";
+        return "Por favor ingresa un correo electrónico válido.";
       }
       return null;
     }

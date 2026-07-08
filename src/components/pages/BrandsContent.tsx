@@ -42,7 +42,7 @@ const BRANDS_FAQ: AccordionItem[] = [
   },
   {
     q: "¿Cómo empiezo?",
-    a: "Llena el formulario con tu ciudad y objetivos. Nuestro equipo te contacta en menos de 24 horas para activar tu campaña.",
+    a: "Llena el formulario con tu ciudad y objetivos. Nuestro equipo te contactará en menos de 24 horas para activar tu campaña.",
   },
 ];
 
