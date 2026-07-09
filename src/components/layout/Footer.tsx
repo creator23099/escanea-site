@@ -32,7 +32,14 @@ export function Footer() {
 
           <address style={{ fontStyle: "normal" }}>
             <div className={styles.colHeading}>Contacto</div>
-            <div className={styles.contactUrl}>www.escanea.co</div>
+            <div className={styles.contactList}>
+              <a href="mailto:Chris@escanea.co" className="footer-link">
+                Chris@escanea.co
+              </a>
+              <a href="tel:+573026691241" className="footer-link">
+                +57 302 669 1241
+              </a>
+            </div>
             <div className="social-row" role="group" aria-label="Redes sociales">
               <a
                 href="https://www.instagram.com/escanea_co"
