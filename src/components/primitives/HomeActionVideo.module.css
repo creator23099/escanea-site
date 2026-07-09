@@ -68,12 +68,20 @@
     width: 100%;
     height: min(75vh, calc(100vw * 9 / 16));
     max-height: 80vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--c-navy);
   }
 
   .video {
     width: 100%;
     height: 100%;
     object-fit: contain;
+    object-position: center;
+    background: var(--c-navy);
+    border: 1.5px solid rgba(255, 255, 255, 0.12);
+    box-sizing: border-box;
   }
 }
 

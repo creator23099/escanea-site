@@ -80,9 +80,6 @@ const HOW_STEPS = [
 export const HERO_BG_IMAGE = "/images/fleet-medellin-horizontal.webp";
 export const HERO_BG_IMAGE_MOBILE = "/images/fleet-medellin-vertical.webp";
 
-const HERO_GRADIENT =
-  "linear-gradient(to top, rgba(0,0,0,0.72) 0%, rgba(0,0,0,0.35) 50%, rgba(0,0,0,0.15) 100%)";
-
 const COMPARISON_ROWS = [
   {
     bad: {
@@ -115,17 +112,6 @@ export function HomeContent() {
       <section
         className="home-hero"
         aria-label="Bienvenida — flota activa de vehículos con publicidad en Medellín"
-        style={{
-          minHeight: "90vh",
-          height: "90vh",
-          paddingTop: 60,
-          paddingBottom: 64,
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "flex-end",
-          position: "relative",
-          overflow: "hidden",
-        }}
       >
         <HeroBackgroundImage
           desktopSrc={HERO_BG_IMAGE}
@@ -137,76 +123,22 @@ export function HomeContent() {
           aria-hidden="true"
           className="home-hero-gradient-top"
         />
-        <div
-          aria-hidden="true"
-          style={{
-            position: "absolute",
-            inset: 0,
-            background: HERO_GRADIENT,
-            pointerEvents: "none",
-            zIndex: 1,
-          }}
-        />
-        <div
-          className="home-hero-content"
-          style={{
-            position: "absolute",
-            bottom: 60,
-            left: "50%",
-            transform: "translateX(-50%)",
-            maxWidth: "80%",
-            width: "100%",
-            zIndex: 10,
-            textAlign: "center",
-          }}
-        >
+        <div aria-hidden="true" className="home-hero-overlay" />
+        <div className="home-hero-content">
           <div className="home-hero-top">
-            <h1
-              className="home-hero-headline"
-              style={{
-                fontFamily: "'DM Serif Display',serif",
-                fontSize: "clamp(3.2rem, 5.5vw, 5.2rem)",
-                lineHeight: 1.1,
-                letterSpacing: "-0.02em",
-                color: "#FFFFFF",
-                marginBottom: "1.1rem",
-                animation: "fadeUp 0.7s ease 0.25s both",
-              }}
-            >
+            <h1 className="home-hero-headline">
               Tu marca recorre la ciudad.
               <br />
-              <em
-                className="home-hero-tagline"
-                style={{
-                  color: T.cobalt,
-                  fontStyle: "italic",
-                  display: "block",
-                }}
-              >
-                Con datos reales.
-              </em>
+              <em className="home-hero-tagline">Con datos reales.</em>
             </h1>
           </div>
 
           <div className="home-hero-bottom">
-            <p
-              style={{
-                fontSize: "1.05rem",
-                fontWeight: 400,
-                color: "#FFFFFF",
-                lineHeight: 1.7,
-                maxWidth: 480,
-                margin: "0 auto 2.2rem",
-                animation: "fadeUp 0.7s ease 0.38s both",
-              }}
-            >
+            <p className="home-hero-lead">
               Publicidad en vehículos que circulan por Medellín y Bogotá todos los días. Medible con QR, verificable con reportes semanales. No más adivinanzas.
             </p>
 
-            <div
-              className="home-hero-ctas"
-              style={{ display: "flex", gap: "0.75rem", flexWrap: "wrap", justifyContent: "center", animation: "fadeUp 0.7s ease 0.5s both" }}
-            >
+            <div className="home-hero-ctas">
               <Link href={ROUTES.marcas} scroll={false} className="btn btn-primary">
                 Anunciar mi marca
               </Link>
@@ -225,20 +157,9 @@ export function HomeContent() {
               </Link>
             </div>
 
-            <div style={{ display: "flex", gap: "0.65rem", flexWrap: "wrap", justifyContent: "center", marginTop: "2.5rem", animation: "fadeUp 0.7s ease 0.62s both" }}>
+            <div className="home-hero-pills">
               {["Reportes semanales", "QR medible", "Sin contratos largos"].map((t) => (
-                <div
-                  key={t}
-                  style={{
-                    padding: "0.35rem 0.85rem",
-                    background: "rgba(255,255,255,0.12)",
-                    border: "1px solid #fff",
-                    borderRadius: 20,
-                    fontSize: "0.75rem",
-                    color: "#fff",
-                    fontWeight: 500,
-                  }}
-                >
+                <div key={t} className="home-hero-pill">
                   {t}
                 </div>
               ))}
