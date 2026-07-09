@@ -127,39 +127,41 @@ export function HomeActionVideo() {
         </div>
       </div>
       <div ref={wrapperRef} className={styles.wrapper}>
-        {mounted ? (
-          <video
-            ref={videoRef}
-            className={styles.video}
-            src={VIDEO_SRC}
-            autoPlay
-            muted
-            loop
-            playsInline
-            preload="metadata"
-            poster={POSTER_SRC}
-            disablePictureInPicture
-            disableRemotePlayback
-            aria-label="Video de Escanea en acción"
-          />
-        ) : (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
-            src={POSTER_SRC}
-            alt=""
-            className={styles.video}
-            aria-hidden="true"
-          />
-        )}
-        <button
-          type="button"
-          className={styles.muteToggle}
-          onClick={toggleMute}
-          aria-label={muted ? "Activar sonido" : "Silenciar"}
-          aria-pressed={!muted}
-        >
-          {muted ? <VolumeOffIcon /> : <VolumeOnIcon />}
-        </button>
+        <div className={styles.videoFrame}>
+          {mounted ? (
+            <video
+              ref={videoRef}
+              className={styles.video}
+              src={VIDEO_SRC}
+              autoPlay
+              muted
+              loop
+              playsInline
+              preload="metadata"
+              poster={POSTER_SRC}
+              disablePictureInPicture
+              disableRemotePlayback
+              aria-label="Video de Escanea en acción"
+            />
+          ) : (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={POSTER_SRC}
+              alt=""
+              className={styles.video}
+              aria-hidden="true"
+            />
+          )}
+          <button
+            type="button"
+            className={styles.muteToggle}
+            onClick={toggleMute}
+            aria-label={muted ? "Activar sonido" : "Silenciar"}
+            aria-pressed={!muted}
+          >
+            {muted ? <VolumeOffIcon /> : <VolumeOnIcon />}
+          </button>
+        </div>
       </div>
     </section>
   );
