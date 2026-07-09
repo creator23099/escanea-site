@@ -111,7 +111,7 @@
 
 .muteToggle {
   position: absolute;
-  right: 0.75rem;
+  left: 0.75rem;
   bottom: 0.75rem;
   z-index: 2;
   display: flex;
