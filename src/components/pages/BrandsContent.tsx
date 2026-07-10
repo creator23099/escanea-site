@@ -239,6 +239,9 @@ export function BrandsContent() {
 
       <FadeUpSection style={sectionWhite} innerStyle={inner} aria-label="Cifras de la red">
           <NetworkStatsGrid stats={MARCAS_STATS_BAR} variant="cards" />
+          <p style={{ ...bodyMd, marginTop: "1.5rem", marginBottom: 0 }}>
+            Estimación conservadora basada en 5 vehículos circulando en zonas de alto tráfico durante 90 días. Con jornadas de conducción más largas o más vehículos, el número real de impresiones suele ser mayor.
+          </p>
       </FadeUpSection>
 
       <FadeUpSection style={sectionIvory} innerStyle={inner} aria-label="El problema">
@@ -304,7 +307,7 @@ export function BrandsContent() {
           <Tag>Oportunidad</Tag>
           <h2 style={{ ...h2Brands, marginBottom: "1rem" }}>Marcas fundadoras.</h2>
           <p style={{ ...bodyMd, marginTop: 0, marginBottom: "1.25rem" }}>
-            Solo quedan 7 cupos disponibles en Medellín para el programa fundador 2026.
+            Solo quedan 5 cupos a la tarifa fundadora.
           </p>
           <p style={{ ...bodyMd, marginTop: 0, marginBottom: "1rem", fontWeight: 600, color: T.ink }}>
             Lo que incluye ser marca fundadora:
@@ -363,7 +366,7 @@ export function BrandsContent() {
       <FadeUpSection style={sectionWhite} innerStyle={inner} aria-label="Deducción fiscal">
           <h2 style={{ ...h2Brands, marginBottom: "1rem" }}>Deducción fiscal — Artículo 107</h2>
           <p style={{ ...bodyMd, margin: 0 }}>
-            El costo total de tu campaña es deducible como gasto operacional bajo el Artículo 107 del Estatuto Tributario. A una tasa del 35%, una campaña de $15.000.000 COP tiene un costo efectivo de $9.750.000 después de la deducción. Consulta con tu contador para más detalles.
+            El 100% de tu inversión califica como deducción de renta según el Artículo 107 del Estatuto Tributario: no se pierde como gasto, reduce directamente tu base gravable. Con la tarifa vigente del 35% para personas jurídicas (Art. 240 ET), el ahorro en impuestos equivale a ese porcentaje sobre el monto deducido — no implica recuperar el 100% invertido. Consulta con tu contador para más detalles.
           </p>
       </FadeUpSection>
 

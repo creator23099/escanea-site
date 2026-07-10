@@ -12,13 +12,14 @@ export const NETWORK_STAT_DRIVERS: NetworkStat = {
   desc: "",
 };
 
-export const NETWORK_STAT_VIEWS_VALUE = "850.000" as const;
-export const NETWORK_STAT_VIEWS_LABEL = "Vistas hiperlocales / 90 días" as const;
+export const NETWORK_STAT_VIEWS_VALUE = "~850K" as const;
+export const NETWORK_STAT_VIEWS_LABEL =
+  "impresiones hiperlocales estimadas / campaña de 90 días" as const;
 
 export const NETWORK_STAT_IMPRESSIONS: NetworkStat = {
   value: NETWORK_STAT_VIEWS_VALUE,
   label: NETWORK_STAT_VIEWS_LABEL,
-  desc: "Con 5 vehículos × 3.000–5.000 km/mes en zonas de alto tráfico. Los escaneos QR son verificables — las vistas son el estimado conservador.",
+  desc: "Con 5 vehículos × 3.000–5.000 km/mes en zonas de alto tráfico. Los escaneos QR son verificables — las impresiones son el estimado conservador.",
 };
 
 export const NETWORK_STAT_IMPRESSIONS_HYPERLOCAL: NetworkStat = {
