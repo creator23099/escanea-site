@@ -76,7 +76,7 @@ const MARCAS_HERO_GRADIENT =
 
 const FOUNDING_BENEFITS = [
   "Tarifa bloqueada al renovar",
-  "Exclusividad de nicho en tu zona durante la campaña",
+  "Prioridad en asignación de conductores y zonas",
   "Prioridad en nuevas zonas y ciudades",
   "Cupos limitados — primeras marcas en la ciudad",
 ] as const;
@@ -285,6 +285,13 @@ export function BrandsContent() {
           </div>
       </FadeUpSection>
 
+      <FadeUpSection style={sectionIvory} innerStyle={inner} aria-label="La frecuencia">
+          <h2 style={{ ...h2Brands, marginBottom: "1rem" }}>La frecuencia es lo que convierte.</h2>
+          <p style={{ ...bodyMd, margin: 0 }}>
+            Tu marca no aparece una vez. Aparece semana tras semana, en los barrios donde tus futuros clientes viven, trabajan y consumen. Esa presencia repetida construye reconocimiento — y el reconocimiento es lo que lleva a la consulta.
+          </p>
+      </FadeUpSection>
+
       <FadeUpSection style={sectionIvory} innerStyle={inner} aria-label="Seguridad de marca">
           <Tag>Curación</Tag>
           <h2 style={{ ...h2Brands, marginBottom: "1rem" }}>Tu marca, en buenas manos.</h2>
@@ -297,7 +304,7 @@ export function BrandsContent() {
           <Tag>Oportunidad</Tag>
           <h2 style={{ ...h2Brands, marginBottom: "1rem" }}>Marcas fundadoras.</h2>
           <p style={{ ...bodyMd, marginTop: 0, marginBottom: "1.25rem" }}>
-            Cupos limitados disponibles en Medellín.
+            Solo quedan 7 cupos disponibles en Medellín para el programa fundador 2026.
           </p>
           <p style={{ ...bodyMd, marginTop: 0, marginBottom: "1rem", fontWeight: 600, color: T.ink }}>
             Lo que incluye ser marca fundadora:
@@ -353,9 +360,16 @@ export function BrandsContent() {
           </div>
       </FadeUpSection>
 
+      <FadeUpSection style={sectionWhite} innerStyle={inner} aria-label="Deducción fiscal">
+          <h2 style={{ ...h2Brands, marginBottom: "1rem" }}>Deducción fiscal — Artículo 107</h2>
+          <p style={{ ...bodyMd, margin: 0 }}>
+            El costo total de tu campaña es deducible como gasto operacional bajo el Artículo 107 del Estatuto Tributario. A una tasa del 35%, una campaña de $15.000.000 COP tiene un costo efectivo de $9.750.000 después de la deducción. Consulta con tu contador para más detalles.
+          </p>
+      </FadeUpSection>
+
       <FadeUpSection style={sectionWhite} innerStyle={inner} aria-label="Protección contra fraude">
           <Tag>Verificación</Tag>
-          <h2 style={{ ...h2Brands, marginBottom: "1.5rem" }}>Protección contra fraude.</h2>
+          <h2 style={{ ...h2Brands, marginBottom: "1.5rem" }}>Verificación y transparencia total.</h2>
           <p style={{ ...bodyMd, marginTop: 0, marginBottom: "1.25rem" }}>
             Cada campaña incluye controles para confirmar que la ejecución sea real, visible y monitoreada durante el ciclo activo.
           </p>

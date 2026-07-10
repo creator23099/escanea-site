@@ -10,11 +10,11 @@ import { ROUTES } from "@/lib/routes";
 export const metadata: Metadata = {
   title: "Publicidad en Vehículos para Marcas | Escanea",
   description:
-    "Publicidad exterior en movimiento para marcas. Tu campaña recorre la ciudad con reportes semanales verificables.",
+    "Programa Marcas Fundadoras — campañas de publicidad exterior móvil medibles y verificables para negocios en Medellín y Bogotá. Cupos limitados 2026.",
   openGraph: {
     title: "Marcas · Escanea",
     description:
-      "Publicidad exterior en movimiento para marcas. Tu campaña recorre la ciudad con reportes semanales verificables.",
+      "Programa Marcas Fundadoras — campañas de publicidad exterior móvil medibles y verificables para negocios en Medellín y Bogotá. Cupos limitados 2026.",
     url: ROUTES.marcas,
   },
   icons: heroLcpPreload(MARCAS_HERO_BG_IMAGE_MOBILE, MARCAS_HERO_BG_IMAGE),

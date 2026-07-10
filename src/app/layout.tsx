@@ -62,14 +62,14 @@ export const metadata: Metadata = {
     siteName: "Escanea",
     title: "Escanea — Media urbana en movimiento",
     description:
-      "Transformando el tráfico en atención medible. Publicidad en movimiento con reportes reales.",
+      "Aumenta el reconocimiento de tu marca donde viven tus futuros clientes. Publicidad móvil medible con reportes semanales — Medellín y Bogotá.",
     url: "/",
   },
   twitter: {
     card: "summary_large_image",
     title: "Escanea — Media urbana en movimiento",
     description:
-      "Transformando el tráfico en atención medible. Publicidad en movimiento con reportes reales.",
+      "Aumenta el reconocimiento de tu marca donde viven tus futuros clientes. Publicidad móvil medible con reportes semanales — Medellín y Bogotá.",
   },
   robots: { index: true, follow: true },
   // Explicit icon declaration. We DO NOT rely on Next.js inferring icons

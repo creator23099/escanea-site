@@ -36,7 +36,7 @@ export function HomeFinalCtaSection() {
             marginBottom: "0.75rem",
           }}
         >
-          Espacios limitados para marcas fundadoras.
+          Quedan cupos limitados para marcas fundadoras en Medellín y Bogotá.
         </p>
         <div style={{ display: "flex", gap: "0.75rem", justifyContent: "center", flexWrap: "wrap" }}>
           <Link href={ROUTES.marcas} scroll={false} className="btn btn-cta-white">

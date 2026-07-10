@@ -191,7 +191,7 @@ export function BrandsContactForm() {
       <Tag>Formulario</Tag>
       <h2 style={{ ...h2Brands, marginBottom: "1rem" }}>Activa tu campaña</h2>
       <p style={{ ...bodyMd, marginTop: 0, marginBottom: "2rem" }}>
-        Campañas diseñadas a la medida de tu objetivo y presupuesto. Cuéntanos qué buscas y te armamos una propuesta en menos de 24 horas.
+        No enviamos propuestas genéricas. Primero entendemos su negocio, sus objetivos y el público que desea alcanzar — con base en eso, diseñamos la campaña más adecuada para su marca. Respuesta en menos de 24 horas.
       </p>
 
       {sent ? (

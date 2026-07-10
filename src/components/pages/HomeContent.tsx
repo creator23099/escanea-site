@@ -43,7 +43,7 @@ const HomeActionVideo = dynamic(
 const HOME_WHY_ITEMS: AccordionItem[] = [
   {
     q: "Exposición repetida",
-    a: "La repetición genera reconocimiento. Tu marca aparece constantemente en distintos puntos de la ciudad, construyendo familiaridad de marca en contextos reales.",
+    a: "Tu marca no aparece una vez — aparece semana tras semana en los barrios donde viven y consumen tus futuros clientes. Esa repetición es lo que construye confianza antes de que te busquen.",
   },
   {
     q: "Movimiento urbano real",
@@ -127,15 +127,13 @@ export function HomeContent() {
         <div className="home-hero-content">
           <div className="home-hero-top">
             <h1 className="home-hero-headline">
-              Tu marca recorre la ciudad.
-              <br />
-              <em className="home-hero-tagline">Con datos reales.</em>
+              Aumente el reconocimiento de su marca en los barrios donde viven sus futuros clientes.
             </h1>
           </div>
 
           <div className="home-hero-bottom">
             <p className="home-hero-lead">
-              Publicidad en vehículos que circulan por Medellín y Bogotá todos los días. Medible con QR, verificable con reportes semanales. No más adivinanzas.
+              Campañas de publicidad exterior móvil con reportes verificables, seguimiento semanal y una red de conductores seleccionados estratégicamente en Medellín y Bogotá.
             </p>
 
             <div className="home-hero-ctas">
@@ -178,7 +176,7 @@ export function HomeContent() {
         aria-label="Cómo funciona"
       >
           <div style={{ marginBottom: "1.2rem" }}>
-            <DarkTag>Activando nuestras primeras campañas en Colombia</DarkTag>
+            <DarkTag>Programa de lanzamiento activo — cupos limitados para primeras marcas en Medellín y Bogotá.</DarkTag>
           </div>
           <NetworkStatsGrid stats={HOME_STATS_ROW} variant="compact-dark" />
           <h2
@@ -271,6 +269,19 @@ export function HomeContent() {
                 ))}
               </div>
 
+              <p
+                style={{
+                  fontFamily: "'DM Sans',sans-serif",
+                  fontSize: "0.82rem",
+                  color: T.ink,
+                  lineHeight: 1.6,
+                  margin: "0 0 1.75rem",
+                  width: "100%",
+                }}
+              >
+                Escanea complementa la publicidad digital. Mientras las redes sociales generan clics, nuestras campañas fortalecen el reconocimiento de marca fuera de las pantallas — donde el algoritmo no llega.
+              </p>
+
               <Link href={ROUTES.marcas} scroll={false} className="btn btn-primary">
                 Anunciar mi marca
               </Link>
@@ -293,6 +304,9 @@ export function HomeContent() {
           >
             Diseñado para<br />resultados reales.
           </h2>
+          <p style={{ fontSize: "0.9rem", color: T.inkMd, lineHeight: 1.75, marginBottom: "2rem" }}>
+            Las personas rara vez toman una decisión importante después de ver una marca una sola vez. Por eso diseñamos campañas que mantienen su marca presente semana tras semana, en las zonas donde sus futuros clientes realizan su rutina diaria.
+          </p>
           <Accordion items={HOME_WHY_ITEMS} />
       </FadeUpSection>
 
@@ -360,7 +374,7 @@ export function HomeContent() {
               margin: "1rem 0 0.75rem",
             }}
           >
-            No estimaciones.
+            ¿Qué recibirá cada semana?
           </h2>
           <p style={{ fontSize: "0.9rem", color: T.inkMd, lineHeight: 1.75, marginBottom: "2rem" }}>
             Cada campaña incluye un reporte semanal con datos verificables de tu inversión.
